@@ -11,21 +11,30 @@ export default function HomeNavbar() {
         <Link className="text-[#0F172A]" href={""}>
           Escrow
         </Link>
+
         <Link className="text-[#0F172A]" href={""}>
-          Escrow
+          How it Works
         </Link>
         <Link className="text-[#0F172A]" href={""}>
-          Escrow
+          Resources
         </Link>
         <Link className="text-[#0F172A]" href={""}>
-          Escrow
+          Contact us
         </Link>
       </span>
 
       <div className="flex gap-10">
         {/* <button className="py-4 px-7 border rounded-md">Login</button> */}
-        <PrimaryButton type="button" text="Login" />
-        <PrimaryButton type="button" text="Register" className="bg-none" />
+        <PrimaryButton
+          type="button"
+          text="Login"
+          className="border-2 border-[#334155] bg-transparent text-[#334155] hover:bg-gray-300 hover:text-black"
+        />
+        <PrimaryButton
+          type="button"
+          text="Register"
+          className="bg-[#334155] hover:bg-[#25303f]"
+        />
         {/* <button>Register</button> */}
       </div>
     </section>

@@ -23,7 +23,7 @@ export default function RootLayout({
             <HomeNavbar />
           </div>
         </section>
-        <section className="w-[80%] mx-auto">{children}</section>
+        <section className="">{children}</section>
       </body>
     </html>
   );
