@@ -34,7 +34,7 @@ export default function Home() {
       </section>
 
       <section className="flex flex-col items-center bg-[#D9D9D9] w-full py-10 px-20">
-        <p>
+        <p className="text-[32px] text-center">
           Step into a world of seamless business transactions, powered by an
           escrow platform designed to safeguard and secure your deals{" "}
         </p>
