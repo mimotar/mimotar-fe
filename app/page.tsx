@@ -38,6 +38,46 @@ export default function Home() {
           Step into a world of seamless business transactions, powered by an
           escrow platform designed to safeguard and secure your deals{" "}
         </p>
+
+        <div className="flex justify-between  w-[80%] mt-12">
+          <div className="flex flex-col items-center">
+            <div className="w-40 h-36 flex flex-col bg-gray-500">
+              <img src="" alt="" height={144} width={160} />
+            </div>
+            <p>Real-time monitoring</p>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <div className="w-40 h-36 flex flex-col bg-gray-500">
+              <img src="" alt="" height={144} width={160} />
+            </div>
+            <p>Verification of claims</p>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <div className="w-40 h-36 flex flex-col bg-gray-500">
+              <img src="" alt="" height={144} width={160} />
+            </div>
+            <p>Safety of both buyer and seller</p>
+          </div>
+        </div>
+        {/* 
+        <div className="w-[80%] flex justify-center mt-11"> */}
+        <PrimaryButton
+          type="button"
+          text="Get paid/Pay someone"
+          className="bg-[#334155] hover:bg-[#25303f] mt-11"
+        />
+        {/* </div> */}
+      </section>
+
+      <section className="flex flex-col items-center w-[80%] py-10">
+        <h2 className="text-[32px] self-start mb-7 font-bold">How it Works</h2>
+        <PrimaryButton
+          type="button"
+          text="Try it out"
+          className="bg-[#334155] hover:bg-[#25303f] mt-11"
+        />
       </section>
     </main>
   );
