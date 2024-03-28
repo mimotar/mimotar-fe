@@ -1,9 +1,9 @@
 import * as React from "react";
-interface LogoProps {
+interface LogoProps extends React.HtmlHTMLAttributes<HTMLOrSVGElement> {
   className: string;
 }
 
-const LogoIcon = ({ className }: LogoProps) => (
+const LogoIcon = ({ className, ...props }: LogoProps) => (
   <svg
     width={140}
     height={33}
@@ -12,6 +12,7 @@ const LogoIcon = ({ className }: LogoProps) => (
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     className={className}
+    {...props}
   >
     <rect width={140} height={32.2835} fill="url(#pattern0)" />
     <defs>

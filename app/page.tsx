@@ -1,5 +1,6 @@
 import Image from "next/image";
 import PrimaryButton from "./commons/PrimaryButtons";
+import Footer from "./commons/Footer";
 
 export default function Home() {
   return (
@@ -79,6 +80,43 @@ export default function Home() {
           className="bg-[#334155] hover:bg-[#25303f] mt-11"
         />
       </section>
+
+      <section className="flex  bg-[#D9D9D9] w-full py-16">
+        <section className="w-[80%] gap-6 mx-auto flex items-center">
+          <div className="">
+            <div className="w-[336px] h-[412px] bg-gray-500 "></div>
+          </div>
+
+          <div className="flex flex-col w-full">
+            <h2 className="font-bold text-3xl">
+              Supporting your transaction every step of the way
+            </h2>
+            <p className="text-xl mt-6">
+              Our customer support are a click away to help you get the most out
+              of Mimotar, so you can go on with your day worry-free.
+            </p>
+            <div className="w-fit mt-8">
+              <PrimaryButton
+                type="button"
+                text="Get in touch"
+                className="bg-[#334155] hover:bg-[#25303f] mt-11"
+              />
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section className="flex flex-col py-11 justify-center items-center w-full">
+        <h2 className="text-3xl  font-bold">
+          Complete a safe deal today with Mimotar
+        </h2>
+        <PrimaryButton
+          type="button"
+          text="Get paid/Pay someone"
+          className="bg-[#334155] hover:bg-[#25303f] mt-9"
+        />
+      </section>
+      <Footer />
     </main>
   );
 }
