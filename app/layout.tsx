@@ -2,6 +2,9 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import HomeNavbar from "./commons/HomeNavbar";
+import { usePathname } from "next/navigation";
+import GeneralNavbar from "./commons/GeneralNavbar";
+import { headers } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,12 +18,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = headers();
+  const pathname = headersList.get("x-invoke-path") || "";
+
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
         <section className="bg-[#D9D9D9] py-7">
           <div className="w-[80%] mx-auto">
-            <HomeNavbar />
+            {pathname === "/" ? <HomeNavbar /> : <GeneralNavbar />}
           </div>
         </section>
         <section className="">{children}</section>
