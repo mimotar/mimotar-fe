@@ -2,13 +2,20 @@ import Link from "next/link";
 import LogoIcon from "../svgIconComponent/Logo";
 import Button from "./PrimaryButtons";
 import PrimaryButton from "./PrimaryButtons";
+import { usePathname } from "next/navigation";
 
 export default function HomeNavbar() {
+  const pathname = usePathname();
   return (
     <section className="flex justify-between items-center ">
       <LogoIcon className="" />
       <span className="flex gap-10">
-        <Link className="text-[#0F172A]" href={""}>
+        <Link
+          className={`text-[#0F172A] hover:font-bold ${
+            pathname === "/" ? "text-[#86198F] font-bold" : ""
+          }`}
+          href={"/"}
+        >
           Escrow
         </Link>
 

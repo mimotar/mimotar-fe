@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import LogoIcon from "../svgIconComponent/Logo";
 import Button from "./PrimaryButtons";
@@ -5,8 +7,11 @@ import PrimaryButton from "./PrimaryButtons";
 import { IoMdCart } from "react-icons/io";
 import { IoMdPerson } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
+import { usePathname } from "next/navigation";
+import Input from "./Input";
 
 export default function GeneralNavbar() {
+  const pathname = usePathname();
   return (
     <section className="flex justify-between items-center ">
       <Link href={"/"}>
@@ -15,31 +20,50 @@ export default function GeneralNavbar() {
       </Link>
 
       <span className="flex items-center gap-10">
-        <Link className="text-[#0F172A]" href={""}>
+        <Link
+          className={`text-[#0F172A] hover:font-bold ${
+            pathname === "/"
+              ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
+              : ""
+          }`}
+          href={"/"}
+        >
           Escrow
         </Link>
-        <Link className="text-[#0F172A]" href={""}>
+        <Link
+          className={`text-[#0F172A] hover:font-bold ${
+            pathname === "/listings"
+              ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
+              : ""
+          }`}
+          href={""}
+        >
           Listings
         </Link>
 
-        <Link className="text-[#0F172A]" href={""}>
+        <Link
+          className={`text-[#0F172A] hover:font-bold ${
+            pathname === "how-it-work"
+              ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
+              : ""
+          }`}
+          href={""}
+        >
           How it Works
         </Link>
 
-        <Link className="text-[#0F172A]" href={""}>
+        <Link
+          className={`text-[#0F172A] hover:font-bold ${
+            pathname === "contact"
+              ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
+              : ""
+          }`}
+          href={""}
+        >
           Contact us
         </Link>
 
-        <span className="relative">
-          <input
-            type="search"
-            name=""
-            id=""
-            placeholder="Search item ..."
-            className="rounded-md p-3 outline-none border-2 border-gray-400 placeholder:pl-4 peer"
-          />
-          <IoSearchOutline className="absolute left-2 top-4 text-xl text-gray-400 peer-focus:hidden" />
-        </span>
+        <Input type="search" placeholder="Search item ..." />
       </span>
 
       <div className="flex gap-10">
