@@ -1,6 +1,7 @@
 import Image from "next/image";
 import PrimaryButton from "./commons/PrimaryButtons";
 import Footer from "./commons/Footer";
+import SecondaryButton from "./commons/SecondaryButton";
 
 export default function Home() {
   return (
@@ -19,12 +20,18 @@ export default function Home() {
             <PrimaryButton
               type="button"
               text="Get paid/Pay someone"
-              className="bg-[#334155] hover:bg-[#25303f]"
+              className="w-[270px] h-[64px]"
             />
-            <PrimaryButton
+            {/* <PrimaryButton
               type="button"
               text="Register"
               className="border-2 border-[#334155] bg-transparent text-[#334155] hover:bg-gray-300 hover:text-black"
+            /> */}
+
+            <SecondaryButton
+              type="button"
+              text="Register"
+              className="w-[143px] h-[64px]"
             />
           </div>
         </div>

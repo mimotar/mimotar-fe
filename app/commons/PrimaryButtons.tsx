@@ -13,7 +13,7 @@ export default function PrimaryButton({
     <button
       {...props}
       className={twMerge(
-        "text-[#F8FAFC] hover:text-[#F8FAFC] py-4 px-7 bg-[#A21CAF] rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] focus:bg-[#A21CAF]",
+        "text-[#F8FAFC] hover:text-[#F8FAFC]  bg-[#A21CAF] rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] focus:bg-[#A21CAF]",
         className
       )}
     >

@@ -21,7 +21,7 @@ export default function GeneralNavbar() {
 
       <span className="flex items-center gap-10">
         <Link
-          className={`text-[#0F172A] hover:font-bold ${
+          className={`text-[#0F172A] text-base hover:font-bold  ${
             pathname === "/"
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""
@@ -31,12 +31,12 @@ export default function GeneralNavbar() {
           Escrow
         </Link>
         <Link
-          className={`text-[#0F172A] hover:font-bold ${
+          className={`text-[#0F172A] text-base hover:font-bold ${
             pathname === "/listings"
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""
           }`}
-          href={""}
+          href={"listings"}
         >
           Listings
         </Link>
@@ -47,7 +47,7 @@ export default function GeneralNavbar() {
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""
           }`}
-          href={""}
+          href={"how-it-work"}
         >
           How it Works
         </Link>
@@ -58,7 +58,7 @@ export default function GeneralNavbar() {
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""
           }`}
-          href={""}
+          href={"contact"}
         >
           Contact us
         </Link>
