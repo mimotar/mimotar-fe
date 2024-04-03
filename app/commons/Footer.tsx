@@ -23,13 +23,19 @@ export default function Footer() {
           <h2 className="text-3xl font-bold text-white mb-8">Services</h2>
           <ul className="space-y-6 text-white text-xl font-medium">
             <li>
-              <Link href={""}>Escrow</Link>
+              <Link href={""} className="hover:text-slate-300">
+                Escrow
+              </Link>
             </li>
             <li>
-              <Link href={""}>Buy</Link>
+              <Link href={""} className="hover:text-slate-300">
+                Buy
+              </Link>
             </li>
             <li>
-              <Link href={""}>Sell</Link>
+              <Link href={""} className="hover:text-slate-300">
+                Sell
+              </Link>
             </li>
           </ul>
         </div>
@@ -38,13 +44,19 @@ export default function Footer() {
           <h2 className="text-3xl font-bold text-white mb-8">About Us</h2>
           <ul className="space-y-6 text-white text-xl font-medium">
             <li>
-              <Link href={""}>Company</Link>
+              <Link href={""} className="hover:text-slate-300">
+                Company
+              </Link>
             </li>
             <li>
-              <Link href={""}>Leadership</Link>
+              <Link href={""} className="hover:text-slate-300">
+                Leadership
+              </Link>
             </li>
             <li>
-              <Link href={""}>Career</Link>
+              <Link href={""} className="hover:text-slate-300">
+                Career
+              </Link>
             </li>
           </ul>
         </div>
@@ -53,21 +65,31 @@ export default function Footer() {
           <h2 className="text-3xl font-bold text-white mb-8">Help</h2>
           <ul className="space-y-6 text-white text-xl font-medium">
             <li>
-              <Link href={""}>Contact us</Link>
+              <Link href={""} className="hover:text-slate-300">
+                Contact us
+              </Link>
             </li>
             <li>
-              <Link href={""}>FAQs</Link>
+              <Link href={""} className="hover:text-slate-300">
+                FAQs
+              </Link>
             </li>
             <li>
-              <Link href={""}>Blog</Link>
+              <Link href={""} className="hover:text-slate-300">
+                Blog
+              </Link>
             </li>
           </ul>
         </div>
       </div>
       <div className="flex justify-center gap-12 text-white items-center py-10 mt-14 border-t-2">
         <div>&#169; {new Date().getFullYear()}, Mimotar</div>
-        <Link href={""}>Terms and Conditions</Link>
-        <Link href={""}>Privacy Policy</Link>
+        <Link href={""} className="hover:text-slate-300">
+          Terms and Conditions
+        </Link>
+        <Link href={""} className="hover:text-slate-300">
+          Privacy Policy
+        </Link>
       </div>
     </section>
   );

@@ -9,11 +9,12 @@ import { IoMdPerson } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { usePathname } from "next/navigation";
 import Input from "./Input";
+import { IoMdArrowDropdown } from "react-icons/io";
 
 export default function GeneralNavbar() {
   const pathname = usePathname();
   return (
-    <section className="flex justify-between items-center ">
+    <section className="flex justify-between items-center">
       <Link href={"/"}>
         {" "}
         <LogoIcon className="" />
@@ -21,7 +22,7 @@ export default function GeneralNavbar() {
 
       <span className="flex items-center gap-10">
         <Link
-          className={`text-[#0F172A] text-base hover:font-bold  ${
+          className={`text-[#0F172A] min-w-fit text-base hover:text-slate-600  ${
             pathname === "/"
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""
@@ -31,7 +32,7 @@ export default function GeneralNavbar() {
           Escrow
         </Link>
         <Link
-          className={`text-[#0F172A] text-base hover:font-bold ${
+          className={`inline-flex items-center text-base hover:text-slate-600 text-[#0F172A] ${
             pathname === "/listings"
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""
@@ -39,10 +40,11 @@ export default function GeneralNavbar() {
           href={"listings"}
         >
           Listings
+          <IoMdArrowDropdown />
         </Link>
 
         <Link
-          className={`text-[#0F172A] hover:font-bold ${
+          className={`text-[#0F172A] hover:text-slate-600 ${
             pathname === "how-it-work"
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""
@@ -53,7 +55,7 @@ export default function GeneralNavbar() {
         </Link>
 
         <Link
-          className={`text-[#0F172A] hover:font-bold ${
+          className={`text-[#0F172A] hover:text-slate-600 ${
             pathname === "contact"
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""

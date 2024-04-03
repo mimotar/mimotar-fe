@@ -17,16 +17,7 @@ export default function Home() {
           </p>
 
           <div className="flex gap-6">
-            <PrimaryButton
-              type="button"
-              text="Get paid/Pay someone"
-              className="w-[270px] h-[64px]"
-            />
-            {/* <PrimaryButton
-              type="button"
-              text="Register"
-              className="border-2 border-[#334155] bg-transparent text-[#334155] hover:bg-gray-300 hover:text-black"
-            /> */}
+            <PrimaryButton type="button" text="Get paid/Pay someone" />
 
             <SecondaryButton
               type="button"
@@ -43,8 +34,9 @@ export default function Home() {
 
       <section className="flex flex-col items-center bg-[#D9D9D9] w-full py-10 px-20">
         <p className="text-[32px] text-center">
-          Step into a world of seamless business transactions, powered by an
-          escrow platform designed to safeguard and secure your deals{" "}
+          Step into a world of <b>seamless business transactions</b>, powered by
+          an escrow platform designed to <b>safeguard</b> and <b>secure</b> your
+          deals{" "}
         </p>
 
         <div className="flex justify-between  w-[80%] mt-12">
@@ -74,18 +66,14 @@ export default function Home() {
         <PrimaryButton
           type="button"
           text="Get paid/Pay someone"
-          className="bg-[#334155] hover:bg-[#25303f] mt-11"
+          className=" mt-11"
         />
         {/* </div> */}
       </section>
 
       <section className="flex flex-col items-center w-[80%] py-10">
         <h2 className="text-[32px] self-start mb-7 font-bold">How it Works</h2>
-        <PrimaryButton
-          type="button"
-          text="Try it out"
-          className="bg-[#334155] hover:bg-[#25303f] mt-11"
-        />
+        <PrimaryButton type="button" text="Try it out" className="mt-11" />
       </section>
 
       <section className="flex  bg-[#D9D9D9] w-full py-16">
@@ -106,7 +94,7 @@ export default function Home() {
               <PrimaryButton
                 type="button"
                 text="Get in touch"
-                className="bg-[#334155] hover:bg-[#25303f] mt-11"
+                className=" mt-11"
               />
             </div>
           </div>
@@ -120,7 +108,7 @@ export default function Home() {
         <PrimaryButton
           type="button"
           text="Get paid/Pay someone"
-          className="bg-[#334155] hover:bg-[#25303f] mt-9"
+          className="mt-9"
         />
       </section>
       <Footer />
