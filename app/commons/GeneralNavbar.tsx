@@ -10,8 +10,12 @@ import { IoSearchOutline } from "react-icons/io5";
 import { usePathname } from "next/navigation";
 import Input from "./Input";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { HiBars3 } from "react-icons/hi2";
+import LeftPanel from "./LeftPanel";
+import { useState } from "react";
 
 export default function GeneralNavbar() {
+  const [isOpenLeftPanel, setIsOpenLeftPanel] = useState(false);
   const pathname = usePathname();
   return (
     <section className="flex justify-between items-center">
@@ -20,9 +24,9 @@ export default function GeneralNavbar() {
         <LogoIcon className="" />
       </Link>
 
-      <span className="flex items-center gap-10">
+      <span className="flex items-center min-[1440px]:gap-10 gap-5">
         <Link
-          className={`text-[#0F172A] min-w-fit text-base hover:text-slate-600  ${
+          className={`text-[#0F172A] min-w-fit text-base hover:text-slate-600 sm:flex hidden ${
             pathname === "/"
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""
@@ -32,7 +36,7 @@ export default function GeneralNavbar() {
           Escrow
         </Link>
         <Link
-          className={`inline-flex items-center text-base hover:text-slate-600 text-[#0F172A] ${
+          className={`inline-flex items-center text-base hover:text-slate-600 text-[#0F172A] sm:flex hidden ${
             pathname === "/listings"
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""
@@ -44,7 +48,7 @@ export default function GeneralNavbar() {
         </Link>
 
         <Link
-          className={`text-[#0F172A] hover:text-slate-600 ${
+          className={`text-[#0F172A] hover:text-slate-600 md:flex hidden ${
             pathname === "how-it-work"
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""
@@ -55,7 +59,7 @@ export default function GeneralNavbar() {
         </Link>
 
         <Link
-          className={`text-[#0F172A] hover:text-slate-600 ${
+          className={`text-[#0F172A] hover:text-slate-600 md:flex hidden ${
             pathname === "contact"
               ? "text-[#86198F] font-bold border-b-2 border-[#86198F]"
               : ""
@@ -65,11 +69,18 @@ export default function GeneralNavbar() {
           Contact us
         </Link>
 
-        <Input type="search" placeholder="Search item ..." />
+        <Input
+          type="search"
+          placeholder="Search item ..."
+          wrapperClassName="min-[1440px]:flex hidden"
+        />
       </span>
 
-      <div className="flex gap-10">
-        <Link href={"cart"} className="flex items-center gap-2 font-bold">
+      <div className="flex items-center 2xl:gap-10 gap-5">
+        <Link
+          href={"cart"}
+          className="min-[1440px]:flex items-center gap-2 font-bold hidden"
+        >
           <IoMdCart />
           Cart
         </Link>
@@ -77,7 +88,13 @@ export default function GeneralNavbar() {
           <IoMdPerson />
           Login or Register
         </Link>
+        <HiBars3 onClick={() => setIsOpenLeftPanel((prev) => !prev)} />
       </div>
+
+      <LeftPanel
+        isOpen={isOpenLeftPanel}
+        closeModal={() => setIsOpenLeftPanel(false)}
+      />
     </section>
   );
 }

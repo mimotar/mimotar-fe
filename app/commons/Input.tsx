@@ -4,11 +4,16 @@ import { twMerge } from "tailwind-merge";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
+  wrapperClassName?: string;
 }
 
-export default function Input({ className, ...props }: InputProps) {
+export default function Input({
+  className,
+  wrapperClassName,
+  ...props
+}: InputProps) {
   return (
-    <span className="relative">
+    <span className={`relative ${wrapperClassName}`}>
       <input
         {...props}
         className={twMerge(
