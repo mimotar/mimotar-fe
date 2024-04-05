@@ -1,6 +1,6 @@
 "use client";
 
-import { IoMdCart, IoMdClose } from "react-icons/io";
+import { IoMdArrowDropdown, IoMdCart, IoMdClose } from "react-icons/io";
 import Link from "next/link";
 import Input from "./Input";
 
@@ -16,25 +16,36 @@ export default function LeftPanel({ isOpen, closeModal }: LeftPanelProps) {
         ""
       ) : (
         <section className="w-full h-full fixed inset-0 flex flex-col items-end bg-transparent">
-          <div className="flex h-full flex-col p-2 bg-yellow-200 space-y-2">
-            <IoMdClose onClick={closeModal} className="flex self-end" />
+          <div className="flex h-full flex-col p-4 bg-[#713F12] text-white space-y-2">
+            <IoMdClose
+              onClick={closeModal}
+              className=" flex self-end text-2xl hover:bg-white/25 p-1 cursor-pointer rounded-full "
+            />
 
             <Link
-              className={`text-[#0F172A] hover:text-slate-600 `}
-              href={"how-it-work"}
+              className={` text-base hover:text-white/80 sm:hidden flex`}
+              href={"/"}
             >
+              Escrow
+            </Link>
+            <Link
+              className={`inline-flex items-center text-base hover:text-white/80 sm:hidden `}
+              href={"listings"}
+            >
+              Listings
+              <IoMdArrowDropdown />
+            </Link>
+
+            <Link className={` hover:text-white/80 `} href={"how-it-work"}>
               How it Works
             </Link>
 
-            <Link
-              className={`text-[#0F172A] hover:text-slate-600`}
-              href={"contact"}
-            >
+            <Link className={` hover:text-white/80`} href={"contact"}>
               Contact us
             </Link>
             <Link
               href={"cart"}
-              className="fmin-[1440px]:flex items-center gap-2 font-bold hidden"
+              className="hover:text-white/80 items-center gap-2 flex"
             >
               <IoMdCart />
               Cart

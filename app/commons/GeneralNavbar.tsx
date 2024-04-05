@@ -88,7 +88,10 @@ export default function GeneralNavbar() {
           <IoMdPerson />
           Login or Register
         </Link>
-        <HiBars3 onClick={() => setIsOpenLeftPanel((prev) => !prev)} />
+        <HiBars3
+          onClick={() => setIsOpenLeftPanel((prev) => !prev)}
+          className="min-[1440px]:hidden flex cursor-pointer"
+        />
       </div>
 
       <LeftPanel

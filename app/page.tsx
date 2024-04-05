@@ -63,10 +63,10 @@ export default function Home() {
         </div>
         {/* 
         <div className="w-[80%] flex justify-center mt-11"> */}
-        <PrimaryButton
+        <SecondaryButton
           type="button"
           text="Get paid/Pay someone"
-          className=" mt-11"
+          className=" mt-11  w-[270px] h-[64px]"
         />
         {/* </div> */}
       </section>
@@ -91,10 +91,10 @@ export default function Home() {
               of Mimotar, so you can go on with your day worry-free.
             </p>
             <div className="w-fit mt-8">
-              <PrimaryButton
+              <SecondaryButton
                 type="button"
                 text="Get in touch"
-                className=" mt-11"
+                className="mt-11 w-[270px] h-[64px]"
               />
             </div>
           </div>
