@@ -22,7 +22,7 @@ export default function Home() {
           </h3>
           <p className="text-base my-[30px] w-[450px]">
             No more worries about scams or fake deals. With Mimotar, a safe deal
-            is sure.
+            is sure
           </p>
 
           <div className="flex gap-6">
