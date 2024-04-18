@@ -7,11 +7,15 @@ import OrganogramTwo from "./svgIconComponent/OrganogramTwo";
 import OrganogramThird from "./svgIconComponent/OrganogramThird";
 import OrganogramFourth from "./svgIconComponent/OganogramFourth";
 import OrganogramFifth from "./svgIconComponent/OganogramFifth";
+import { Images } from "./Images";
+import dotsbgstyle from "./moduleCss/dotsBgcss.module.css";
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between ">
-      <section className="flex justify-between gap-9 w-[80%] mx-auto py-14 px-14">
+      <section
+        className={`flex justify-between gap-9 w-[80%] mx-auto py-14 px-14 ${dotsbgstyle.dotbg}`}
+      >
         <div className="w-[60%] h-fit">
           <h3 className="text-[56px] leading-none font-bold">
             Securely buy, sell, and close deals with ease{" "}
@@ -22,18 +26,24 @@ export default function Home() {
           </p>
 
           <div className="flex gap-6">
-            <PrimaryButton type="button" text="Get paid/Pay someone" />
-
             <SecondaryButton
               type="button"
               text="Register"
               className="w-[143px] h-[64px]"
             />
+
+            <PrimaryButton type="button" text="Get paid/Pay someone" />
           </div>
         </div>
 
-        <div className="w-[40%] h-fit">
-          <img src="" alt="" height={412} width={392} />
+        <div className="w-[40%] h-fit ">
+          <img
+            src={Images.banner}
+            alt="banner"
+            height={412}
+            width={392}
+            className="object-cover"
+          />
         </div>
       </section>
 
