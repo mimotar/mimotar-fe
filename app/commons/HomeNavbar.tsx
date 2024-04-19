@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import LogoIcon from "../svgIconComponent/Logo";
 import Button from "./PrimaryButtons";
 import PrimaryButton from "./PrimaryButtons";
 import { usePathname } from "next/navigation";
+import SecondaryButton from "./SecondaryButton";
 
 export default function HomeNavbar() {
   const pathname = usePathname();
@@ -30,19 +33,22 @@ export default function HomeNavbar() {
         </Link>
       </span>
 
-      <div className="flex gap-10">
-        {/* <button className="py-4 px-7 border rounded-md">Login</button> */}
-        <PrimaryButton
+      <div className="flex gap-10 ">
+        <SecondaryButton
           type="button"
           text="Login"
-          className="border-2 border-[#334155] bg-transparent text-[#334155] hover:bg-gray-300 hover:text-black"
+          className="w-[118px] h-[48px]"
         />
-        <PrimaryButton
+        {/* <PrimaryButton
           type="button"
           text="Register"
           className="bg-[#334155] hover:bg-[#25303f]"
+        /> */}
+        <PrimaryButton
+          type="button"
+          text="Register"
+          className="w-[118px] h-[48px]"
         />
-        {/* <button>Register</button> */}
       </div>
     </section>
   );

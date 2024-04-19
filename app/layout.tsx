@@ -24,9 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-        <section className="bg-[#D9D9D9] py-7">
+        <section className="py-7">
           <div className="min-[1440px]:w-[80%] w-[95%] mx-auto">
-            {pathname === "/" ? <HomeNavbar /> : <GeneralNavbar />}
+            <HomeNavbar />
           </div>
         </section>
         <section className="">{children}</section>

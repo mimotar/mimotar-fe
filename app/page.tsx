@@ -9,6 +9,9 @@ import OrganogramFourth from "./svgIconComponent/OganogramFourth";
 import OrganogramFifth from "./svgIconComponent/OganogramFifth";
 import { Images } from "./Images";
 import dotsbgstyle from "./moduleCss/dotsBgcss.module.css";
+import MonitorIcon from "./svgIconComponent/MonitorIcon";
+import VerifyIcon from "./svgIconComponent/VerifyIcon";
+import SafetyIcon from "./svgIconComponent/SafetyIcon";
 
 export default function Home() {
   return (
@@ -47,38 +50,38 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="flex flex-col items-center bg-[#D9D9D9] w-full py-10 px-20">
-        <p className="text-[32px] text-center">
-          Step into a world of <b>seamless business transactions</b>, powered by
-          an escrow platform designed to <b>safeguard</b> and <b>secure</b> your
-          deals{" "}
+      <section className="flex flex-col items-center  w-full py-10 px-20">
+        <p className="text-2xl font-medium w-[70%] text-center">
+          Step into a world of seamless business transactions, powered by an
+          escrow platform designed to safeguard and secure your deals{" "}
         </p>
 
         <div className="flex justify-between  w-[80%] mt-12">
           <div className="flex flex-col items-center">
-            <div className="w-40 h-36 flex flex-col bg-gray-500">
-              <img src="" alt="" height={144} width={160} />
+            <div className="w-40 h-36 flex flex-col items-center">
+              {/* <img src="" alt="" height={144} width={160} /> */}
+              <MonitorIcon className="" />
             </div>
             <p>Real-time monitoring</p>
           </div>
 
           <div className="flex flex-col items-center">
-            <div className="w-40 h-36 flex flex-col bg-gray-500">
-              <img src="" alt="" height={144} width={160} />
+            <div className="w-40 h-36 flex flex-col items-center">
+              <VerifyIcon className="" />
             </div>
             <p>Verification of claims</p>
           </div>
 
           <div className="flex flex-col items-center">
-            <div className="w-40 h-36 flex flex-col bg-gray-500">
-              <img src="" alt="" height={144} width={160} />
+            <div className="w-40 h-36 flex flex-col items-center">
+              <SafetyIcon className="" />
             </div>
             <p>Safety of both buyer and seller</p>
           </div>
         </div>
         {/* 
         <div className="w-[80%] flex justify-center mt-11"> */}
-        <SecondaryButton
+        <PrimaryButton
           type="button"
           text="Get paid/Pay someone"
           className=" mt-11  w-[270px] h-[64px]"
@@ -135,13 +138,15 @@ export default function Home() {
         <PrimaryButton type="button" text="Try it out" className="my-11" />
       </section>
 
-      <section className="flex  bg-[#D9D9D9] w-full py-16">
+      <section className="flex bg-[#F8FAFC] w-full py-16">
         <section className="w-[80%] gap-6 mx-auto flex items-center">
           <div className="">
-            <div className="w-[336px] h-[412px] bg-gray-500 "></div>
+            <div className="w-[336px] h-[412px]">
+              <img src={Images.transactionStepImg} alt="" />
+            </div>
           </div>
 
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full h-full">
             <h2 className="font-bold text-3xl">
               Supporting your transaction every step of the way
             </h2>
@@ -149,7 +154,7 @@ export default function Home() {
               Our customer support are a click away to help you get the most out
               of Mimotar, so you can go on with your day worry-free.
             </p>
-            <div className="w-fit mt-8">
+            <div className="w-fit">
               <SecondaryButton
                 type="button"
                 text="Get in touch"
@@ -164,6 +169,9 @@ export default function Home() {
         <h2 className="text-3xl  font-bold">
           Complete a safe deal today with Mimotar
         </h2>
+        <p className="text-lg mt-3">
+          Get up and running in less than 5 minutes
+        </p>
         <PrimaryButton
           type="button"
           text="Get paid/Pay someone"
