@@ -5,4 +5,8 @@ export const Images = {
     .href,
   twitterLogo: new URL("./assets/png/twitterLogo.png", import.meta.url).href,
   banner: new URL("./assets/png/banner.png", import.meta.url).href,
+  transactionStepImg: new URL(
+    "./assets/png/transactionStepImg.png",
+    import.meta.url
+  ).href,
 };
