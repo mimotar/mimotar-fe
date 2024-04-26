@@ -2,16 +2,14 @@ import Image from "next/image";
 import PrimaryButton from "./commons/PrimaryButtons";
 import Footer from "./commons/Footer";
 import SecondaryButton from "./commons/SecondaryButton";
-import Organogram from "./svgIconComponent/Organogram";
-import OrganogramTwo from "./svgIconComponent/OrganogramTwo";
-import OrganogramThird from "./svgIconComponent/OrganogramThird";
-import OrganogramFourth from "./svgIconComponent/OganogramFourth";
-import OrganogramFifth from "./svgIconComponent/OganogramFifth";
 import { Images } from "./Images";
 import dotsbgstyle from "./moduleCss/dotsBgcss.module.css";
 import MonitorIcon from "./svgIconComponent/MonitorIcon";
 import VerifyIcon from "./svgIconComponent/VerifyIcon";
 import SafetyIcon from "./svgIconComponent/SafetyIcon";
+import gif from "./assets/gif/How_it_works.gif";
+import Dotsbg from "./svgIconComponent/Dotsbg";
+import AbsoluteSmalldots from "./svgIconComponent/AbsoluteSmalldots";
 
 export default function Home() {
   return (
@@ -39,13 +37,18 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-[40%] h-fit ">
-          <img
+        <div className="w-[40%] h-fit relative block">
+          <Image
             src={Images.banner}
             alt="banner"
             height={412}
             width={392}
+            sizes="100vw"
             className="object-cover"
+            style={{
+              width: "100%",
+              height: "auto",
+            }}
           />
         </div>
       </section>
@@ -93,7 +96,7 @@ export default function Home() {
         <h2 className="text-[32px] self-start my-10 font-bold">How it Works</h2>
 
         {/* organogram */}
-        <div className="flex flex-col -space-y-10">
+        {/* <div className="flex flex-col -space-y-10">
           <div className="flex -space-x-10">
             <div className="relative">
               <p className="absolute top-32 w-52 left-10">
@@ -134,19 +137,34 @@ export default function Home() {
 
             <div className="w-16 h-16 bg-[#303030] self-end ml-5 -translate-y-11"></div>
           </div>
-        </div>
+        </div> */}
+        <Image
+          src={gif}
+          alt=""
+          unoptimized={true}
+          sizes="100vw"
+          // Make the image display full width
+          style={{
+            width: "100%",
+            height: "auto",
+          }}
+        />
         <PrimaryButton type="button" text="Try it out" className="my-11" />
       </section>
 
       <section className="flex bg-[#F8FAFC] w-full py-16">
-        <section className="w-[80%] gap-6 mx-auto flex items-center">
-          <div className="">
-            <div className="w-[336px] h-[412px]">
-              <img src={Images.transactionStepImg} alt="" />
-            </div>
+        <section className="w-[80%] gap-6 mx-auto flex items-center relative">
+          <div className="w-full h-[412px] relative block">
+            <Image
+              src={Images.transactionStepImg}
+              fill
+              sizes="100vw"
+              alt=""
+              className="object-cover z-50"
+            />
           </div>
-
-          <div className="flex flex-col w-full h-full">
+          <AbsoluteSmalldots className="absolute -left-16 -top-12" />
+          <div className="flex justify-center flex-col w-full h-full">
             <h2 className="font-bold text-3xl">
               Supporting your transaction every step of the way
             </h2>
