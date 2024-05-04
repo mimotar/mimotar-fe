@@ -2,21 +2,25 @@ import Image from "next/image";
 import PrimaryButton from "./commons/PrimaryButtons";
 import Footer from "./commons/Footer";
 import SecondaryButton from "./commons/SecondaryButton";
-import { Images } from "./Images";
-import dotsbgstyle from "./moduleCss/dotsBgcss.module.css";
-import MonitorIcon from "./svgIconComponent/MonitorIcon";
-import VerifyIcon from "./svgIconComponent/VerifyIcon";
-import SafetyIcon from "./svgIconComponent/SafetyIcon";
-import gif from "./assets/gif/How_it_works.gif";
-import Dotsbg from "./svgIconComponent/Dotsbg";
-import AbsoluteSmalldots from "./svgIconComponent/AbsoluteSmalldots";
+import Organogram from "./svgIconComponent/Organogram";
+import OrganogramTwo from "./svgIconComponent/OrganogramTwo";
+import OrganogramThird from "./svgIconComponent/OrganogramThird";
+import OrganogramFourth from "./svgIconComponent/OganogramFourth";
+import OrganogramFifth from "./svgIconComponent/OganogramFifth";
+import HomeNavbar from "./commons/HomeNavbar";
+import GeneralNavbar from "./commons/GeneralNavbar";
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between ">
-      <section
-        className={`flex justify-between gap-9 w-[80%] mx-auto py-14 px-14 ${dotsbgstyle.dotbg}`}
-      >
+      <section className="bg-[#D9D9D9] py-7 w-full">
+        <div className="min-[1440px]:w-[80%] w-[95%] mx-auto">
+          {/* {pathname === "/" ? <HomeNavbar /> : <GeneralNavbar />} */}
+          {/* <HomeNavbar />  */}
+          <GeneralNavbar />
+        </div>
+      </section>
+      <section className="flex justify-between gap-9 w-[80%] mx-auto py-14 px-14">
         <div className="w-[60%] h-fit">
           <h3 className="text-[56px] leading-none font-bold">
             Securely buy, sell, and close deals with ease{" "}

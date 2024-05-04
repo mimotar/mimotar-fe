@@ -18,17 +18,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const headersList = headers();
-  const pathname = headersList.get("x-invoke-path") || "";
+  // const headersList = headers();
+  // const pathname = headersList.get("x-invoke-path") || "";
 
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-        <section className="py-7">
-          <div className="min-[1440px]:w-[80%] w-[95%] mx-auto">
-            <HomeNavbar />
-          </div>
-        </section>
         <section className="">{children}</section>
       </body>
     </html>
