@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import LogoIcon from "../svgIconComponent/Logo";
 import Button from "./PrimaryButtons";
