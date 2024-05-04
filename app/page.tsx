@@ -9,6 +9,12 @@ import OrganogramFourth from "./svgIconComponent/OganogramFourth";
 import OrganogramFifth from "./svgIconComponent/OganogramFifth";
 import HomeNavbar from "./commons/HomeNavbar";
 import GeneralNavbar from "./commons/GeneralNavbar";
+import { Images } from "./Images";
+import MonitorIcon from "./svgIconComponent/MonitorIcon";
+import VerifyIcon from "./svgIconComponent/VerifyIcon";
+import SafetyIcon from "./svgIconComponent/SafetyIcon";
+import AbsoluteSmalldots from "./svgIconComponent/AbsoluteSmalldots";
+import gif from "./assets/gif/How_it_works.gif";
 
 export default function Home() {
   return (

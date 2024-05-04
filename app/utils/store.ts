@@ -11,7 +11,7 @@ import {
 } from "redux-persist";
 // import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
-import userSlice from "./slice/userSlice";
+import userSlice from "./slices/userSlice";
 import { storage } from "./storage";
 
 const persistConfig = {
