@@ -18,10 +18,10 @@ export default function Home() {
         className={`flex justify-between gap-9 w-[80%] mx-auto py-14 px-14 ${dotsbgstyle.dotbg}`}
       >
         <div className="w-[60%] h-fit">
-          <h3 className="text-[56px] leading-none font-bold">
+          <h3 className="lg:text-[56px]  text-3xl leading-none font-bold">
             Securely buy, sell, and close deals with ease{" "}
           </h3>
-          <p className="text-base my-[30px] w-[450px]">
+          <p className="text-base my-[30px] lg:w-[450px]">
             No more worries about scams or fake deals. With Mimotar, a safe deal
             is sure
           </p>
@@ -37,14 +37,15 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-[40%] h-fit relative block">
+        <div className="w-[40%] h-full relative block">
           <Image
             src={Images.banner}
             alt="banner"
+            // fill
             height={412}
             width={392}
-            sizes="100vw"
-            className="object-cover"
+            // sizes="100vw"
+            className="object-cover h-[412px] w-[392px]"
             style={{
               width: "100%",
               height: "auto",
@@ -53,33 +54,33 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="flex flex-col items-center  w-full py-10 px-20">
-        <p className="text-2xl font-medium w-[70%] text-center">
+      <section className="flex flex-col items-center  w-full py-10 px-20 min-[2000px]:px-[15%]">
+        <p className="text-2xl font-medium lg:w-[70%]  text-center">
           Step into a world of seamless business transactions, powered by an
           escrow platform designed to safeguard and secure your deals{" "}
         </p>
 
-        <div className="flex justify-between  w-[80%] mt-12">
-          <div className="flex flex-col items-center">
-            <div className="w-40 h-36 flex flex-col items-center">
+        <div className="flex justify-between lg:w-[80%] w-full mt-12">
+          <div className="flex flex-col items-center w-full">
+            <div className="md:w-40 md:h-36 w-32 h-28 flex flex-col items-center">
               {/* <img src="" alt="" height={144} width={160} /> */}
               <MonitorIcon className="" />
             </div>
-            <p>Real-time monitoring</p>
+            <p className="text-center">Real-time monitoring</p>
           </div>
 
-          <div className="flex flex-col items-center">
-            <div className="w-40 h-36 flex flex-col items-center">
+          <div className="flex flex-col items-center w-full">
+            <div className="md:w-40 md:h-36 w-32 h-28 flex flex-col items-center">
               <VerifyIcon className="" />
             </div>
-            <p>Verification of claims</p>
+            <p className="text-center">Verification of claims</p>
           </div>
 
-          <div className="flex flex-col items-center">
-            <div className="w-40 h-36 flex flex-col items-center">
+          <div className="flex flex-col items-center w-full">
+            <div className="md:w-40 md:h-36 w-32 h-28 flex flex-col items-center">
               <SafetyIcon className="" />
             </div>
-            <p>Safety of both buyer and seller</p>
+            <p className="text-center">Safety of both buyer and seller</p>
           </div>
         </div>
         {/* 
@@ -92,7 +93,7 @@ export default function Home() {
         {/* </div> */}
       </section>
 
-      <section className="flex flex-col items-center w-[80%] ">
+      <section className="flex flex-col items-center w-[80%]">
         <h2 className="text-[32px] self-start my-10 font-bold">How it Works</h2>
 
         {/* organogram */}
@@ -153,7 +154,7 @@ export default function Home() {
       </section>
 
       <section className="flex bg-[#F8FAFC] w-full py-16">
-        <section className="w-[80%] gap-6 mx-auto flex items-center relative">
+        <section className="lg:w-[80%] w-[90%] gap-6 mx-auto flex items-center relative">
           <div className="w-full h-[412px] relative block">
             <Image
               src={Images.transactionStepImg}
@@ -183,8 +184,8 @@ export default function Home() {
         </section>
       </section>
 
-      <section className="flex flex-col py-11 justify-center items-center w-full">
-        <h2 className="text-3xl  font-bold">
+      <section className="flex flex-col py-11 justify-center items-center w-full px-2">
+        <h2 className="text-3xl  font-bold text-center">
           Complete a safe deal today with Mimotar
         </h2>
         <p className="text-lg mt-3">
