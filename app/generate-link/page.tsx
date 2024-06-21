@@ -1,5 +1,3 @@
-import React from "react";
-import GenerateLinkLeftPanel from "./components/GenerateLinkLeftPanel";
 import { useSearchParams } from "next/navigation";
 import Steps from "./components/Steps";
 
