@@ -10,6 +10,7 @@ import SafetyIcon from "./svgIconComponent/SafetyIcon";
 import gif from "./assets/gif/How_it_works.gif";
 import Dotsbg from "./svgIconComponent/Dotsbg";
 import AbsoluteSmalldots from "./svgIconComponent/AbsoluteSmalldots";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -33,7 +34,9 @@ export default function Home() {
               className="w-[143px] h-[64px]"
             />
 
-            <PrimaryButton type="button" text="Get paid/Pay someone" />
+            <Link href={"/generate-link"}>
+              <PrimaryButton type="button" text="Get paid/Pay someone" />
+            </Link>
           </div>
         </div>
 
