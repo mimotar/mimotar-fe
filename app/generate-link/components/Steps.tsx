@@ -24,9 +24,9 @@ export default function Steps({ title, subtitle, stage }: StepsType) {
   const stepNumber = getStepNumber(title);
   const condition = stage !== undefined && stepNumber < Number(stage);
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col w-[250px]">
       <div className="flex gap-10 justify-between items-center relative">
-        <div className="flex flex-col ">
+        <div className="flex flex-col">
           <h3 className="font-bold">{title}</h3>
           <p>{subtitle}</p>
         </div>

@@ -1,5 +1,6 @@
 import { useSearchParams } from "next/navigation";
 import Steps from "./components/Steps";
+import StepOne from "./components/StepOne";
 
 export default function page({
   searchParams,
@@ -11,9 +12,9 @@ export default function page({
   const params = searchParams.step ?? 0;
   console.log(params);
   return (
-    <section className="flex flex-col h-full w-full bg-blue-500">
-      <div className="h-full flex justify-between">
-        <div className="flex flex-col py-10 pr-28 pl-10 bg-[#0F172A] text-white">
+    <section className="flex flex-col h-full w-full">
+      <div className="h-full flex justify-between  gap-20">
+        <div className="flex flex-col justify-center items-center bg-[#0F172A] text-white px-14 py-14">
           <Steps
             title="Step 1"
             subtitle="Personal Information "
@@ -36,8 +37,14 @@ export default function page({
           />
         </div>
 
-        <div>middle content</div>
-        <div>right content</div>
+        <div className="flex flex-col h-full items-center w-full">
+          {params == 0 && <StepOne />}
+          {params == 1 && "step 2"}
+          {params == 2 && "step 3"}
+        </div>
+        <div className="flex flex-col h-full items-center w-[20%]">
+          right content
+        </div>
       </div>
       <div className="bg-green-400 flex-shrink-0">Footer</div>
     </section>
