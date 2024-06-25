@@ -39,15 +39,18 @@ export default function HomeNavbar() {
       <div className="flex items-center min-[932px]:gap-10 gap-5 ">
         <SecondaryButton
           type="button"
-          text="Login"
+          // text="Login"
           className="min-[932px]:w-[118px] min-[932px]:h-[48px] w-[80px] h-[35px]"
-        />
+        >
+          Login
+        </SecondaryButton>
 
         <PrimaryButton
           type="button"
-          text="Register"
           className="min-[932px]:w-[118px] min-[932px]:h-[48px] w-[80px] h-[35px]"
-        />
+        >
+          Register
+        </PrimaryButton>
       </div>
     </section>
   );

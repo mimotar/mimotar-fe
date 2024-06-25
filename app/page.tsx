@@ -28,14 +28,12 @@ export default function Home() {
           </p>
 
           <div className="flex gap-6">
-            <SecondaryButton
-              type="button"
-              text="Register"
-              className="w-[143px] h-[64px]"
-            />
+            <SecondaryButton type="button" className="w-[143px] h-[64px]">
+              Register
+            </SecondaryButton>
 
             <Link href={"/generate-link"}>
-              <PrimaryButton type="button" text="Get paid/Pay someone" />
+              <PrimaryButton type="button">Get paid/Pay someone</PrimaryButton>
             </Link>
           </div>
         </div>
@@ -88,11 +86,9 @@ export default function Home() {
         </div>
         {/* 
         <div className="w-[80%] flex justify-center mt-11"> */}
-        <PrimaryButton
-          type="button"
-          text="Get paid/Pay someone"
-          className=" mt-11  w-[270px] h-[64px]"
-        />
+        <PrimaryButton type="button" className=" mt-11  w-[270px] h-[64px]">
+          Get paid/Pay someone
+        </PrimaryButton>
         {/* </div> */}
       </section>
 
@@ -153,7 +149,9 @@ export default function Home() {
             height: "auto",
           }}
         />
-        <PrimaryButton type="button" text="Try it out" className="my-11" />
+        <PrimaryButton type="button" className="my-11">
+          Try it out
+        </PrimaryButton>
       </section>
 
       <section className="flex bg-[#F8FAFC] w-full py-16">
@@ -179,9 +177,10 @@ export default function Home() {
             <div className="w-fit">
               <SecondaryButton
                 type="button"
-                text="Get in touch"
                 className="mt-11 w-[270px] h-[64px]"
-              />
+              >
+                Get in touch
+              </SecondaryButton>
             </div>
           </div>
         </section>
@@ -194,11 +193,9 @@ export default function Home() {
         <p className="text-lg mt-3">
           Get up and running in less than 5 minutes
         </p>
-        <PrimaryButton
-          type="button"
-          text="Get paid/Pay someone"
-          className="mt-9"
-        />
+        <PrimaryButton type="button" className="mt-9">
+          Get paid/Pay someone
+        </PrimaryButton>
       </section>
       <Footer />
     </main>
