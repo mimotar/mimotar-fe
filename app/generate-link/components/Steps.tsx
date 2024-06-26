@@ -1,11 +1,17 @@
 import { GrFormCheckmark } from "react-icons/gr";
 
 interface StepsType {
+  showStroke: boolean;
   title: string;
   subtitle: string;
   stage: string | string[] | undefined | number[] | undefined | number;
 }
-export default function Steps({ title, subtitle, stage }: StepsType) {
+export default function Steps({
+  showStroke,
+  title,
+  subtitle,
+  stage,
+}: StepsType) {
   const getStepNumber = (title: string): number => {
     switch (title) {
       case "Step 1":
@@ -38,7 +44,9 @@ export default function Steps({ title, subtitle, stage }: StepsType) {
         </div>
       </div>
 
-      <div className="self-end h-52 w-0.5 bg-white -translate-x-4"></div>
+      {showStroke && (
+        <div className="self-end h-52 w-0.5 bg-white -translate-x-4"></div>
+      )}
     </div>
   );
 }
