@@ -19,7 +19,7 @@ export default function RadioInput({
         <input
           {...props}
           className={twMerge(
-            `rounded-md active:border active:accent-[#86198F] focus:accent-[#86198F]`,
+            `rounded-md accent-[#86198F] active:border active:accent-[#86198F] focus:accent-[#86198F]`,
             className
           )}
         />
