@@ -4,6 +4,7 @@ import StepTwo from "./components/StepTwo";
 import StepOne from "./components/StepOne";
 import StepThree from "./components/StepThree";
 import StepFour from "./components/StepFour";
+import StepFive from "./components/StepFive";
 
 export default function page({
   searchParams,
@@ -44,11 +45,12 @@ export default function page({
           />
         </div>
 
-        <div className="flex flex-col h-full items-center w-full">
+        <div className="flex flex-col h-full items-center justify-center w-full">
           {params == 0 && <StepOne />}
           {params == 2 && <StepTwo />}
           {params == 3 && <StepThree />}
           {params == 4 && <StepFour />}
+          {params == 5 && <StepFive />}
         </div>
         <div className="flex flex-col h-full items-center w-[20%]">
           right content
