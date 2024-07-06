@@ -20,7 +20,7 @@ export default function StepThree() {
         must agree to this.
       </h3>
 
-      <div className="space-y-5 mt-6">
+      <div className="space-y-5 mt-6 ">
         <div className="flex flex-col">
           <p className="inline-flex items-center  gap-1 font-semibold">
             Who will pay the escrow fee?{" "}
@@ -28,8 +28,9 @@ export default function StepThree() {
               <AiOutlineExclamationCircle className="inline-flex" />
             </Link>
           </p>
-          <div className="flex gap-3 items-center w-full mt-2">
+          <div className="flex sm:flex-row flex-col gap-3 items-center w-full mt-2">
             <RadioInput
+              labelClassName=""
               type="radio"
               id="buyer"
               name="buyer"
@@ -71,7 +72,7 @@ export default function StepThree() {
               <AiOutlineExclamationCircle className="inline-flex" />
             </Link>
           </p>
-          <div className="flex gap-3 items-center w-full mt-2">
+          <div className="flex sm:flex-row flex-col gap-3 items-center w-full mt-2">
             <RadioInput
               type="radio"
               id="buyer"

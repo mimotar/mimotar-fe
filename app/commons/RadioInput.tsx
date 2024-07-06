@@ -5,17 +5,18 @@ import { twMerge } from "tailwind-merge";
 interface RadioInputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   labelName?: string;
+  labelClassName?: string;
 }
 
 export default function RadioInput({
   className,
-
+  labelClassName,
   labelName,
   ...props
 }: RadioInputProps) {
   return (
     <span className={`flex flex-col w-full`}>
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center ">
         <input
           {...props}
           className={twMerge(
@@ -23,7 +24,9 @@ export default function RadioInput({
             className
           )}
         />
-        <label htmlFor={props.id}>{labelName}</label>
+        <label htmlFor={props.id} className={`${labelClassName} `}>
+          {labelName}
+        </label>
       </div>
     </span>
   );
