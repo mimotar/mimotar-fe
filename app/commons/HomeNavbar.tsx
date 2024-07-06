@@ -36,7 +36,7 @@ export default function HomeNavbar() {
         </Link>
       </span>
 
-      <div className="flex items-center min-[932px]:gap-10 gap-5 ">
+      <div className="sm:flex hidden items-center min-[932px]:gap-10 gap-5  ">
         <SecondaryButton
           type="button"
           // text="Login"

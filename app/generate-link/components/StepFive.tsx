@@ -26,7 +26,7 @@ export default function StepFive() {
       </div>
 
       <h1 className="text-lg text-center my-4">TRANSACTION SUMMARY</h1>
-      <div className="grid grid-cols-2 ">
+      <div className="grid min-[425px]:grid-cols-2 grid-cols-1 ">
         {/* first grid */}
         <div className="flex flex-col space-y-6">
           <div className="flex flex-col space-y-1">
@@ -61,7 +61,7 @@ export default function StepFive() {
         </div>
       </div>
 
-      <div className="flex justify-end w-full mt-10">
+      <div className="flex sm:justify-end justify-center w-full mt-10">
         <PrimaryButton
           onClick={() => navigate.push("/")}
           className="bg-white text-[#A21CAF] border border-[#A21CAF] text-lg "
