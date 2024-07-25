@@ -60,6 +60,7 @@ export default function page({
         <div className="flex flex-row sm:flex-col h-full justify-center items-center bg-[#0F172A] text-white lg:px-14 px-4 py-14 z-0">
           {stepperData.map((stepper, i) => (
             <Stepper
+              key={i}
               showStroke={stepper.showStroke}
               title={stepper.title}
               subtitle={stepper.subtitle}

@@ -11,7 +11,7 @@ export default function StepFour() {
   const navigate = useRouter();
   return (
     <section className="flex flex-col w-full h-full">
-      <h1 className="font-bold text-lg">Second Transactor's Info</h1>
+      <h1 className="font-bold text-lg">Second Transactor&apos;s Info</h1>
       <h3>
         Input the personal details of the other party (whether buyer or seller).
       </h3>
