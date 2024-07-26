@@ -3,6 +3,7 @@ import { Images } from "../Images";
 import FacebookIcon from "../svgIconComponent/FacebookIcon";
 import LogoIcon from "../svgIconComponent/Logo";
 import WhiteLogoIcon from "../svgIconComponent/whiteLogoIcon";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -10,12 +11,30 @@ export default function Footer() {
       <div className="w-[80%] mx-auto grid grid-cols-4 gap-20">
         <div className="flex flex-col ">
           {/* <WhiteLogoIcon className=" w-[300px] h-[67px]" /> */}
-          <img src={Images.logo} alt="" height={67} width={300} />
+          <Image src={Images.logo} alt="" height={67} width={300} />
           <div className="flex items-center gap-8 mt-12">
-            <img src={Images.facebookLogo} alt="" className="w-6 h-6" />
+            <Image
+              src={Images.facebookLogo}
+              alt=""
+              width={24}
+              height={24}
+              className="w-6 h-6"
+            />
 
-            <img src={Images.instagramLogo} alt="" className="w-6 h-6" />
-            <img src={Images.twitterLogo} alt="" className="w-6 h-6" />
+            <Image
+              src={Images.instagramLogo}
+              alt=""
+              width={24}
+              height={24}
+              className="w-6 h-6"
+            />
+            <Image
+              src={Images.twitterLogo}
+              alt=""
+              width={24}
+              height={24}
+              className="w-6 h-6"
+            />
           </div>
         </div>
 

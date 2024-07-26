@@ -1,12 +1,12 @@
-import React, { ButtonHTMLAttributes, HTMLAttributes } from "react";
+import React, { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  text: string;
+  children: ReactNode;
 }
 export default function PrimaryButton({
   className,
-  text,
+  children,
   ...props
 }: ButtonProps) {
   return (
@@ -17,7 +17,7 @@ export default function PrimaryButton({
         className
       )}
     >
-      {text}
+      {children}
     </button>
   );
 }

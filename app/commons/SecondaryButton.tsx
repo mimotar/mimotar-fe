@@ -1,13 +1,14 @@
+import { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface SecondaryButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  text: string|React.ReactNode;
+  children: ReactNode;
 }
 
 export default function SecondaryButton({
   className,
-  text,
+  children,
   ...props
 }: SecondaryButtonProps) {
   return (
@@ -18,7 +19,7 @@ export default function SecondaryButton({
         className
       )}
     >
-      {text}
+      {children}
     </button>
   );
 }
