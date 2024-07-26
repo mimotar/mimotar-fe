@@ -24,6 +24,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
+        <main className="py-7">
+          <div className="min-[1440px]:w-[80%] w-[95%] mx-auto">
+            <HomeNavbar />
+          </div>
+        </main>
         <section className="">{children}</section>
       </body>
     </html>
