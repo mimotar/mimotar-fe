@@ -57,8 +57,10 @@ const page = () => {
           <div className="w-full  py-4">
             <PrimaryButton
               className="text-xs xl:text-base w-full h-10 font-bold text-neutral-50"
-              text={"Login"}
-            />
+              // text={"Login"}
+            >
+              Login
+            </PrimaryButton>
           </div>
           <div className="flex flex-col gap-y-3 pt-3">
             <div className="w-full gap-x-1  flex flex-row items-center h-4">
