@@ -11,6 +11,7 @@ import { UseFormRegisterReturn } from "react-hook-form";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { ZodType, z } from "zod";
+import LoginForm from "./components/LoginForm";
 
 const page = () => {
   const schema: ZodType<AuthTypes> = z.object({
@@ -28,7 +29,9 @@ const page = () => {
 
   return (
     <div className=" w-full h-full p- xl:p-4 flex flex-col  items-center">
-      <form className="flex flex-col h-full w-[70%] ">
+      fhfhfh
+      <LoginForm />
+      {/* <form className="flex flex-col h-full w-[70%] ">
         <div className="space-y-4 xl:space-y-6">
           <TextInput
             type="text"
@@ -78,7 +81,7 @@ const page = () => {
             </div>
           </div>
         </div>
-      </form>
+      </form> */}
     </div>
   );
 };
