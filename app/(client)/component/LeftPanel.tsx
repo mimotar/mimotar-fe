@@ -2,7 +2,7 @@
 
 import { IoMdArrowDropdown, IoMdCart, IoMdClose } from "react-icons/io";
 import Link from "next/link";
-import Input from "./Input";
+import Input from "../../commons/Input";
 
 interface LeftPanelProps {
   isOpen?: boolean;
