@@ -1,15 +1,18 @@
 import Image from "next/image";
-import PrimaryButton from "./commons/PrimaryButtons";
-import Footer from "./commons/Footer";
-import SecondaryButton from "./commons/SecondaryButton";
-import { Images } from "./Images";
-import dotsbgstyle from "./moduleCss/dotsBgcss.module.css";
-import MonitorIcon from "./svgIconComponent/MonitorIcon";
-import VerifyIcon from "./svgIconComponent/VerifyIcon";
-import SafetyIcon from "./svgIconComponent/SafetyIcon";
-import gif from "./assets/gif/How_it_works.gif";
-import Dotsbg from "./svgIconComponent/Dotsbg";
-import AbsoluteSmalldots from "./svgIconComponent/AbsoluteSmalldots";
+import PrimaryButton from "@/app/commons/PrimaryButtons";
+import Footer from "../component/Footer";
+import SecondaryButton from "@/app/commons/SecondaryButton";
+import { Images } from "../../Images";
+
+import dotsbgstyle from "../../moduleCss/dotsBgcss.module.css";
+import MonitorIcon from "@/app/svgIconComponent/MonitorIcon";
+import VerifyIcon from "@/app/svgIconComponent/VerifyIcon";
+import SafetyIcon from "@/app/svgIconComponent/SafetyIcon";
+// import gif from "./assets/gif/How_it_works.gif";
+import gif from "../../assets/gif/How_it_works.gif";
+// import Dotsbg from "@/app/svgIconComponent/Dotsbg";
+import Dotsbg from "../../svgIconComponent/Dotsbg";
+import AbsoluteSmalldots from "@/app/svgIconComponent/AbsoluteSmalldots";
 import Link from "next/link";
 
 export default function Home() {

@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Images } from "../Images";
-import FacebookIcon from "../svgIconComponent/FacebookIcon";
-import LogoIcon from "../svgIconComponent/Logo";
-import WhiteLogoIcon from "../svgIconComponent/whiteLogoIcon";
+import { Images } from "../../Images";
+import FacebookIcon from "@/app/svgIconComponent/FacebookIcon";
+import LogoIcon from "@/app/svgIconComponent/Logo";
+import WhiteLogoIcon from "@/app/svgIconComponent/whiteLogoIcon";
 import Image from "next/image";
 
 export default function Footer() {

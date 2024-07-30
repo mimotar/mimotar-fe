@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import LogoIcon from "../svgIconComponent/Logo";
-import Button from "./PrimaryButtons";
-import PrimaryButton from "./PrimaryButtons";
+import LogoIcon from "@/app/svgIconComponent/Logo";
+import Button from "../../commons/PrimaryButtons";
+import PrimaryButton from "../../commons/PrimaryButtons";
 import { usePathname } from "next/navigation";
-import SecondaryButton from "./SecondaryButton";
+import SecondaryButton from "../../commons/SecondaryButton";
 
 export default function HomeNavbar() {
   const pathname = usePathname();
