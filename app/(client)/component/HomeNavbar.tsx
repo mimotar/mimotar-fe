@@ -6,13 +6,14 @@ import Button from "../../commons/PrimaryButtons";
 import PrimaryButton from "../../commons/PrimaryButtons";
 import { usePathname } from "next/navigation";
 import SecondaryButton from "../../commons/SecondaryButton";
+import { RxHamburgerMenu } from "react-icons/rx";
 
 export default function HomeNavbar() {
   const pathname = usePathname();
   return (
     <section className="flex justify-between items-center">
       <LogoIcon className="text-sm md:w-auto md:h-auto w-28" />
-      <span className="flex items-center justify-center min-[932px]:gap-10 gap-5">
+      <span className="md:flex hidden items-center justify-center min-[932px]:gap-10 gap-5">
         <Link
           className={`text-[#0F172A] hover:font-bold md:text-base text-sm ${
             pathname === "/" ? "text-[#86198F] font-bold" : ""
@@ -28,15 +29,12 @@ export default function HomeNavbar() {
         <Link className="text-[#0F172A] md:text-base text-sm" href={""}>
           Resources
         </Link>
-        <Link
-          className="text-[#0F172A] md:text-base text-sm md:block hidden"
-          href={""}
-        >
+        <Link className="text-[#0F172A] md:text-base text-sm " href={""}>
           Contact us
         </Link>
       </span>
 
-      <div className="sm:flex hidden items-center min-[932px]:gap-10 gap-5  ">
+      <div className="md:flex hidden items-center min-[932px]:gap-10 gap-5  ">
         <SecondaryButton
           type="button"
           // text="Login"
@@ -52,6 +50,7 @@ export default function HomeNavbar() {
           Register
         </PrimaryButton>
       </div>
+      <RxHamburgerMenu className="hover:bg-gray-200 rounded-full p-1 text-2xl md:hidden" />
     </section>
   );
 }
