@@ -48,8 +48,10 @@ const page = () => {
           <div className="w-full  pt-4">
             <PrimaryButton
               className="text-xs xl:text-base w-full h-10 font-bold text-neutral-50"
-              text={"Register"}
-            />
+              // text={"Register"}
+            >
+              Register
+            </PrimaryButton>
             <div className="text-[10px] xl:text-xs py-2 xl:w-[95%] ">
               By creating an account, you agree to the Mimotar{" "}
               <strong className="text-primary-700">Terms of Service</strong> and{" "}
@@ -66,7 +68,7 @@ const page = () => {
             <PrimaryOutline>
               <FcGoogle className="h-4 w-4" />
               <p className="text-primary-700 font-bold  text-xs xl:text-sm">
-              Login with your Google account
+                Login with your Google account
               </p>
             </PrimaryOutline>
           </div>

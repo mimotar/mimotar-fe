@@ -1,11 +1,11 @@
 import "../../app/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import HomeNavbar from "./component/HomeNavbar";
+// import HomeNavbar from "./component/HomeNavbar";
 import { usePathname } from "next/navigation";
 import GeneralNavbar from "./component/GeneralNavbar";
 import { headers } from "next/headers";
-
+import HomeNavB
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
