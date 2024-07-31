@@ -30,7 +30,7 @@ const page = () => {
   return (
     <div className=" w-full h-full p- xl:p-4 flex flex-col  items-center">
       fhfhfh
-      <LoginForm />
+      {/* <LoginForm /> */}
       {/* <form className="flex flex-col h-full w-[70%] ">
         <div className="space-y-4 xl:space-y-6">
           <TextInput

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IoMdClose } from "react-icons/io";
 import { IoCloseOutline } from "react-icons/io5";
+import LoginForm from "./login/components/LoginForm";
 
 export default function AuthLayout({
   children,
@@ -15,8 +16,8 @@ export default function AuthLayout({
   ];
   const pathname = usePathname();
   return (
-    <main className="w-screen h-screen bg-[#A21CAF]  flex flex-row items-center justify-center">
-      <div className="w-[90%] md:w-[50%] xl:w-[35%] h-[80%] bg-white rounded-xl py-2 xl:py-4">
+    <main className="h-[100%] bg-[#A21CAF]  flex flex-row items-center justify-center">
+      <div className="w-[90%] md:w-[50%] xl:w-[35%] h-[100%] bg-white rounded-xl py-2 xl:py-4">
         <nav className="w-full flex flex-row items-center justify-between px-4">
           <div className="w-full flex flex-row items-center justify-center">
             <div className="border-b">
@@ -48,7 +49,9 @@ export default function AuthLayout({
             <IoMdClose className="h-6 w-6" />
           </Link>
         </nav>
-        <div className=" h-full flex flex-col items-center justify-center my-4 w-full ">{children}</div>
+        <div className=" h-full flex flex-col items-center justify-center my-4 w-full ">
+          {children}
+        </div>
       </div>
     </main>
   );
