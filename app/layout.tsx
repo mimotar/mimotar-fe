@@ -5,6 +5,8 @@ import HomeNavbar from "./commons/HomeNavbar";
 import { usePathname } from "next/navigation";
 import GeneralNavbar from "./commons/GeneralNavbar";
 import { headers } from "next/headers";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollAreaScrollbar } from "@radix-ui/react-scroll-area";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,12 +26,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-        <main className="py-7">
-          <div className="min-[1440px]:w-[80%] w-[95%] mx-auto">
-            <HomeNavbar />
+        <main className="h-screen w-screen overflow-auto">
+          <div className="py-7 h-[100px] flex items-center ">
+            <div className="min-[1440px]:w-[80%] w-[95%] mx-auto">
+              <HomeNavbar />
+            </div>
           </div>
+          <ScrollArea data-state="hidden" className="">
+            <section className=" h-[calc(100vh-100px)] ">{children}</section>
+            <ScrollAreaScrollbar hidden={false} />
+          </ScrollArea>
         </main>
-        <section className="">{children}</section>
       </body>
     </html>
   );
