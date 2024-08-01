@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import LogoIcon from "@/app/svgIconComponent/Logo";
 import AuthForm from "@/app/auth/AuthForm";
-import Button from "../../commons/PrimaryButtons";
+// import Button from "../../commons/PrimaryButtons";
 import PrimaryButton from "../../commons/PrimaryButtons";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 import SecondaryButton from "../../commons/SecondaryButton";
 import { RxHamburgerMenu } from "react-icons/rx";
 
