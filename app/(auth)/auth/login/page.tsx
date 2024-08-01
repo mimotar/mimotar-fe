@@ -3,7 +3,7 @@ import Password from "@/app/commons/Password";
 import PrimaryButton, { PrimaryOutline } from "@/app/commons/PrimaryButtons";
 import SecondaryButton from "@/app/commons/SecondaryButton";
 import { TextInput } from "@/app/commons/TextInput";
-import { AuthTypes } from "@/app/types/AuthTypes";
+import { AuthTypes } from "@/lib/types/AuthTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import React from "react";
