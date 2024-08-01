@@ -14,6 +14,8 @@ import gif from "../../assets/gif/How_it_works.gif";
 import Dotsbg from "../../svgIconComponent/Dotsbg";
 import AbsoluteSmalldots from "@/app/svgIconComponent/AbsoluteSmalldots";
 import Link from "next/link";
+import AuthForm from "@/app/auth/AuthForm";
+import DealBtns from "../component/DealBtns";
 
 export default function Home() {
   return (
@@ -29,16 +31,7 @@ export default function Home() {
             No more worries about scams or fake deals. With Mimotar, a safe deal
             is sure
           </p>
-
-          <div className="flex gap-6">
-            <SecondaryButton type="button" className="w-[143px] h-[64px]">
-              Register
-            </SecondaryButton>
-
-            <Link href={"/generate-link"}>
-              <PrimaryButton type="button">Get paid/Pay someone</PrimaryButton>
-            </Link>
-          </div>
+          <DealBtns />
         </div>
 
         <div className="w-[40%] h-full relative block">

@@ -49,7 +49,7 @@ const HomeNavbar: React.FC = () => {
       <div className="sm:flex hidden items-center min-[932px]:gap-10 gap-5">
         <Button
           onClick={() => handleOpen("login")}
-          className="min-[932px]:w-[118px] min-[932px]:h-[48px] text-[#D946EF] hover:text-[#F8FAFC] font-bold  hover w-[80px] h-[35px] boirder-[#D946EF] bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
+          className="min-[932px]:w-[118px] min-[932px]:h-[48px] text-[#D946EF] hover:text-[#F8FAFC] font-bold  hover w-[80px] h-[35px] border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
         >
           Login
         </Button>
