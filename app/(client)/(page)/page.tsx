@@ -21,31 +21,33 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between ">
       <section
-        className={`flex justify-between gap-9 w-[80%] mx-auto py-14 px-14 ${dotsbgstyle.dotbg}`}
+        className={` grid md:grid-cols-2 grid-cols-1 gap-10 w-[80%] mx-auto md:py-14 py-5 md:px-14 px-7 ${dotsbgstyle.dotbg}`}
       >
-        <div className="w-[60%] h-fit">
-          <h3 className="lg:text-[56px]  text-3xl leading-none font-bold">
+        <div className=" w-full h-fit">
+          <h3 className="min-[1300px]:text-[56px]   text-3xl leading-none font-bold">
             Securely buy, sell, and close deals with ease{" "}
           </h3>
-          <p className="text-base my-[30px] lg:w-[450px]">
+
+          {/* lg:w-[450px] */}
+          <p className="text-base my-[30px] ">
             No more worries about scams or fake deals. With Mimotar, a safe deal
             is sure
           </p>
           <DealBtns />
         </div>
 
-        <div className="w-[40%] h-full relative block">
-          <Image
+        <div className=" bg-red-300 w-full h-full relative block">
+          <img
             src={Images.banner}
             alt="banner"
             // fill
-            height={412}
-            width={392}
+            // height={412}
+            // width={392}
             // sizes="100vw"
-            className="object-cover h-[412px] w-[392px]"
+            className="object-cover"
             style={{
               width: "100%",
-              height: "auto",
+              height: "100%",
             }}
           />
         </div>
@@ -57,7 +59,7 @@ export default function Home() {
           escrow platform designed to safeguard and secure your deals{" "}
         </p>
 
-        <div className="flex justify-between lg:w-[80%] w-full mt-12">
+        <div className=" grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 lg:w-[80%] w-full mt-12">
           <div className="flex flex-col items-center w-full">
             <div className="md:w-40 md:h-36 w-32 h-28 flex flex-col items-center">
               {/* <img src="" alt="" height={144} width={160} /> */}
