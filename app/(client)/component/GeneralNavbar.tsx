@@ -85,7 +85,7 @@ export default function GeneralNavbar() {
           <IoMdCart />
           Cart
         </Link>
-        <Link href={"login"} className="flex items-center gap-2 font-bold">
+        <Link href={"auth/login"} className="flex items-center gap-2 font-bold">
           <IoMdPerson />
           Login or Register
         </Link>
