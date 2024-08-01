@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IoMdClose } from "react-icons/io";
 import { IoCloseOutline } from "react-icons/io5";
+import LoginForm from "./login/components/LoginForm";
 
 export default function AuthLayout({
   children,
@@ -48,6 +49,9 @@ export default function AuthLayout({
             <IoMdClose className="h-6 w-6" />
           </Link>
         </nav>
+        <div className=" h-full flex flex-col items-center justify-center my-4 w-full ">
+          {children}
+        </div>
         <div className=" h-full flex flex-col items-center justify-center my-4 w-full ">
           {children}
         </div>

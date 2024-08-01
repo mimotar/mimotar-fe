@@ -1,15 +1,18 @@
 import Image from "next/image";
-import PrimaryButton from "./commons/PrimaryButtons";
-import Footer from "./commons/Footer";
-import SecondaryButton from "./commons/SecondaryButton";
-import { Images } from "./Images";
-import dotsbgstyle from "./moduleCss/dotsBgcss.module.css";
-import MonitorIcon from "./svgIconComponent/MonitorIcon";
-import VerifyIcon from "./svgIconComponent/VerifyIcon";
-import SafetyIcon from "./svgIconComponent/SafetyIcon";
-import gif from "./assets/gif/How_it_works.gif";
-import Dotsbg from "./svgIconComponent/Dotsbg";
-import AbsoluteSmalldots from "./svgIconComponent/AbsoluteSmalldots";
+import PrimaryButton from "@/app/commons/PrimaryButtons";
+import Footer from "../component/Footer";
+import SecondaryButton from "@/app/commons/SecondaryButton";
+import { Images } from "../../Images";
+
+import dotsbgstyle from "../../moduleCss/dotsBgcss.module.css";
+import MonitorIcon from "@/app/svgIconComponent/MonitorIcon";
+import VerifyIcon from "@/app/svgIconComponent/VerifyIcon";
+import SafetyIcon from "@/app/svgIconComponent/SafetyIcon";
+// import gif from "./assets/gif/How_it_works.gif";
+import gif from "../../assets/gif/How_it_works.gif";
+// import Dotsbg from "@/app/svgIconComponent/Dotsbg";
+import Dotsbg from "../../svgIconComponent/Dotsbg";
+import AbsoluteSmalldots from "@/app/svgIconComponent/AbsoluteSmalldots";
 import Link from "next/link";
 
 export default function Home() {
@@ -95,49 +98,6 @@ export default function Home() {
       <section className="flex flex-col items-center w-[80%]">
         <h2 className="text-[32px] self-start my-10 font-bold">How it Works</h2>
 
-        {/* organogram */}
-        {/* <div className="flex flex-col -space-y-10">
-          <div className="flex -space-x-10">
-            <div className="relative">
-              <p className="absolute top-32 w-52 left-10">
-                Buyer and seller agree to terms of transaction
-              </p>
-              <OrganogramThird className="" />
-            </div>
-            <div className="relative">
-              <p className="absolute top-16 w-52 left-24">
-                Buyer makes payment to Mimotar
-              </p>
-              <OrganogramTwo />
-            </div>
-
-            <div className="relative">
-              <p className="absolute top-16 w-52 left-24">
-                Mimotar holds the payment until seller ships item
-              </p>
-              <Organogram />
-            </div>
-          </div>
-
-          <div className="flex ">
-            <div className="flex -space-x-10">
-              <div className="relative">
-                <p className="absolute bottom-16 w-52 left-24">
-                  Buyer verifies the item received and confirms satisfaction
-                </p>
-                <OrganogramFourth />
-              </div>
-              <div className="self-end relative">
-                <p className="absolute top-16 w-52 left-24">
-                  Momotar releases payment to seller
-                </p>
-                <OrganogramFifth />
-              </div>
-            </div>
-
-            <div className="w-16 h-16 bg-[#303030] self-end ml-5 -translate-y-11"></div>
-          </div>
-        </div> */}
         <Image
           src={gif}
           alt=""
