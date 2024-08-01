@@ -2,8 +2,8 @@
 
 import React from "react";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog";
-import Login from "./login/page";
-import Register from "./register/page";
+import Login from "./login/Login";
+import Register from "./register/Register";
 
 interface AuthFormProps {
   open: boolean;
