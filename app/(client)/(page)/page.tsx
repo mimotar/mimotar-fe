@@ -24,7 +24,7 @@ export default function Home() {
         className={` grid md:grid-cols-2 grid-cols-1 gap-10 sm:w-[80%] mx-auto md:py-14 py-5 md:px-14 px-7 ${dotsbgstyle.dotbg}`}
       >
         <div className=" w-full h-fit">
-          <h3 className="min-[1300px]:text-[56px]   text-3xl leading-none font-bold">
+          <h3 className="min-[1300px]:text-[56px] md:text-3xl sm:text-4xl text-3xl leading-none font-bold">
             Securely buy, sell, and close deals with ease{" "}
           </h3>
 
