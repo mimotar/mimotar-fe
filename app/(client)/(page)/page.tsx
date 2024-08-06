@@ -21,10 +21,10 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between ">
       <section
-        className={` grid md:grid-cols-2 grid-cols-1 gap-10 w-[80%] mx-auto md:py-14 py-5 md:px-14 px-7 ${dotsbgstyle.dotbg}`}
+        className={` grid md:grid-cols-2 grid-cols-1 gap-10 sm:w-[80%] mx-auto md:py-14 py-5 md:px-14 px-7 ${dotsbgstyle.dotbg}`}
       >
         <div className=" w-full h-fit">
-          <h3 className="min-[1300px]:text-[56px]   text-3xl leading-none font-bold">
+          <h3 className="min-[1300px]:text-[56px] md:text-3xl sm:text-4xl text-3xl leading-none font-bold">
             Securely buy, sell, and close deals with ease{" "}
           </h3>
 
@@ -53,10 +53,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="flex flex-col items-center  w-full py-10 px-20 min-[2000px]:px-[15%]">
+      <section className="flex flex-col items-center  w-full py-10 sm:px-20 px-5 min-[2000px]:px-[15%]">
         <p className="text-2xl font-medium lg:w-[70%]  text-center">
           Step into a world of seamless business transactions, powered by an
-          escrow platform designed to safeguard and secure your deals{" "}
+          escrow platform designed to safeguard and secure your deals
         </p>
 
         <div className=" grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 lg:w-[80%] w-full mt-12">
@@ -101,7 +101,7 @@ export default function Home() {
           // Make the image display full width
           style={{
             width: "100%",
-            height: "auto",
+            height: "100%",
           }}
         />
         <PrimaryButton type="button" className="my-11">
@@ -110,7 +110,7 @@ export default function Home() {
       </section>
 
       <section className="flex bg-[#F8FAFC] w-full py-16">
-        <section className="lg:w-[80%] w-[90%] gap-6 mx-auto flex items-center relative">
+        <section className="lg:w-[80%] w-[90%] gap-6 mx-auto flex md:flex-row flex-col items-center relative">
           <div className="w-full h-[412px] relative block">
             <Image
               src={Images.transactionStepImg}
@@ -121,7 +121,7 @@ export default function Home() {
             />
           </div>
           <AbsoluteSmalldots className="absolute -left-16 -top-12" />
-          <div className="flex justify-center flex-col w-full h-full">
+          <div className="flex justify-center flex-col w-full md:h-full">
             <h2 className="font-bold text-3xl">
               Supporting your transaction every step of the way
             </h2>

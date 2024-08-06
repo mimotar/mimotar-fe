@@ -17,10 +17,10 @@ const DealBtns = () => {
     setOpen(true);
   };
   return (
-    <div className="flex gap-6">
+    <div className="flex sm:flex-row flex-col gap-6 w-full">
       <Button
         onClick={() => handleOpen("register")}
-        className="w-[143px] h-[64px] text-[#D946EF] hover:text-[#F8FAFC] font-bold   border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
+        className="sm:w-[143px] w-full h-[64px] text-[#D946EF] hover:text-[#F8FAFC] font-bold border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
       >
         Register
       </Button>
@@ -30,8 +30,10 @@ const DealBtns = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
-      <Link href={"/generate-link"}>
-        <PrimaryButton type="button">Get paid/Pay someone</PrimaryButton>
+      <Link href={"/generate-link"} className="w-full">
+        <PrimaryButton type="button" className="w-full">
+          Get paid/Pay someone
+        </PrimaryButton>
       </Link>
     </div>
   );
