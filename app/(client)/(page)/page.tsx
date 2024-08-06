@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between ">
       <section
-        className={` grid md:grid-cols-2 grid-cols-1 gap-10 w-[80%] mx-auto md:py-14 py-5 md:px-14 px-7 ${dotsbgstyle.dotbg}`}
+        className={` grid md:grid-cols-2 grid-cols-1 gap-10 sm:w-[80%] mx-auto md:py-14 py-5 md:px-14 px-7 ${dotsbgstyle.dotbg}`}
       >
         <div className=" w-full h-fit">
           <h3 className="min-[1300px]:text-[56px]   text-3xl leading-none font-bold">
@@ -62,7 +62,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="flex flex-col items-center  w-full py-10 px-20 min-[2000px]:px-[15%]">
+      <section className="flex flex-col items-center  w-full py-10 sm:px-20 px-5 min-[2000px]:px-[15%]">
         <p className="text-2xl font-medium lg:w-[70%]  text-center">
           Step into a world of seamless business transactions, powered by an
           escrow platform designed to safeguard and secure your deals{" "}
@@ -102,49 +102,6 @@ export default function Home() {
       <section className="flex flex-col items-center w-[80%]">
         <h2 className="text-[32px] self-start my-10 font-bold">How it Works</h2>
 
-        {/* organogram */}
-        {/* <div className="flex flex-col -space-y-10">
-          <div className="flex -space-x-10">
-            <div className="relative">
-              <p className="absolute top-32 w-52 left-10">
-                Buyer and seller agree to terms of transaction
-              </p>
-              <OrganogramThird className="" />
-            </div>
-            <div className="relative">
-              <p className="absolute top-16 w-52 left-24">
-                Buyer makes payment to Mimotar
-              </p>
-              <OrganogramTwo />
-            </div>
-
-            <div className="relative">
-              <p className="absolute top-16 w-52 left-24">
-                Mimotar holds the payment until seller ships item
-              </p>
-              <Organogram />
-            </div>
-          </div>
-
-          <div className="flex ">
-            <div className="flex -space-x-10">
-              <div className="relative">
-                <p className="absolute bottom-16 w-52 left-24">
-                  Buyer verifies the item received and confirms satisfaction
-                </p>
-                <OrganogramFourth />
-              </div>
-              <div className="self-end relative">
-                <p className="absolute top-16 w-52 left-24">
-                  Momotar releases payment to seller
-                </p>
-                <OrganogramFifth />
-              </div>
-            </div>
-
-            <div className="w-16 h-16 bg-[#303030] self-end ml-5 -translate-y-11"></div>
-          </div>
-        </div> */}
         <Image
           src={gif}
           alt=""
@@ -153,7 +110,7 @@ export default function Home() {
           // Make the image display full width
           style={{
             width: "100%",
-            height: "auto",
+            height: "100%",
           }}
         />
         <PrimaryButton type="button" className="my-11">
@@ -162,7 +119,7 @@ export default function Home() {
       </section>
 
       <section className="flex bg-[#F8FAFC] w-full py-16">
-        <section className="lg:w-[80%] w-[90%] gap-6 mx-auto flex items-center relative">
+        <section className="lg:w-[80%] w-[90%] gap-6 mx-auto flex md:flex-row flex-col items-center relative">
           <div className="w-full h-[412px] relative block">
             <Image
               src={Images.transactionStepImg}
@@ -173,7 +130,7 @@ export default function Home() {
             />
           </div>
           <AbsoluteSmalldots className="absolute -left-16 -top-12" />
-          <div className="flex justify-center flex-col w-full h-full">
+          <div className="flex justify-center flex-col w-full md:h-full">
             <h2 className="font-bold text-3xl">
               Supporting your transaction every step of the way
             </h2>

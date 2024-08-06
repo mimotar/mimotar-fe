@@ -7,8 +7,8 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <section className="bg-[#334155] flex flex-col w-full pt-5 ">
-      <div className="w-[80%] mx-auto grid grid-cols-4 gap-20">
+    <section className="bg-[#334155] flex flex-col w-full pt-5">
+      <div className="w-[80%] mx-auto grid md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-20">
         <div className="flex flex-col ">
           {/* <WhiteLogoIcon className=" w-[300px] h-[67px]" /> */}
           <Image src={Images.logo} alt="" height={67} width={300} />
