@@ -65,7 +65,7 @@ export default function Home() {
       <section className="flex flex-col items-center  w-full py-10 sm:px-20 px-5 min-[2000px]:px-[15%]">
         <p className="text-2xl font-medium lg:w-[70%]  text-center">
           Step into a world of seamless business transactions, powered by an
-          escrow platform designed to safeguard and secure your deals{" "}
+          escrow platform designed to safeguard and secure your deals
         </p>
 
         <div className=" grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 lg:w-[80%] w-full mt-12">
