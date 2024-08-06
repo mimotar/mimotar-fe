@@ -14,6 +14,8 @@ import gif from "../../assets/gif/How_it_works.gif";
 import Dotsbg from "../../svgIconComponent/Dotsbg";
 import AbsoluteSmalldots from "@/app/svgIconComponent/AbsoluteSmalldots";
 import Link from "next/link";
+import AuthForm from "@/app/auth/AuthForm";
+import DealBtns from "../component/DealBtns";
 
 export default function Home() {
   return (
@@ -31,18 +33,7 @@ export default function Home() {
             No more worries about scams or fake deals. With Mimotar, a safe deal
             is sure
           </p>
-
-          <div className="grid md:grid-cols-2 grid-cols-1 gap-6">
-            <SecondaryButton type="button" className="w-full h-[64px]">
-              Register
-            </SecondaryButton>
-
-            <Link href={"/generate-link"} className="">
-              <PrimaryButton type="button" className="w-full">
-                Get paid/Pay someone
-              </PrimaryButton>
-            </Link>
-          </div>
+          <DealBtns />
         </div>
 
         <div className=" bg-red-300 w-full h-full relative block">
