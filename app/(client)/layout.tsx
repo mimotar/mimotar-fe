@@ -29,7 +29,8 @@ export default function RootLayout({
       <body className={`${inter.className}`}>
         <main className="h-screen w-screen overflow-auto">
           <div className="py-7 h-[100px] flex items-center ">
-            <div className="min-[1440px]:w-[80%] w-[95%] mx-auto">
+            {/* min-[1440px]:w-[80%] */}
+            <div className=" w-[90%] mx-auto">
               <HomeNavbar />
             </div>
           </div>

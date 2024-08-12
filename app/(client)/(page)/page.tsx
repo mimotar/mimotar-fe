@@ -20,36 +20,35 @@ import DealBtns from "../component/DealBtns";
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between ">
-      <section
-        className={` grid md:grid-cols-2 grid-cols-1 gap-10 sm:w-[80%] mx-auto md:py-14 py-5 md:px-14 px-7 ${dotsbgstyle.dotbg}`}
-      >
-        <div className=" w-full h-fit">
-          <h3 className="min-[1300px]:text-[56px] md:text-3xl sm:text-4xl text-3xl leading-none font-bold">
-            Securely buy, sell, and close deals with ease{" "}
-          </h3>
+      <section className={`${dotsbgstyle.dotbg}`}>
+        <div
+          className={`grid md:grid-cols-2 grid-cols-1 gap-10 w-[90%] mx-auto md:py-14 py-5 `}
+        >
+          <div className=" w-full h-full flex flex-col justify-center">
+            {/* min-[1300px]:text-[56px] md:text-3xl sm:text-4xl text-3xl */}
+            <h3 className=" sm:text-5xl text-4xl font-semibold">
+              Securely buy, sell, and close deals with ease{" "}
+            </h3>
 
-          {/* lg:w-[450px] */}
-          <p className="text-base my-[30px] ">
-            No more worries about scams or fake deals. With Mimotar, a safe deal
-            is sure
-          </p>
-          <DealBtns />
-        </div>
+            {/* lg:w-[450px] */}
+            <p className="text-xl my-[30px] ">
+              No more worries about scams or fake deals. With Mimotar, a safe
+              deal is sure.
+            </p>
+            <DealBtns />
+          </div>
 
-        <div className=" bg-red-300 w-full h-full relative block">
-          <img
-            src={Images.banner}
-            alt="banner"
-            // fill
-            // height={412}
-            // width={392}
-            // sizes="100vw"
-            className="object-cover"
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
+          <div className="  w-full h-full relative block">
+            <img
+              src={Images.banner}
+              alt="banner"
+              className="object-cover rounded-bl-lg rounded-tr-lg"
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+            />
+          </div>
         </div>
       </section>
 
