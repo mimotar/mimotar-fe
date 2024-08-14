@@ -8,10 +8,16 @@ import Image from "next/image";
 export default function Footer() {
   return (
     <section className="bg-[#334155] flex flex-col w-full pt-5">
-      <div className="w-[80%] mx-auto grid md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-20">
+      <div className="w-[90%] mx-auto grid md:grid-cols-4 sm:grid-cols-2 grid-cols-2 gap-20">
         <div className="flex flex-col ">
           {/* <WhiteLogoIcon className=" w-[300px] h-[67px]" /> */}
-          <Image src={Images.logo} alt="" height={67} width={300} />
+          <Image
+            src={Images.logo}
+            alt=""
+            height={67}
+            width={300}
+            className="sm:w-auto sm:h-auto h-8 w-36"
+          />
           <div className="flex items-center gap-8 mt-12">
             <Image
               src={Images.facebookLogo}
@@ -39,8 +45,10 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col ">
-          <h2 className="text-3xl font-bold text-white mb-8">Services</h2>
-          <ul className="space-y-6 text-white text-xl font-medium">
+          <h2 className="lg:text-3xl sm:text-2xl text-xl  font-bold text-white mb-8">
+            Services
+          </h2>
+          <ul className="space-y-6 text-white lg:text-xl text-base font-medium">
             <li>
               <Link href={""} className="hover:text-slate-300">
                 Escrow
@@ -60,8 +68,10 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col ">
-          <h2 className="text-3xl font-bold text-white mb-8">About Us</h2>
-          <ul className="space-y-6 text-white text-xl font-medium">
+          <h2 className="lg:text-3xl sm:text-2xl text-xl  font-bold text-white mb-8">
+            About Us
+          </h2>
+          <ul className="space-y-6 text-white lg:text-xl text-base font-medium">
             <li>
               <Link href={""} className="hover:text-slate-300">
                 Company
@@ -81,8 +91,10 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col ">
-          <h2 className="text-3xl font-bold text-white mb-8">Help</h2>
-          <ul className="space-y-6 text-white text-xl font-medium">
+          <h2 className="sm:text-2xl text-xl font-bold text-white mb-8">
+            Help
+          </h2>
+          <ul className="space-y-6 text-white lg:text-xl text-base font-medium">
             <li>
               <Link href={""} className="hover:text-slate-300">
                 Contact us
@@ -101,14 +113,19 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <div className="flex justify-center gap-12 text-white items-center py-10 mt-14 border-t-2">
-        <div>&#169; {new Date().getFullYear()}, Mimotar</div>
+      <div className="flex sm:justify-center sm:text-base text-sm gap-12 text-white items-center sm:py-10 py-4 px-4  mt-14 border-t-2">
+        <div className="sm:block hidden">
+          &#169; {new Date().getFullYear()}, Mimotar
+        </div>
         <Link href={""} className="hover:text-slate-300">
           Terms and Conditions
         </Link>
         <Link href={""} className="hover:text-slate-300">
           Privacy Policy
         </Link>
+      </div>
+      <div className="sm:hidden block text-white ml-4 sm:text-base text-sm">
+        &#169; {new Date().getFullYear()}, Mimotar
       </div>
     </section>
   );
