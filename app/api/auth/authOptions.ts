@@ -1,4 +1,4 @@
-import axiosClient from "@/app/utils/axiosClient";
+import axiosService from "@/lib/services/axiosService";
 import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
@@ -18,7 +18,7 @@ export const authOptions: AuthOptions = {
         },
       },
       async authorize(credentials, req) {
-        return axiosClient
+        return axiosService
           .post("/auth/login", {
             email: credentials?.email as string,
             password: credentials?.password as string,

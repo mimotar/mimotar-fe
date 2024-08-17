@@ -9,15 +9,14 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-// import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
-import userSlice from "./slices/userSlice";
-import { storage } from "./storage";
+import { storageService } from "./storageService";
+import userSlice from "../slices/userSlice";
 
 const persistConfig = {
   key: "root",
-  storage,
-  whitelist: ["cart", "wishList"],
+  storage: storageService,
+  whitelist: ["leftPanelVisibility", "customerCount"],
 };
 
 const rootReducer = combineReducers({
