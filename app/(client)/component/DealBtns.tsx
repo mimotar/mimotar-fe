@@ -17,10 +17,10 @@ const DealBtns = () => {
     setOpen(true);
   };
   return (
-    <div className="flex sm:flex-row flex-col gap-6 w-full">
+    <div className="flex sm:flex-row flex-col lg:gap-10 gap-5 w-full">
       <Button
         onClick={() => handleOpen("register")}
-        className="sm:w-[143px] w-full h-[64px] text-[#D946EF] hover:text-[#F8FAFC] font-bold border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
+        className="sm:w-[143px]  w-full h-[64px] text-[#D946EF] hover:text-[#F8FAFC] font-bold border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
       >
         Register
       </Button>
