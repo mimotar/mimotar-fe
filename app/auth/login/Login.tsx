@@ -73,7 +73,10 @@ const Login = () => {
                   <PasswordInput field={field} />
                 </FormControl>
                 <FormMessage />
-                <Link href={"/"} className="text-sm text-[#A21CAF] font-bold">
+                <Link
+                  href={"/auth/forget-password"}
+                  className="text-sm text-[#A21CAF] font-bold"
+                >
                   Forget password
                 </Link>
               </FormItem>
