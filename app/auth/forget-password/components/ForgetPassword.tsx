@@ -39,7 +39,7 @@ export default function ForgetPassword() {
         </Button>
       </form>
       <Link
-        href={"/auth/login"}
+        href={"/"}
         className="inline-flex gap-2 font-bold items-center border-none  sm:text-base text-sm text-[#A21CAF] justify-center bg-none mt-6 "
       >
         <IoMdArrowBack /> Back to login
