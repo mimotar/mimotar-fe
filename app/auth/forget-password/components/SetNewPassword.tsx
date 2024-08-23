@@ -12,11 +12,11 @@ export default function SetNewPassword() {
     <section className="flex flex-col justify-center items-center ">
       <PasswordIcon className="sm:w-24 sm:h-24 w-20 h-20" />
       <h1 className="sm:text-2xl text-xl font-bold mt-6">Set new password</h1>
-      <p className="sm:text-lg text-base text-center  ">
+      <p className="sm:text-lg text-base text-center mt-2">
         Your new password must be different from previous passwords.
       </p>
 
-      <form className="mt-6  flex flex-col sm:w-[360px] w-[90%] space-y-6">
+      <form className="mt-6  flex flex-col sm:w-[360px] w-[90%] space-y-5">
         <div className="flex flex-col w-full relative">
           <label htmlFor="password" className="text-neutral-600 font-medium ">
             Password
@@ -51,7 +51,7 @@ export default function SetNewPassword() {
       </form>
 
       <Link
-        href={"/auth/login"}
+        href={"/"}
         className="inline-flex gap-2 font-bold items-center border-none  sm:text-base text-sm text-[#A21CAF] justify-center bg-none mt-6 "
       >
         <IoMdArrowBack /> Back to login

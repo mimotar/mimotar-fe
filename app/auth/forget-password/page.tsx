@@ -2,6 +2,7 @@ import React from "react";
 import ForgetPassword from "./components/ForgetPassword";
 import CheckMail from "./components/CheckEmail";
 import SetNewPassword from "./components/SetNewPassword";
+import PasswordIsReset from "./components/PasswordIsReset";
 
 export default function page({
   searchParams,
@@ -18,6 +19,8 @@ export default function page({
         <CheckMail />
       ) : params === "set-newPassword" ? (
         <SetNewPassword />
+      ) : params === "password-reset" ? (
+        <PasswordIsReset />
       ) : (
         ""
       )}

@@ -24,7 +24,7 @@ export default function CheckMail() {
       </small>
 
       <Link
-        href={"/auth/login"}
+        href={"/"}
         className="inline-flex sm:text-base text-sm gap-2 font-bold items-center border-none text-[#A21CAF] justify-center bg-none mt-6 "
       >
         <IoMdArrowBack /> Back to login
