@@ -3,11 +3,17 @@
 import PasswordIcon from "@/app/svgIconComponent/PasswordIcon";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import React from "react";
+import React, { FormEvent } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import { AiOutlineEye } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 
 export default function SetNewPassword() {
+  const navigate = useRouter();
+  const handleSubmitResetPassword = (event: FormEvent) => {
+    event.preventDefault();
+    navigate.push("/auth/forget-password?type=password-reset");
+  };
   return (
     <section className="flex flex-col justify-center items-center ">
       <PasswordIcon className="sm:w-24 sm:h-24 w-20 h-20" />
@@ -45,7 +51,11 @@ export default function SetNewPassword() {
           <AiOutlineEye className="absolute bottom-3 text-lg text-gray-600  right-3" />
         </div>
 
-        <Button type="submit" className="w-full mt-4 text-base">
+        <Button
+          onClick={handleSubmitResetPassword}
+          type="submit"
+          className="w-full mt-4 text-base"
+        >
           Reset password
         </Button>
       </form>

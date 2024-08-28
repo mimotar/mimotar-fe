@@ -8,11 +8,11 @@ import React, { FormEvent } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 
 export default function ForgetPassword() {
-  // const navigate = useRouter();
+  const navigate = useRouter();
   const handleResetPassword = (event: FormEvent) => {
     event.preventDefault();
-    // navigate.push("/auth/forget-password?type=check-mail");
-    alert("hello");
+    navigate.push("/auth/forget-password?type=check-mail");
+    // alert("hello");
   };
 
   return (
