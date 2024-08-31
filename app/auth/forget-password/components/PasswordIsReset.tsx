@@ -1,8 +1,11 @@
+"use client";
 import PasswordResetIcon from "@/app/svgIconComponent/PasswordResetIcon";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function PasswordIsReset() {
+  const navigate = useRouter();
   return (
     <section className="flex flex-col justify-center items-center ">
       <PasswordResetIcon className="sm:w-24 sm:h-24 w-20 h-20" />
@@ -12,8 +15,12 @@ export default function PasswordIsReset() {
         dashboard.
       </p>
 
-      <Button type="submit" className=" sm:w-[360px] w-[90%] mt-4 text-base">
-        Reset password
+      <Button
+        onClick={() => navigate.push("/")}
+        type="submit"
+        className=" sm:w-[360px] w-[90%] mt-4 text-base"
+      >
+        Continue
       </Button>
     </section>
   );
