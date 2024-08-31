@@ -30,7 +30,8 @@ export default function Stepper({
   const stepNumber = getStepNumber(title);
   const condition = stage !== undefined && stepNumber < Number(stage);
   return (
-    <div className="sm:flex hidden h-full flex-col md:w-[250px] sm:w-[190px] ">
+    // md:w-[250px] sm:w-[190px]
+    <div className="sm:flex hidden flex-col h-full w-full">
       <div className="flex gap-10 justify-between items-center relative">
         <div className="flex flex-col">
           <h3 className="font-bold">{title}</h3>
@@ -45,7 +46,8 @@ export default function Stepper({
       </div>
 
       {showStroke && (
-        <div className="self-end h-52 w-0.5 bg-white -translate-x-4"></div>
+        // h-52
+        <div className="self-end h-full w-0.5 bg-white -translate-x-4"></div>
       )}
     </div>
   );
