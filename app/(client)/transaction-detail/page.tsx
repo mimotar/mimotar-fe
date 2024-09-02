@@ -1,7 +1,7 @@
-import PrimaryButton from '../commons/PrimaryButtons'
-import SecondaryButton from '../commons/SecondaryButton'
+import PrimaryButton from '../../commons/PrimaryButtons'
+import SecondaryButton from '../../commons/SecondaryButton'
 import ExpiryBox from './ExpiryBox'
-import Info from "../assets/icons/info.svg";
+import Info from "../../assets/icons/info.svg"
 
 export default function TransactionDetail() {
   return (
@@ -105,17 +105,21 @@ export default function TransactionDetail() {
 
 
 
-        <div className='p-4 px-6 w-full md:w-2/6 bg-[#F8FAFC] gap-4 grid rounded-lg max-h-[500px]'>
+        <div className='p-4 px-6 w-full md:w-2/6 bg-[#F8FAFC] gap-4 grid rounded-lg h-full lg:max-h-[500px]'>
           <p className='font-normal text-black text-lg'>
             Please check that the information provided for the transaction are correct and that you accept the transaction agreement
           </p>
-          <PrimaryButton text={'Accept Agreement'} className='w-full' />
+          <PrimaryButton className='w-full'>
+            Accept agreement
+          </PrimaryButton>
           <label htmlFor='' className='flex gap-2 items-center'>
             <input type='checkbox' className='' />
             <p className='text-xs font-semibold'> I agree to the Mimotar Terms of Service and Privacy Policy</p>
           </label>
           <hr className="w-full" />
-          <SecondaryButton text={'Cancel agreement'} />
+          <SecondaryButton className='h-14 md:h-auto'>
+            Cancel Agreement
+          </SecondaryButton>
         </div>
 
       </section>

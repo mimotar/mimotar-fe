@@ -1,12 +1,12 @@
-import React, { ButtonHTMLAttributes, HTMLAttributes } from "react";
+import React, { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  text: string;
+  children: ReactNode;
 }
 export default function PrimaryButton({
   className,
-  text,
+  children,
   ...props
 }: ButtonProps) {
   return (
@@ -17,7 +17,18 @@ export default function PrimaryButton({
         className
       )}
     >
-      {text}
+      {children}
     </button>
   );
 }
+
+interface PrimaryOutlineProps {
+  children: React.ReactNode;
+}
+
+export const PrimaryOutline: React.FC<PrimaryOutlineProps> = ({ children }) => (
+  <button className="w-full border-primary-700  border rounded-lg justify-center h-10 flex flex-row gap-x-2 items-center hover:bg-primary-500">
+    {/* <img src="../../../assets/png/image 49.png" className="h-4 w-4" alt="" /> */}
+    {children}
+  </button>
+);
