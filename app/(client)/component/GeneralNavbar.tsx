@@ -1,17 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import LogoIcon from "../svgIconComponent/Logo";
-import Button from "./PrimaryButtons";
-import PrimaryButton from "./PrimaryButtons";
+import LogoIcon from "@/app/svgIconComponent/Logo";
+import Button from "../../commons/PrimaryButtons";
+import PrimaryButton from "../../commons/PrimaryButtons";
 import { IoMdCart } from "react-icons/io";
 import { IoMdPerson } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { usePathname } from "next/navigation";
-import Input from "./Input";
+import Input from "@/app/commons/Input";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { HiBars3 } from "react-icons/hi2";
 import LeftPanel from "./LeftPanel";
+
 import { useState } from "react";
 
 export default function GeneralNavbar() {
@@ -84,7 +85,7 @@ export default function GeneralNavbar() {
           <IoMdCart />
           Cart
         </Link>
-        <Link href={"login"} className="flex items-center gap-2 font-bold">
+        <Link href={"auth/login"} className="flex items-center gap-2 font-bold">
           <IoMdPerson />
           Login or Register
         </Link>
