@@ -181,7 +181,7 @@ export default function Footer() {
             </li>
           </ul>
 
-          {/* mobile device */}
+          {/* mobile device fdgd */}
           <div className="min-[500px]:hidden grid grid-cols-2">
             <ul className="space-y-3 text-left">
               <li>
