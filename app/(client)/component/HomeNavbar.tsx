@@ -48,7 +48,7 @@ const HomeNavbar: React.FC = () => {
         >
           About us
         </Link>
-        <Link className="text-[#0F172A] md:text-base text-sm" href="#">
+        <Link className="text-[#0F172A] md:text-base text-sm" href="blog">
           Blog
         </Link>
         <Link
