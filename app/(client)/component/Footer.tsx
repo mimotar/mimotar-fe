@@ -120,7 +120,7 @@ export default function Footer() {
         <Link href={""} className="hover:text-slate-300">
           Terms and Conditions
         </Link>
-        <Link href={""} className="hover:text-slate-300">
+        <Link href={"privacy"} className="hover:text-slate-300">
           Privacy Policy
         </Link>
       </div>
