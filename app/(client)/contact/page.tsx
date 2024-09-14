@@ -31,9 +31,9 @@ function page() {
                             <TextAreaInput labelName='Message' isShowLabel id={''} />
                         </div>
                         <div className="flex justify-end">
-                           <PrimaryButton title=''> Send message</PrimaryButton>
+                            <PrimaryButton title=''> Send message</PrimaryButton>
                         </div>
-                        
+
                     </div>
                     <div className="flex flex-col mt-28 gap-10">
                         <div className='flex flex-col items-center justify-center gap-2'>
@@ -48,8 +48,8 @@ function page() {
                         </div>
 
                     </div>
-                    <div className="grid gap-4 lg:gap-8">
-                    <div className='flex flex-col items-center justify-center gap-2'>
+                    <div className="grid mt-28">
+                        <div className='flex flex-col items-center gap-2'>
                             <EmailIcon />
                             <p className=' font-normal text-lg text-center'> Enquires: www.mimotarenquires.com </p>
                             <p className=' font-normal text-lg text-center'> Sales: www.mimotarsales.com </p>
