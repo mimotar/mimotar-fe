@@ -11,7 +11,7 @@ export default function MoreInfoPreviewCard({
     <section className="h-[281px] bg-black flex flex-col py-8 px-4 text-white">
       <h1 className="text-xl">{Object.keys(data)}</h1>
       {Object.entries(data).map((item, i) => (
-        <ul className="space-y-4 mt-5">
+        <ul key={i} className="space-y-4 mt-5">
           <li>{item}</li>
           {/* <li>Real Estate</li>
           <li>Online Shopping</li>
