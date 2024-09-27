@@ -4,7 +4,7 @@ import { IoIosSearch } from "react-icons/io";
 export default function SearchSection() {
   return (
     <div className="grid grid-cols-3 my-8">
-      <div className="col-span-2 relative">
+      <div className="sm:col-span-2 col-span-3 relative">
         <input
           type="search"
           name=""
