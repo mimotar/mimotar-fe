@@ -27,7 +27,10 @@ const HomeNavbar: React.FC = () => {
 
   return (
     <section className="flex justify-between items-center">
-      <LogoIcon className="text-sm md:w-auto md:h-auto w-28" />
+      <Link href={"/"}>
+        <LogoIcon className="text-sm md:w-auto md:h-auto w-28" />
+      </Link>
+
       <span className="md:flex hidden items-center justify-center min-[932px]:gap-10 gap-5">
         {/* <Link
           className={`text-[#0F172A] hover:font-bold md:text-base text-sm ${
@@ -48,7 +51,7 @@ const HomeNavbar: React.FC = () => {
         >
           About us
         </Link>
-        <Link className="text-[#0F172A] md:text-base text-sm" href="#">
+        <Link className="text-[#0F172A] md:text-base text-sm" href="blog">
           Blog
         </Link>
         <Link
