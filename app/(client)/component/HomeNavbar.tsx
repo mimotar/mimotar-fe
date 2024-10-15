@@ -40,14 +40,14 @@ const HomeNavbar: React.FC = () => {
         >
           Escrow
         </Link> */}
-        <Link className="text-[#0F172A] md:text-base text-sm" href="#">
+        <Link className="text-[#0F172A] md:text-base text-sm" href="/">
           How it Works
         </Link>
         <Link
           className={`text-[#0F172A] hover:font-bold md:text-base text-sm ${
             pathname === "#" ? "text-[#86198F] font-bold" : ""
           }`}
-          href="#"
+          href="/"
         >
           About us
         </Link>
@@ -56,7 +56,7 @@ const HomeNavbar: React.FC = () => {
         </Link>
         <Link
           className="text-[#0F172A] md:text-base text-sm md:block hidden"
-          href="#"
+          href="/"
         >
           Contact us
         </Link>
