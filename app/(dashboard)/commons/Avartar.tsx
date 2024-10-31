@@ -11,7 +11,7 @@ export default function Avata({ className, imgUrl }: AvatarProps) {
       <AvatarImage
         src={`${imgUrl ? imgUrl : "https://github.com/shadcn.png"}`}
       />
-      <AvatarFallback>CN</AvatarFallback>
+      <AvatarFallback className="p-1">CN</AvatarFallback>
     </Avatar>
   );
 }
