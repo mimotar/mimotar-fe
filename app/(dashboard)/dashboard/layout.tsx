@@ -27,12 +27,8 @@ export default function DashboardLayout({
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
         /> */}
-        {/* <DashboardNavBar setIsCollapsed={setIsCollapsed} /> */}
         <DashboardNavbar />
-        <div className="p-4 overflow-y-auto h-full w-full">
-          dashboard layout
-          {children}
-        </div>
+        <div className="p-4 overflow-y-auto h-full w-full">{children}</div>
       </div>
     </section>
   );
