@@ -1,6 +1,8 @@
 import PrimaryButton, { PrimaryOutline } from "@/app/commons/PrimaryButtons";
 import Card from "./(components)/Card";
 import DoughnutChart from "./(components)/DoughnutChart";
+import ChartWrapper from "./(components)/ChartWrapper";
+import ChartSession from "./(components)/ChartSession";
 
 export default function page() {
   return (
@@ -42,11 +44,7 @@ export default function page() {
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mt-6">
-        <div className="col-span-1">
-          <DoughnutChart />
-        </div>
-      </div>
+      <ChartSession />
     </section>
   );
 }

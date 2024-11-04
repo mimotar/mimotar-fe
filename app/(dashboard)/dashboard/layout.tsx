@@ -28,7 +28,9 @@ export default function DashboardLayout({
           setIsCollapsed={setIsCollapsed}
         /> */}
         <DashboardNavbar />
-        <div className="p-4 overflow-y-auto h-full w-full">{children}</div>
+        <div className=".sm:p-4 p-2 overflow-y-auto h-full w-full">
+          {children}
+        </div>
       </div>
     </section>
   );
