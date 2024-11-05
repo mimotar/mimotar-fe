@@ -100,8 +100,8 @@ export default function ChartSession() {
 
   const BarOption: ChartOptions<"bar"> = {
     responsive: true,
-    // aspectRatio: 1,
-    maintainAspectRatio: false,
+    aspectRatio: 1,
+    // maintainAspectRatio: true,
     plugins: {
       legend: {
         display: false,
@@ -115,8 +115,6 @@ export default function ChartSession() {
       },
     },
     scales: {
-      x: {},
-
       y: {
         ticks: {
           callback: (value) => `${Number(value) / 1000} k`,
@@ -125,7 +123,8 @@ export default function ChartSession() {
     },
   };
   return (
-    <div className="grid grid-cols-3 gap-4 mt-6">
+    <div className="grid sm:grid-cols-3 grid-cols-1 sm:gap-4  space-y-4 mt-6">
+      {/* first section */}
       <div className="col-span-1">
         <ChartWrapper
           exclaimTitle="Transaction summary"
@@ -136,8 +135,8 @@ export default function ChartSession() {
           </div>
         </ChartWrapper>
       </div>
-
-      <div className="col-span-2 h-full">
+      {/* second section */}
+      <div className="col-span-2 h-full w-full">
         <ChartWrapper
           exclaimTitle="Transaction distribution summary"
           heading="Transaction distribution"
@@ -148,8 +147,12 @@ export default function ChartSession() {
               <option value="this_month">This month</option>
             </select>
           </div>
-          <div className="w-full">
-            <Bar data={barData} options={BarOption} />
+          <div className="w-full flex items-center h-[250px] overflow-auto py-3">
+            <h1 className="font-medium -rotate-90">Amount</h1>
+            <div className="flex flex-col w-full">
+              <Bar data={barData} options={BarOption} />
+              <h1 className="font-medium text-center">Period</h1>
+            </div>
           </div>
         </ChartWrapper>
       </div>
