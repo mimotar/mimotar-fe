@@ -1,9 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import ChartWrapper from "./ChartWrapper";
 import { Doughnut } from "react-chartjs-2";
 import { Bar } from "react-chartjs-2";
+import { RiArrowDropDownLine } from "react-icons/ri";
+import { MdDateRange, MdOutlineDateRange } from "react-icons/md";
+
 import {
   Chart as ChartJS,
   ArcElement,
@@ -18,6 +21,8 @@ import {
   LinearScale,
   BarElement,
 } from "chart.js";
+import ModalOverlay from "../../commons/ModalOverlay";
+import FromToDateSection from "./FromToDateSection";
 ChartJS.register(
   ArcElement,
   Tooltip,
@@ -31,6 +36,11 @@ ChartJS.register(
 );
 
 export default function ChartSession() {
+  const [period, setPeriod] = useState("Last month");
+  const [isPeriod, setIsPeriod] = useState(false);
+  const [toDate, setToDate] = useState<Date | undefined>();
+  const [fromDate, setFromDate] = useState<Date | undefined>();
+
   // session for Doughnut configuration
   const option: ChartOptions<"doughnut"> = {
     responsive: true,
@@ -100,8 +110,8 @@ export default function ChartSession() {
 
   const BarOption: ChartOptions<"bar"> = {
     responsive: true,
-    // aspectRatio: 1,
-    maintainAspectRatio: false,
+    aspectRatio: 1,
+    // maintainAspectRatio: true,
     plugins: {
       legend: {
         display: false,
@@ -115,8 +125,6 @@ export default function ChartSession() {
       },
     },
     scales: {
-      x: {},
-
       y: {
         ticks: {
           callback: (value) => `${Number(value) / 1000} k`,
@@ -125,7 +133,8 @@ export default function ChartSession() {
     },
   };
   return (
-    <div className="grid grid-cols-3 gap-4 mt-6">
+    <div className="grid sm:grid-cols-3 grid-cols-1 sm:gap-4  space-y-4 mt-6">
+      {/* first section */}
       <div className="col-span-1">
         <ChartWrapper
           exclaimTitle="Transaction summary"
@@ -136,20 +145,60 @@ export default function ChartSession() {
           </div>
         </ChartWrapper>
       </div>
-
-      <div className="col-span-2 h-full">
+      {/* second section */}
+      <div className="col-span-2 h-full w-full">
         <ChartWrapper
           exclaimTitle="Transaction distribution summary"
           heading="Transaction distribution"
         >
-          <div className="flex items-center justify-end">
-            <select name="" id="" className="border rounded-md p-2">
-              <option value="last_month">Last month</option>
-              <option value="this_month">This month</option>
-            </select>
+          <div className="flex items-center justify-end ">
+            <div
+              onClick={() => setIsPeriod(!isPeriod)}
+              className="relative cursor-pointer font-medium rounded-md border p-2 inline-flex gap-2 items-center justify-center"
+            >
+              {period}{" "}
+              <RiArrowDropDownLine
+                className={`text-2xl ${isPeriod && "rotate-180"}`}
+              />
+              {isPeriod && (
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex flex-col z-20 absolute right-0 top-12 w-[240px] bg-white text-[#334155] p-2 rounded-md space-y-3 border shadow-md"
+                >
+                  <span
+                    className="font-normal"
+                    onClick={() => setPeriod("Last month")}
+                  >
+                    Last month
+                  </span>
+                  <span
+                    className="font-normal"
+                    onClick={() => setPeriod("This month")}
+                  >
+                    This month
+                  </span>
+                  <span
+                    className="font-normal"
+                    onClick={() => setPeriod("Last 7 days")}
+                  >
+                    Last 7 days
+                  </span>
+                  <FromToDateSection
+                    setFromDate={setFromDate}
+                    fromDate={fromDate}
+                    setToDate={setToDate}
+                    toDate={toDate}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-          <div className="w-full">
-            <Bar data={barData} options={BarOption} />
+          <div className="w-full flex items-center h-[250px] overflow-auto py-3">
+            <h1 className="font-medium -rotate-90">Amount</h1>
+            <div className="flex flex-col w-full">
+              <Bar data={barData} options={BarOption} />
+              <h1 className="font-medium text-center">Period</h1>
+            </div>
           </div>
         </ChartWrapper>
       </div>
