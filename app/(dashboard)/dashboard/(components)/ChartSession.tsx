@@ -1,9 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import ChartWrapper from "./ChartWrapper";
 import { Doughnut } from "react-chartjs-2";
 import { Bar } from "react-chartjs-2";
+import { RiArrowDropDownLine } from "react-icons/ri";
+import { MdDateRange, MdOutlineDateRange } from "react-icons/md";
+
 import {
   Chart as ChartJS,
   ArcElement,
@@ -18,6 +21,8 @@ import {
   LinearScale,
   BarElement,
 } from "chart.js";
+import ModalOverlay from "../../commons/ModalOverlay";
+import FromToDateSection from "./FromToDateSection";
 ChartJS.register(
   ArcElement,
   Tooltip,
@@ -31,6 +36,11 @@ ChartJS.register(
 );
 
 export default function ChartSession() {
+  const [period, setPeriod] = useState("Last month");
+  const [isPeriod, setIsPeriod] = useState(false);
+  const [toDate, setToDate] = useState<Date | undefined>();
+  const [fromDate, setFromDate] = useState<Date | undefined>();
+
   // session for Doughnut configuration
   const option: ChartOptions<"doughnut"> = {
     responsive: true,
@@ -141,11 +151,47 @@ export default function ChartSession() {
           exclaimTitle="Transaction distribution summary"
           heading="Transaction distribution"
         >
-          <div className="flex items-center justify-end">
-            <select name="" id="" className="border rounded-md p-2">
-              <option value="last_month">Last month</option>
-              <option value="this_month">This month</option>
-            </select>
+          <div className="flex items-center justify-end ">
+            <div
+              onClick={() => setIsPeriod(!isPeriod)}
+              className="relative cursor-pointer font-medium rounded-md border p-2 inline-flex gap-2 items-center justify-center"
+            >
+              {period}{" "}
+              <RiArrowDropDownLine
+                className={`text-2xl ${isPeriod && "rotate-180"}`}
+              />
+              {isPeriod && (
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex flex-col z-20 absolute right-0 top-12 w-[240px] bg-white text-[#334155] p-2 rounded-md space-y-3 border shadow-md"
+                >
+                  <span
+                    className="font-normal"
+                    onClick={() => setPeriod("Last month")}
+                  >
+                    Last month
+                  </span>
+                  <span
+                    className="font-normal"
+                    onClick={() => setPeriod("This month")}
+                  >
+                    This month
+                  </span>
+                  <span
+                    className="font-normal"
+                    onClick={() => setPeriod("Last 7 days")}
+                  >
+                    Last 7 days
+                  </span>
+                  <FromToDateSection
+                    setFromDate={setFromDate}
+                    fromDate={fromDate}
+                    setToDate={setToDate}
+                    toDate={toDate}
+                  />
+                </div>
+              )}
+            </div>
           </div>
           <div className="w-full flex items-center h-[250px] overflow-auto py-3">
             <h1 className="font-medium -rotate-90">Amount</h1>
