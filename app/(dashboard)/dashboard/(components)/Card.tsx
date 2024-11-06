@@ -27,7 +27,7 @@ export default function Card({
       </div>
 
       <div className="flex items-center justify-between flex-wrap ">
-        <h1 className="font-bold text-3xl">{amount}</h1>
+        <h1 className="font-bold md:text-3xl">{amount}</h1>
         {button}
       </div>
 
