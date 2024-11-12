@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setStage, setIsOpen } from "@/lib/slices/createTransactionStateSlice";
 import CreateTransactionModalContainer from "./CreateTransactionModalContainer";
 import TransactionDetailModalSection from "./TransactionDetailModalSection";
+import CreateTransactionTermAndAgreement from "./CreateTransactionTermAndAgreement";
 
 export default function CreateTransactionSection() {
   const dispatch = useAppDispatch();
@@ -27,6 +28,10 @@ export default function CreateTransactionSection() {
         <CreateTransactionModalContainer>
           {getCreateTransactionStateModal.stage == 1 && (
             <TransactionDetailModalSection />
+          )}
+
+          {getCreateTransactionStateModal.stage == 2 && (
+            <CreateTransactionTermAndAgreement />
           )}
         </CreateTransactionModalContainer>
       )}

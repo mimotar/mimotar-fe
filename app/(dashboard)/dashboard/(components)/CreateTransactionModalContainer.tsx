@@ -25,22 +25,22 @@ export default function CreateTransactionModalContainer({
       }}
     >
       <section
-        className={`flex flex-col ${className} min-w-[730px] bg-white rounded-md shadow-md p-6`}
+        className={`flex flex-col ${className} min-w-[730px] h-full bg-white rounded-md shadow-md p-6`}
       >
         <div className="flex flex-col space-y-3 mb-10">
           <div className="flex w-[90%] mx-auto items-center justify-center">
             <div
               className={`${
                 getCreateTransactionModalStage.stage > 1
-                  ? "bg-[#2DD4BF]"
-                  : "bg-[#334155]"
-              } flex flex-col items-center justify-center rounded-full w-8 h-8 bg-gray-200`}
+                  ? "border-2 border-[#2DD4BF] "
+                  : "bg-black"
+              } flex flex-col items-center justify-center rounded-full w-8 h-8 `}
             >
               <RiCheckLine
                 className={`text-2xl ${
                   getCreateTransactionModalStage.stage > 1
                     ? "text-[#2DD4BF]"
-                    : "bg-[#334155`"
+                    : "text-black"
                 }`}
               />
             </div>
