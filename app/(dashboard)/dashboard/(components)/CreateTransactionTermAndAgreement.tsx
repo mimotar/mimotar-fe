@@ -1,17 +1,16 @@
 "use client";
 
 import PrimaryButton, { PrimaryOutline } from "@/app/commons/PrimaryButtons";
-import { useAppSelector } from "@/lib/hooks";
-import { IoMdArrowBack } from "react-icons/io";
-import { useAppDispatch } from "@/lib/hooks";
-import { setStage, setIsOpen } from "@/lib/slices/createTransactionStateSlice";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import TransactionDetailSchema, {
   TransactionDetailSchemaType,
 } from "@/lib/schemas/createTransactionSchema";
+import { setIsOpen, setStage } from "@/lib/slices/createTransactionStateSlice";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { IoMdArrowBack } from "react-icons/io";
 
-export default function TransactionDetailModalSection() {
+export default function CreateTransactionTermAndAgreement() {
   const getCreateTransactionStateModal = useAppSelector(
     (state) => state.createTransactionStateModal
   );
@@ -28,13 +27,13 @@ export default function TransactionDetailModalSection() {
     console.log(data);
     dispatch(setStage(2));
   };
-
   return (
     <section className="flex flex-col mx-auto sm:w-[580px] w-[90%]">
       <div className="flex flex-col">
-        <h1 className="2xl:text-2xl text-xl font-bold">Transaction Details</h1>
+        <h1 className="2xl:text-2xl text-xl font-bold">Terms and Agreement</h1>
         <p className="2xl:text-lg  font-light">
-          All information about the transaction.
+          Everything that should determine how the transaction goes. Both
+          parties must agree to this.
         </p>
       </div>
 
@@ -124,7 +123,7 @@ export default function TransactionDetailModalSection() {
 
           <div className="flex justify-between items-center">
             <PrimaryOutline
-              onClick={() => dispatch(setIsOpen(false))}
+              onClick={() => dispatch(setStage(1))}
               className="px-6"
             >
               <IoMdArrowBack />
