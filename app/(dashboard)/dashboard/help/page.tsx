@@ -6,6 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { helpdata } from '@/app/data/helpdata';
+import CustomPagination from '@/app/(client)/component/CustomPagination';
 
 export default function page() {
   return (
@@ -38,6 +39,7 @@ export default function page() {
         }
       </Accordion>
 
+<CustomPagination />
     </div>
   )
 }
