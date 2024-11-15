@@ -15,6 +15,7 @@ export default function page() {
           <p className="text-neutral-900 text-sm">
             Stay updated with the overview of your escrow transactions.
           </p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quis omnis porro delectus molestiae earum a nulla nostrum velit magnam ad iusto, asperiores iure. Accusantium atque aut odio. Velit, repellat culpa.
         </div>
         <PrimaryButton className="w-fit sm:px-6 px-3 h-fit sm:py-4 py-2">
           Create transaction
