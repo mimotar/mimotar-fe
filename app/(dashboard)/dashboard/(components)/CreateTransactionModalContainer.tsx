@@ -47,16 +47,36 @@ export default function CreateTransactionModalContainer({
 
             <div className="flex flex-1 h-0.5 bg-gray-200"></div>
             <div
-              className={`flex flex-col items-center justify-center rounded-full w-8 h-8 bg-gray-200`}
+              className={`${
+                getCreateTransactionModalStage.stage > 2
+                  ? "border-2 border-[#2DD4BF] "
+                  : "bg-black"
+              } flex flex-col items-center justify-center rounded-full w-8 h-8 `}
             >
-              <RiCheckLine className={`text-2xl`} />
+              <RiCheckLine
+                className={`${
+                  getCreateTransactionModalStage.stage > 2
+                    ? "text-[#2DD4BF]"
+                    : "text-black"
+                } text-2xl`}
+              />
             </div>
             <div className="flex flex-1 h-0.5 bg-gray-200"></div>
 
             <div
-              className={`flex flex-col items-center justify-center rounded-full w-8 h-8 bg-gray-200`}
+              className={`${
+                getCreateTransactionModalStage.stage > 3
+                  ? "border-2 border-[#2DD4BF] "
+                  : "bg-black"
+              } flex flex-col items-center justify-center rounded-full w-8 h-8`}
             >
-              <RiCheckLine className={`text-2xl`} />
+              <RiCheckLine
+                className={`${
+                  getCreateTransactionModalStage.stage > 3
+                    ? "text-[#2DD4BF]"
+                    : "text-black"
+                } text-2xl`}
+              />
             </div>
           </div>
           <div className="flex justify-between items-center">
