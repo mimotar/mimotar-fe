@@ -43,3 +43,31 @@ export const TermAndAgreementSchema = z.object({
 });
 
 export type TermAndAgreementSchemaType = z.infer<typeof TermAndAgreementSchema>;
+
+// Second Transactor Info Schema
+export const SecondTransactorInfoSchema = z.object({
+  full_name: z
+    .string()
+    .min(1, "Full name is required")
+    .regex(/^[a-zA-Z\s]+$/, "Full name must only contain alphabets and spaces"),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")), // Allow empty string as optional
+  phone_number: z
+    .string()
+    .min(1, "Phone number is required")
+    .regex(/^\+\d{1,3}\s?\d{4,14}$/, "Invalid phone number format"),
+  address: z.string().optional().or(z.literal("")), // Optional field
+  countryCode: z.object({
+    // code: z.string().optional(),
+    flag: z
+      .string()
+      .url("Flag must be a valid URL")
+      .min(1, "Flag URL is required"),
+  }),
+  optionThatDesPerson: z
+    .enum(["Buyer (100%)", "Seller (100%)"])
+    .refine((value) => !!value, { message: "Selection is required" }),
+});
+
+export type SecondTransactorInfoSchemaType = z.infer<
+  typeof SecondTransactorInfoSchema
+>;

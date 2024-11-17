@@ -7,6 +7,7 @@ import CreateTransactionModalContainer from "./CreateTransactionModalContainer";
 import TransactionDetailModalSection from "./TransactionDetailModalSection";
 import CreateTransactionTermAndAgreement from "./CreateTransactionTermAndAgreement";
 import SecondTransactorInfo from "./SecondTransactorInfo";
+import CreateTransactionGenerateLink from "./CreateTransactionGenerateLink";
 
 export default function CreateTransactionSection() {
   const dispatch = useAppDispatch();
@@ -37,6 +38,9 @@ export default function CreateTransactionSection() {
 
           {getCreateTransactionStateModal.stage == 3 && (
             <SecondTransactorInfo />
+          )}
+          {getCreateTransactionStateModal.stage == 4 && (
+            <CreateTransactionGenerateLink />
           )}
         </CreateTransactionModalContainer>
       )}
