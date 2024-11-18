@@ -22,7 +22,7 @@ export default function CreateTransactionGenerateLink() {
 
   return (
     <section className="flex flex-col">
-      <div className="flex flex-col bg-neutral-100 rounded-lg p-8 justify-center items-center mt-10">
+      <div className="flex flex-col bg-neutral-100 rounded-lg sm:p-8 p-4 justify-center items-center mt-10">
         <p className="font-bold">
           You can choose to copy the link below and paste into chat or email to
           share
@@ -47,7 +47,7 @@ export default function CreateTransactionGenerateLink() {
 
       <div className="flex flex-col justify-center items-center mt-6 w-full px-4">
         <h1 className="font-light">TRANSACTION SUMMARY</h1>
-        <div className="grid grid-cols-2 w-full mt-3">
+        <div className="grid sm:grid-cols-2 grid-cols-1 w-full mt-3">
           <div className="flex flex-col">
             <h1 className="text-neutral-500">Second transactor</h1>
             <strong>Olawale Ade</strong>
@@ -63,7 +63,7 @@ export default function CreateTransactionGenerateLink() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 w-full mt-4">
+        <div className="grid sm:grid-cols-2 grid-cols-1 w-full mt-4">
           <div className="flex flex-col">
             <h1 className="text-neutral-500">Transaction ID</h1>
 

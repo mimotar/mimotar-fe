@@ -30,7 +30,7 @@ export default function CreateTransactionTermAndAgreement() {
     dispatch(setStage(3));
   };
   return (
-    <section className="flex flex-col mx-auto sm:w-[580px] w-[90%]">
+    <section className="flex flex-col mx-auto sm:w-[580px] w-[95%]">
       <div className="flex flex-col">
         <h1 className="2xl:text-2xl text-xl font-bold">Terms and Agreement</h1>
         <p className="2xl:text-lg  font-light">
@@ -52,7 +52,7 @@ export default function CreateTransactionTermAndAgreement() {
                 className="cursor-pointer"
               />
             </h1>
-            <div className="inline-flex gap-2 justify-between items-center">
+            <div className="inline-flex sm:flex-row flex-col gap-2 justify-between .sm:items-center">
               <div className="inline-flex gap-2 items-center">
                 <input
                   type="radio"
@@ -132,13 +132,13 @@ export default function CreateTransactionTermAndAgreement() {
           </div>
 
           <div className="flex flex-col">
-            <h1 className="inline-flex gap-2 items-center text-neutral-600 mb-2 font-medium">
+            <h1 className="inline-flex gap-2 flex-wrap items-center text-neutral-600 mb-2 font-medium">
               Who will pay shipping costs?
               <span className="bg-neutral-100 rounded-full py-0.5 text-sm px-1.5">
                 Optional
               </span>
             </h1>
-            <div className="inline-flex gap-2 justify-between items-center">
+            <div className="inline-flex sm:flex-row flex-col gap-2 justify-between sm:items-center">
               <div className="inline-flex gap-2 items-center">
                 <input
                   type="radio"
