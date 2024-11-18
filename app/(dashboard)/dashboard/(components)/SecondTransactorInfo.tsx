@@ -49,7 +49,7 @@ export default function SecondTransactorInfo() {
   console.log(errors);
 
   return (
-    <section className="flex flex-col mx-auto sm:w-[580px] w-[90%]">
+    <section className="flex flex-col mx-auto sm:w-[580px] w-[95%]">
       <div className="flex flex-col">
         <h1 className="2xl:text-2xl text-xl font-bold">
           Second Transactor&apos;s Info
@@ -109,7 +109,7 @@ export default function SecondTransactorInfo() {
               Phone number
             </label>
             <div className="inline-flex">
-              <div className="relative flex justify-between items-center gap-2 border rounded-l-lg w-20 px-2">
+              <div className="relative sm:flex hidden justify-between items-center gap-2 border rounded-l-lg w-20 px-2">
                 <Image
                   src={countryCode.flag}
                   {...register("countryCode.flag")}
@@ -205,7 +205,7 @@ export default function SecondTransactorInfo() {
                   htmlFor="optionThatDesPerson_buyer"
                   className="text-neutral-900"
                 >
-                  Buyer (100%)
+                  Buyer
                 </label>
               </div>
               <div className="inline-flex gap-2 items-center">
@@ -221,7 +221,7 @@ export default function SecondTransactorInfo() {
                   htmlFor="optionThatDesPerson_seller"
                   className="text-neutral-900"
                 >
-                  Seller (100%)
+                  Seller
                 </label>
               </div>
             </div>

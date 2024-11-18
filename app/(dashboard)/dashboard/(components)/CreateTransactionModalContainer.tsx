@@ -25,7 +25,7 @@ export default function CreateTransactionModalContainer({
       }}
     >
       <section
-        className={`flex flex-col ${className} min-w-[730px] h-full bg-white rounded-md shadow-md p-6`}
+        className={`flex flex-col ${className} sm:min-w-[730px] h-full bg-white rounded-md shadow-md sm:p-6 p-4`}
       >
         <div className="flex flex-col space-y-3 mb-10">
           <div className="flex w-[90%] mx-auto items-center justify-center">
@@ -79,7 +79,7 @@ export default function CreateTransactionModalContainer({
               />
             </div>
           </div>
-          <div className="flex justify-between items-center">
+          <div className="min-[700px]:flex flex-row hidden w-full justify-between items-center ">
             <div className="flex flex-col items-center">
               <h1 className="">Step 1</h1>
               <p className="">Transaction Details</p>
@@ -94,6 +94,18 @@ export default function CreateTransactionModalContainer({
               <h1 className="">Step 3</h1>
               <p className="">2nd Transactor&apos;s Info</p>
             </div>
+          </div>
+          {/* display on mobile  */}
+          <div className="flex min-[700px]:hidden flex-col px-2">
+            {getCreateTransactionModalStage.stage == 1 ? (
+              <p className="font-medium text-neutral-900">Step 1 of 3</p>
+            ) : getCreateTransactionModalStage.stage == 2 ? (
+              <p className="font-medium text-neutral-900">Step 2 of 3</p>
+            ) : getCreateTransactionModalStage.stage == 3 ? (
+              <p className="font-medium text-neutral-900">Step 3 of 3</p>
+            ) : (
+              ""
+            )}
           </div>
         </div>
 

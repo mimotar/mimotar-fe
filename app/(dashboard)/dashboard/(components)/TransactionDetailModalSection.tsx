@@ -30,7 +30,7 @@ export default function TransactionDetailModalSection() {
   };
 
   return (
-    <section className="flex flex-col mx-auto sm:w-[580px] w-[90%]">
+    <section className="flex flex-col mx-auto sm:w-[580px] w-[95%]">
       <div className="flex flex-col">
         <h1 className="2xl:text-2xl text-xl font-bold">Transaction Details</h1>
         <p className="2xl:text-lg  font-light">
