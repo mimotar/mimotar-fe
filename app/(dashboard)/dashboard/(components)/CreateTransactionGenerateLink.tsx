@@ -46,7 +46,7 @@ export default function CreateTransactionGenerateLink() {
       </div>
 
       <div className="flex flex-col justify-center items-center mt-6 w-full px-4">
-        <h1 className="font-light">TRANSACTION SUMMARY</h1>
+        <h1 className="font-light">TRANSACTION SUMMARY </h1>
         <div className="grid sm:grid-cols-2 grid-cols-1 w-full mt-3">
           <div className="flex flex-col">
             <h1 className="text-neutral-500">Second transactor</h1>
