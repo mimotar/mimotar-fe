@@ -1,6 +1,5 @@
 import LeftPanel from "../commons/leftpanel";
 // import DashboardNavBar from "./DashboardNavBar";
-import { useState } from "react";
 import Link from "next/link";
 import LogoIcon from "@/app/svgIconComponent/Logo";
 import DashboardNavbar from "../commons/DashboardNavbar";
