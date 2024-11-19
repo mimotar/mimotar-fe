@@ -9,9 +9,11 @@ import { useState } from "react";
 import NotificationDropDown from "./NotificationDropDown";
 import AvatarAndContentCard from "./AvartarAndContentCard";
 import { notificationData } from "@/app/data/notificationData";
+import ProfileDropDown from "../dashboard/profile/component/ProfileDropDown";
 
 export default function DashboardNavbar() {
   const [isNotificationDropDown, setIsNotificationDropDown] = useState(false);
+  const [isProfileDropdown, setIsProfileDropdown] = useState(false);
   return (
     <section className="flex justify-between items-center sm:p-5 p-3 bg-[#FFFFFF] gap-3">
       <div className="relative">
@@ -58,9 +60,20 @@ export default function DashboardNavbar() {
           </NotificationDropDown>
         </span>
 
-        <div className="flex items-center justify-center gap-1">
+        <div className="relative flex items-center justify-center gap-1">
           <Avata className="sm:w-10 sm:h-10 h-6 w-6" />
-          <RiArrowDropDownLine className="cursor-pointer text-2xl" />
+          <RiArrowDropDownLine
+            className={`cursor-pointer text-2xl ${
+              isProfileDropdown && "rotate-180"
+            }`}
+            onClick={() => setIsProfileDropdown((prev) => !prev)}
+          />
+          {isProfileDropdown && (
+            <ProfileDropDown
+              closeDropdown={() => setIsProfileDropdown(false)}
+              className="absolute top-11 right-0 w-64"
+            />
+          )}
         </div>
 
         <RxHamburgerMenu
