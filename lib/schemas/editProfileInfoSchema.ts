@@ -10,6 +10,13 @@ const editProfileInfoFormSchema = z.object({
     .string()
     .regex(/^\+?\d{7,15}$/, "Invalid phone number")
     .min(1, "Phone number is required"),
+  countryCode: z.object({
+    // code: z.string().optional(),
+    flag: z
+      .string()
+      .url("Flag must be a valid URL")
+      .min(1, "Flag URL is required"),
+  }),
   address: z
     .string()
     .min(1, "Address is required")

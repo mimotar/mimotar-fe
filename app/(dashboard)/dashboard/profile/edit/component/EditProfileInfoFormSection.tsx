@@ -6,11 +6,12 @@ import editProfileInfoFormSchema, {
 } from "@/lib/schemas/editProfileInfoSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { Suspense, useState } from "react";
+import { forwardRef, Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { RiArrowDropDownLine } from "react-icons/ri";
 
-export default function EditProfileInfoFormSection() {
+const EditProfileInfoFormSection = forwardRef<HTMLFormElement>((props, ref) => {
   const [countryCode, setCountryCode] = useState<{
     code?: string;
     flag: string;
@@ -24,15 +25,25 @@ export default function EditProfileInfoFormSection() {
     formState: { errors },
   } = useForm<editProfileInfoFormSchemaType>({
     resolver: zodResolver(editProfileInfoFormSchema),
+    defaultValues: {
+      countryCode: {
+        flag: "https://flagcdn.com/16x12/ng.png",
+      },
+    },
   });
 
   const handleSubmitEdit = (data: editProfileInfoFormSchemaType) => {
     console.log(data);
+    toast.success("Profile updated successfully");
   };
 
   return (
     <section className="flex flex-col mt-3 ">
-      <form onSubmit={handleSubmit(handleSubmitEdit)} className="space-y-4">
+      <form
+        ref={ref}
+        onSubmit={handleSubmit(handleSubmitEdit)}
+        className="space-y-4"
+      >
         <div className="grid sm:grid-cols-2 grid-cols-1 gap-6">
           <div className="flex flex-col ">
             <label htmlFor="full_name" className="text-neutral-600">
@@ -78,7 +89,7 @@ export default function EditProfileInfoFormSection() {
               <div className="relative sm:flex hidden justify-between items-center gap-2 border rounded-l-lg w-20 px-2">
                 <Image
                   src={countryCode.flag}
-                  // {...register("countryCode.flag")}
+                  {...register("countryCode.flag")}
                   width="20"
                   height="16"
                   alt="Ukraine"
@@ -127,11 +138,11 @@ export default function EditProfileInfoFormSection() {
                 {errors.phoneNumber.message}
               </small>
             )}
-            {/* {errors.countryCode?.flag && (
+            {errors.countryCode?.flag && (
               <small className="text-red-400">
                 {errors.countryCode.flag.message}
               </small>
-            )}  */}
+            )}
           </div>
 
           <div className="flex flex-col ">
@@ -222,4 +233,6 @@ export default function EditProfileInfoFormSection() {
       </form>
     </section>
   );
-}
+});
+
+export default EditProfileInfoFormSection;
