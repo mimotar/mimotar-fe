@@ -25,9 +25,12 @@ export default function page() {
       <div className="border rounded-md py-6 px-3 mt-4 flex flex-col ">
         <div className="inline-flex gap-4 items-center">
           <h1 className="font-bold text-neutral-900">Password management</h1>
-          <button className="inline-flex  gap-1 items-center text-primary font-semibold">
+          <Link
+            href={"profile/edit-password"}
+            className="inline-flex  gap-1 items-center text-primary font-semibold"
+          >
             Edit password <MdEdit />
-          </button>
+          </Link>
         </div>
         <PasswordMgtFormSection />
       </div>
