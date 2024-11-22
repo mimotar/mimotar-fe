@@ -130,4 +130,5 @@ const EditPasswordFormSection = forwardRef<HTMLFormElement>((props, ref) => {
   );
 });
 
+EditPasswordFormSection.displayName = "EditPasswordFormSection";
 export default EditPasswordFormSection;

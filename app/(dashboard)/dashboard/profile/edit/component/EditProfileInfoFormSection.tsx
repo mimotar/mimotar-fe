@@ -235,4 +235,7 @@ const EditProfileInfoFormSection = forwardRef<HTMLFormElement>((props, ref) => {
   );
 });
 
+// Set the display name for easier debugging
+EditProfileInfoFormSection.displayName = "EditProfileInfoFormSection";
+
 export default EditProfileInfoFormSection;
