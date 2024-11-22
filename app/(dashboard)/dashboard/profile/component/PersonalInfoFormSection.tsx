@@ -1,6 +1,5 @@
 "use client";
 
-import { countriesCode } from "@/app/data/CountryCode";
 import Image from "next/image";
 import { Suspense, useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
@@ -52,62 +51,25 @@ export default function PersonalInfoFormSection() {
             Phone number
           </label>
           <div className="inline-flex">
-            <div className="relative sm:flex hidden justify-between items-center gap-2 border rounded-l-lg w-20 px-2">
+            <div className="relative flex  justify-between items-center gap-2 border rounded-l-lg w-20 px-2">
               <Image
                 src={countryCode.flag}
-                // {...register("countryCode.flag")}
-                width="20"
-                height="16"
+                width="35"
+                height="35"
+                sizes="100vw"
                 alt="Ukraine"
               />
 
-              <RiArrowDropDownLine
-                className={`text-3xl cursor-pointer ${
-                  isFlagDropdown ? "rotate-180" : ""
-                }`}
-                onClick={() => setIsFlagDropdown(!isFlagDropdown)}
-              />
-
-              {isFlagDropdown && (
-                <div className="absolute top-12 left-0 w-full h-60 bg-white overflow-y-auto space-y-2 p-3">
-                  {Object.keys(countriesCode).map((item: string, i) => (
-                    <Suspense fallback="Loading ..." key={i}>
-                      <Image
-                        key={i}
-                        onClick={() =>
-                          setCountryCode({
-                            flag: `https://flagcdn.com/16x12/${item}.webp`,
-                          })
-                        }
-                        src={`https://flagcdn.com/16x12/${item}.webp`}
-                        width="20"
-                        height="16"
-                        className="cursor-pointer"
-                        alt=""
-                      />
-                    </Suspense>
-                  ))}
-                </div>
-              )}
+              <RiArrowDropDownLine className={`text-3xl cursor-pointer `} />
             </div>
             <input
               type="tel"
               id="phone_number"
-              className="p-3 bg-neutral-200 outline-none border flex-grow rounded-r-lg"
+              readOnly
+              className="p-3 bg-neutral-200 outline-none border w-full rounded-r-lg"
               placeholder="+234"
             />
           </div>
-          {/* 
-            {errors.phone_number && (
-              <small className="text-red-400">
-                {errors.phone_number.message}
-              </small>
-            )}
-            {errors.countryCode?.flag && (
-              <small className="text-red-400">
-                {errors.countryCode.flag.message}
-              </small>
-            )} */}
         </div>
 
         <div className="flex flex-col ">

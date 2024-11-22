@@ -60,7 +60,7 @@ const EditPasswordFormSection = forwardRef<HTMLFormElement>((props, ref) => {
               </small>
             )}
             <LuEye
-              className="absolute bottom-4 right-3 cursor-pointer"
+              className="absolute top-10 right-3 cursor-pointer"
               onClick={() =>
                 setPasswordVisibility((prev) => ({
                   ...prev,
