@@ -14,6 +14,7 @@ export default function PasswordMgtFormSection() {
           <input
             type={isVsible ? "text" : "password"}
             id="password"
+            readOnly
             placeholder="**********"
             className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900 text-sm"
           />

@@ -14,11 +14,11 @@ export default function ProfileDropDown({
   const navigate = useRouter();
   return (
     <section
-      className={`flex flex-col w-full bg-white shadow-lg border rounded-md space-y-2 ${className}`}
+      className={`flex flex-col  bg-white shadow-lg border rounded-md space-y-2 ${className}`}
     >
       <div className=" flex items-center gap-2 p-2 w-full">
         <Avata className="sm:w-10 sm:h-10 h-6 w-6" />
-        <h1 className="text-neutral-700 text-sm">Olawale Ade</h1>
+        <h1 className="text-neutral-700 text-sm text-nowrap">Olawale Ade</h1>
       </div>
       <hr />
 

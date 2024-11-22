@@ -71,7 +71,7 @@ export default function DashboardNavbar() {
           {isProfileDropdown && (
             <ProfileDropDown
               closeDropdown={() => setIsProfileDropdown(false)}
-              className="absolute top-11 right-0 w-64"
+              className="absolute top-11 right-4 w-64"
             />
           )}
         </div>
