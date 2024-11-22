@@ -1,0 +1,8 @@
+export const helpdata = [
+    {title: "Lorem, ipsum dolor sit amet consectetur", body: " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quis omnis porro delectus molestiae earum a nulla nostrum velit magnam ad iusto, asperiores iure. Accusantium atque aut odio. Velit, repellat culpa."},
+    {title: "Lorem, ipsum dolor sit amet consectetur", body: " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quis omnis porro delectus molestiae earum a nulla nostrum velit magnam ad iusto, asperiores iure. Accusantium atque aut odio. Velit, repellat culpa."},
+    {title: "Lorem, ipsum dolor sit amet consectetur", body: " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quis omnis porro delectus molestiae earum a nulla nostrum velit magnam ad iusto, asperiores iure. Accusantium atque aut odio. Velit, repellat culpa."},
+    {title: "Lorem, ipsum dolor sit amet consectetur", body: " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quis omnis porro delectus molestiae earum a nulla nostrum velit magnam ad iusto, asperiores iure. Accusantium atque aut odio. Velit, repellat culpa."},
+    {title: "Lorem, ipsum dolor sit amet consectetur", body: " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quis omnis porro delectus molestiae earum a nulla nostrum velit magnam ad iusto, asperiores iure. Accusantium atque aut odio. Velit, repellat culpa."},
+    {title: "Lorem, ipsum dolor sit amet consectetur", body: " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quis omnis porro delectus molestiae earum a nulla nostrum velit magnam ad iusto, asperiores iure. Accusantium atque aut odio. Velit, repellat culpa."},
+]
