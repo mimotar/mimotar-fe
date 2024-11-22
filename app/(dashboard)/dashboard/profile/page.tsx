@@ -10,7 +10,7 @@ export default function page() {
       <h1 className="font-bold text-2xl">Profile</h1>
 
       <div className="border rounded-md py-6 px-3 mt-4 flex flex-col ">
-        <div className="inline-flex gap-4 items-center">
+        <div className="inline-flex sm:flex-row flex-col gap-4 sm:items-center">
           <h1 className="font-bold text-neutral-900">Personal information</h1>
           <Link
             href={"profile/edit"}
@@ -23,7 +23,7 @@ export default function page() {
       </div>
 
       <div className="border rounded-md py-6 px-3 mt-4 flex flex-col ">
-        <div className="inline-flex gap-4 items-center">
+        <div className="inline-flex sm:flex-row flex-col gap-4 sm:items-center">
           <h1 className="font-bold text-neutral-900">Password management</h1>
           <Link
             href={"profile/edit-password"}

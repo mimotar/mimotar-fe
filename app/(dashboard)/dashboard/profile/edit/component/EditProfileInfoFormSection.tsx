@@ -86,12 +86,12 @@ const EditProfileInfoFormSection = forwardRef<HTMLFormElement>((props, ref) => {
               Phone number
             </label>
             <div className="inline-flex">
-              <div className="relative sm:flex hidden justify-between items-center gap-2 border rounded-l-lg w-20 px-2">
+              <div className="relative flex justify-between items-center gap-2 border rounded-l-lg w-20 px-2">
                 <Image
                   src={countryCode.flag}
                   {...register("countryCode.flag")}
-                  width="20"
-                  height="16"
+                  width="35"
+                  height="35"
                   alt="Ukraine"
                 />
 
@@ -128,7 +128,7 @@ const EditProfileInfoFormSection = forwardRef<HTMLFormElement>((props, ref) => {
                 type="tel"
                 {...register("phoneNumber")}
                 id="phone_number"
-                className="p-3 bg-neutral-200 outline-none border flex-grow rounded-r-lg"
+                className="p-3 outline-none border w-full rounded-r-lg"
                 placeholder="+234"
               />
             </div>

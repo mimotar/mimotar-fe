@@ -1,11 +1,13 @@
 "use client";
 
 import PrimaryButton, { PrimaryOutline } from "@/app/commons/PrimaryButtons";
-import EditProfileInfoFormSection from "../edit/component/EditProfileInfoFormSection";
+import EditProfileInfoFormSection from "./EditProfileInfoFormSection";
 import { useRef } from "react";
+import { useRouter } from "next/navigation";
 
 export default function EditProfileContainer() {
   const formRef = useRef<HTMLFormElement>(null);
+  const navigate = useRouter();
 
   const handleSave = () => {
     if (formRef.current) {
@@ -24,7 +26,10 @@ export default function EditProfileContainer() {
         <PrimaryButton onClick={handleSave} className="text-white  w-32 h-14">
           Saves
         </PrimaryButton>
-        <PrimaryOutline className="text-primary w-32 h-14 ">
+        <PrimaryOutline
+          onClick={() => navigate.push("/dashboard/profile")}
+          className="text-primary w-32 h-14 "
+        >
           Cancel
         </PrimaryOutline>
       </div>
