@@ -12,7 +12,7 @@ export default function page() {
             Welcome back, Olawale
           </h1>
           <p className="text-neutral-900 text-sm">
-            Stay updated with the overview of your escrow transactions.
+            Stay updated with the overview of your escrow transactions
           </p>
         </div>
         <CreateTransactionSection />
