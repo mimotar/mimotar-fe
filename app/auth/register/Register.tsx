@@ -1,14 +1,10 @@
 "use client";
-import Password from "@/app/commons/Password";
-
-import { TextInput } from "@/app/commons/TextInput";
-import { AuthTypes } from "@/lib/types/AuthTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import { ZodType, z } from "zod";
+
 import {
   Form,
   FormControl,
@@ -16,12 +12,18 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { AuthFormSchema } from "@/lib/schemas/loginSchema";
+import { AuthTypes } from "@/lib/types/AuthTypes";
+import { AuthFormSchema, IAuthFormSchema } from "@/lib/schemas/loginSchema";
 import { Input, PasswordInput } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/Loader";
 import { Label } from "@/components/ui/label";
+import { useMutateAction } from "@/app/hooks/useMutation";
 const Register = () => {
+  const { isPending, isError, mutate } = useMutateAction<
+    Record<string, string | number>,
+    IAuthFormSchema
+  >("post", "/auth/signup");
   const form = useForm<AuthTypes>({
     resolver: zodResolver(AuthFormSchema),
     defaultValues: {
@@ -29,10 +31,17 @@ const Register = () => {
       password: "",
     },
   });
-  const onSubmit = (data: AuthTypes) => {
-    return setTimeout(() => {
-      console.log(data);
-    }, 2000);
+  const onSubmit: SubmitHandler<AuthTypes> = (data) => {
+    mutate(data, {
+      onSuccess: (data) => {},
+      onError: (error) => {
+        console.log(error);
+      },
+    });
+  };
+
+  const handleGoogleRegister = () => {
+    window.location.href = `https://mim-backend.onrender.com/api/auth/signup/google`;
   };
   return (
     <div className=" w-full h-full p- xl:p-4 flex flex-col  items-center">
@@ -99,7 +108,10 @@ const Register = () => {
           <div className="h-[1px] bg-neutral-900 xl:text-sm text-xs w-[50%] "></div>
         </div>
         <div className="w-full">
-          <Button className="border flex gap-x-2 hover:bg-transparent bg-white border-[#A21CAF] w-full">
+          <Button
+            onClick={handleGoogleRegister}
+            className="border flex gap-x-2 hover:bg-transparent bg-white border-[#A21CAF] w-full"
+          >
             <FcGoogle className="h-4 w-4" />
             <p className="text-[#A21CAF] font-bold  text-xs xl:text-sm">
               Register with your Google account

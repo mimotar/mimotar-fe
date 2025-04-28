@@ -17,6 +17,7 @@ export default function page() {
         </div>
         <CreateTransactionSection />
       </div>
+      {/* //https://deploy-preview-30--mimotar.netlify.app/dashboard */}
 
       <div className="grid min-[700px]:grid-cols-3 min-[500px]:grid-cols-2 grid-cols-1 gap-4 mt-6">
         <Card className="p-6" amount={22400} title="Escrow balance" />
