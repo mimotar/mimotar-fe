@@ -9,3 +9,5 @@ export const AuthFormSchema: ZodType<AuthTypes> = z.object({
     message: "Password must be at least 2 characters.",
   }),
 });
+
+export type IAuthFormSchema = z.infer<typeof AuthFormSchema>;
