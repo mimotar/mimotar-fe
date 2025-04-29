@@ -19,11 +19,29 @@ import { Button } from "@/components/ui/button";
 import Loader from "@/components/Loader";
 import { Label } from "@/components/ui/label";
 import { useMutateAction } from "@/app/hooks/useMutation";
+import toast from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
+import { unTokenAxiosInstance } from "@/lib/services/axiosService";
+import { AxiosError } from "axios";
+import { AxiosErrorHandler } from "@/app/utils/axiosErrorHandler";
+
 const Register = () => {
-  const { isPending, isError, mutate } = useMutateAction<
-    Record<string, string | number>,
-    IAuthFormSchema
-  >("post", "/auth/signup");
+  const { isPending, isError, mutate } = useMutation({
+    mutationFn: async (data: AuthTypes) => {
+      try {
+        const req = await unTokenAxiosInstance({
+          url: "/user",
+          method: "POST",
+          data,
+        });
+        const result = await req.data;
+        console.log(result);
+        return result;
+      } catch (error) {
+        throw error;
+      }
+    },
+  });
   const form = useForm<AuthTypes>({
     resolver: zodResolver(AuthFormSchema),
     defaultValues: {
@@ -31,11 +49,15 @@ const Register = () => {
       password: "",
     },
   });
-  const onSubmit: SubmitHandler<AuthTypes> = (data) => {
-    mutate(data, {
-      onSuccess: (data) => {},
+
+  const onSubmit: SubmitHandler<AuthTypes> = (dataPayload) => {
+    mutate(dataPayload, {
+      onSuccess: (data) => {
+        console.log(data);
+      },
       onError: (error) => {
-        console.log(error);
+        const errorMessage = AxiosErrorHandler(error);
+        toast.error(errorMessage);
       },
     });
   };
@@ -86,7 +108,7 @@ const Register = () => {
             text-xs xl:text-base  h-10 font-bold text-neutral-50"
             type="submit"
           >
-            {form.formState.isSubmitting ? (
+            {isPending ? (
               <div className="w-8 h-8">
                 <Loader />
               </div>

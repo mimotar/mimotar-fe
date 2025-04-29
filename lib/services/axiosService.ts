@@ -27,3 +27,7 @@ axiosService.interceptors.response.use(
   }
 );
 export default axiosService;
+
+export const unTokenAxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+});
