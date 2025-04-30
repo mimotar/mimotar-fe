@@ -24,8 +24,13 @@ import { useMutation } from "@tanstack/react-query";
 import { unTokenAxiosInstance } from "@/lib/services/axiosService";
 import { AxiosError } from "axios";
 import { AxiosErrorHandler } from "@/app/utils/axiosErrorHandler";
+import { useRouter } from "next/navigation";
 
-const Register = () => {
+interface IRegisterFormProps {
+  closeModal: () => void;
+}
+const Register = ({ closeModal }: IRegisterFormProps) => {
+  const navigate = useRouter();
   const { isPending, isError, mutate } = useMutation({
     mutationFn: async (data: AuthTypes) => {
       try {
@@ -35,7 +40,6 @@ const Register = () => {
           data,
         });
         const result = await req.data;
-        console.log(result);
         return result;
       } catch (error) {
         throw error;
@@ -54,6 +58,9 @@ const Register = () => {
     mutate(dataPayload, {
       onSuccess: (data) => {
         console.log(data);
+        closeModal();
+        navigate.push("/auth/otp");
+        toast.success("Registration successful, please check your email");
       },
       onError: (error) => {
         const errorMessage = AxiosErrorHandler(error);
@@ -72,6 +79,41 @@ const Register = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 w-full"
         >
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <Label className="font-bold">First name</Label>
+                <FormControl>
+                  <Input
+                    placeholder="Joe"
+                    {...field}
+                    className="focus:outline-none focus:border-0"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <Label className="font-bold">Last name</Label>
+                <FormControl>
+                  <Input
+                    placeholder="Doe"
+                    {...field}
+                    className="focus:outline-none focus:border-0"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"
