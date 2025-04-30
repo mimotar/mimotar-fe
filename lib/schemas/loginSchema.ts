@@ -2,6 +2,22 @@ import { z, ZodType } from "zod";
 import { AuthTypes } from "../types/AuthTypes";
 
 export const AuthFormSchema: ZodType<AuthTypes> = z.object({
+  firstName: z
+    .string()
+    .min(2, {
+      message: "First name must be at least 2 characters.",
+    })
+    .max(20, {
+      message: "First name must be at most 20 characters.",
+    }),
+  lastName: z
+    .string()
+    .min(2, {
+      message: "First name must be at least 2 characters.",
+    })
+    .max(20, {
+      message: "First name must be at most 20 characters.",
+    }),
   email: z
     .string()
     .min(2, {
@@ -13,9 +29,9 @@ export const AuthFormSchema: ZodType<AuthTypes> = z.object({
     .min(8, {
       message: "Password must be at least 8 characters.",
     })
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])/, {
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])/, {
       message:
-        "Password must include at least one lowercase letter, one uppercase letter, and one special character.",
+        "Password must include at least one lowercase letter, one uppercase letter, one number, and one special character.",
     }),
 });
 
