@@ -1,7 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
-import { UseFormRegisterReturn } from "react-hook-form";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 
@@ -58,9 +57,9 @@ const Register = ({ closeModal }: IRegisterFormProps) => {
     mutate(dataPayload, {
       onSuccess: (data) => {
         console.log(data);
-        closeModal();
-        navigate.push("/auth/otp");
+        navigate.push("/otp");
         toast.success("Registration successful, please check your email");
+        closeModal();
       },
       onError: (error) => {
         const errorMessage = AxiosErrorHandler(error);
