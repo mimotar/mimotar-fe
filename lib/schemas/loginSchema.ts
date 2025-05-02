@@ -35,4 +35,22 @@ export const AuthFormSchema: ZodType<AuthTypes> = z.object({
     }),
 });
 
+export const LoginFormSchema = z.object({
+  email: z
+    .string()
+    .min(2, {
+      message: "Username must be at least 2 characters.",
+    })
+    .email(),
+  password: z
+    .string()
+    .min(8, {
+      message: "Password must be at least 8 characters.",
+    })
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])/, {
+      message:
+        "Password must include at least one lowercase letter, one uppercase letter, one number, and one special character.",
+    }),
+});
+
 export type IAuthFormSchema = z.infer<typeof AuthFormSchema>;

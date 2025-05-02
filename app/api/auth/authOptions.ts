@@ -1,6 +1,31 @@
-import axiosService from "@/lib/services/axiosService";
+import axiosService, {
+  unTokenAxiosInstance,
+} from "@/lib/services/axiosService";
 import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      firstName: string;
+      lastName: string;
+      accessToken: string;
+      verified: boolean;
+      refreshToken?: string;
+    };
+  }
+
+  interface User {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    verified: boolean;
+    accessToken: string;
+  }
+}
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -18,46 +43,61 @@ export const authOptions: AuthOptions = {
         },
       },
       async authorize(credentials, req) {
-        return axiosService
-          .post("/auth/login", {
+        return unTokenAxiosInstance
+          .post("user/login-with-email", {
             email: credentials?.email as string,
             password: credentials?.password as string,
           })
           .then(({ data }) => {
+            // console.log(data);
+            if (!data) {
+              return null;
+            }
             return {
-              token: data.access_token,
-              id: data.user.id,
-              user: data.user,
+              id: data.data.user.id,
+              firstName: data.data.user.firstName,
+              lastName: data.data.user.lastName,
+              accessToken: data.data.token,
+              email: data.data.user.email,
+              verified: data.data.user.verified,
             };
           })
           .catch((error) => {
-            throw new Error(error?.response?.data?.response?.message);
+            console.log(error);
+            // throw new Error(error?.response?.data?.response?.message);
+            return null;
           });
       },
     }),
   ],
   secret: process.env.NEXT_AUTH_SECRET,
+  session: { strategy: "jwt" },
   callbacks: {
-    async signIn({ user, account }: { user: any; account: any }) {
+    // async signIn({ user, account }: { user: any; account: any }) {
+    //   if (account?.provider == "credentials") {
+    //     return true;
+    //   }
+    //   return false;
+    // },
+
+    jwt: async ({ token, user, account, profile }) => {
       if (account?.provider == "credentials") {
-        return true;
+        token.accessToken = user.accessToken;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+        token.userId = user.id;
+        token.verified = user.verified;
       }
-      return false;
-    },
-    jwt: async ({ token, user }: { token: any; user: any }) => {
-      if (user) {
-        return {
-          ...token,
-          jwt: user.token,
-          user: user.user,
-        };
-      }
+
       return token;
     },
     session: async ({ session, token }: { session: any; token: any }) => {
       if (token) {
-        session.jwt = token.jwt;
-        session.user = token.user;
+        session.user.accessToken = token.accessToken;
+        session.user.firstName = token.firstName;
+        session.user.lastName = token.lastName;
+        session.user.userId = token.userId;
+        session.user.verified = token.verified;
       }
       return session;
     },

@@ -77,7 +77,7 @@ export default function OtpPage() {
   const handleResendOtp = async () => {
     const email = getValues("email");
     if (!email) {
-      toast.error("Please enter your email before resending OTP.");
+      toast.error("Please enter only your email before resending OTP.");
       return;
     }
 
