@@ -49,7 +49,7 @@ const Login = () => {
         password: data.password,
         callbackUrl: "/dashboard",
       });
-      // console.log(result);
+      console.log(result);
       if (result?.ok && result.status == 200) {
         // closeModal();
         navigate.push(result.url as string);
@@ -58,7 +58,7 @@ const Login = () => {
         return;
       }
       if (result?.error && result.status == 401) {
-        toast.error("Something is wrong with your credentials");
+        toast.error("Unauthorized credential");
         return;
       }
     } catch (error) {
