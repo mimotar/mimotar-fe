@@ -3,6 +3,7 @@ import axiosService, {
 } from "@/lib/services/axiosService";
 import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
 
 declare module "next-auth" {
   interface Session {
@@ -69,24 +70,59 @@ export const authOptions: AuthOptions = {
           });
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
+    }),
   ],
   secret: process.env.NEXT_AUTH_SECRET,
   session: { strategy: "jwt" },
   callbacks: {
-    // async signIn({ user, account }: { user: any; account: any }) {
-    //   if (account?.provider == "credentials") {
-    //     return true;
-    //   }
-    //   return false;
-    // },
+    async signIn({ user, account }: { user: any; account: any }) {
+      try {
+        if (account?.provider == "credentials") {
+          return true;
+        }
+        if (account?.provider == "google") {
+          return true;
+        }
+      } catch (error) {
+        return false;
+      }
+
+      return false;
+    },
 
     jwt: async ({ token, user, account, profile }) => {
+      // console.log("profile", profile);
+      // console.log("account", account);
       if (account?.provider == "credentials") {
         token.accessToken = user.accessToken;
         token.firstName = user.firstName;
         token.lastName = user.lastName;
         token.userId = user.id;
         token.verified = user.verified;
+      }
+
+      if (account?.provider == "google") {
+        const googleProfile = profile as GoogleProfile & {
+          email_verified: boolean;
+          given_name: string;
+          family_name: string;
+          // picture:string
+        };
+        token.accessToken = account?.access_token;
+        token.firstName = googleProfile?.given_name;
+        token.lastName = googleProfile?.family_name;
+        token.userId = googleProfile?.sub;
+        token.verified = googleProfile?.email_verified;
       }
 
       return token;

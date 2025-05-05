@@ -134,7 +134,10 @@ const Login = () => {
           <div className="h-[1px] bg-neutral-900 xl:text-sm text-xs w-[50%] "></div>
         </div>
         <div className="w-full">
-          <Button className="border flex gap-x-2 hover:bg-transparent bg-white border-[#A21CAF] w-full">
+          <Button
+            onClick={() => signIn("google")}
+            className="border flex gap-x-2 hover:bg-transparent bg-white border-[#A21CAF] w-full"
+          >
             <FcGoogle className="h-4 w-4" />
             <p className="text-[#A21CAF] font-bold  text-xs xl:text-sm">
               Login with your Google account
