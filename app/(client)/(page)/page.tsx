@@ -16,6 +16,7 @@ import AbsoluteSmalldots from "@/app/svgIconComponent/AbsoluteSmalldots";
 import Link from "next/link";
 import AuthForm from "@/app/auth/AuthForm";
 import DealBtns from "../component/DealBtns";
+import TestingUserSessionComponent from "../component/TestingUserSessionComponent";
 
 export default function Home() {
   return (
@@ -52,6 +53,8 @@ export default function Home() {
         </div>
       </section>
       {/* py-10 sm:px-20 px-5 min-[2000px]:px-[15%] */}
+
+      {/* <TestingUserSessionComponent /> */}
       <section className="flex flex-col items-center  w-full py-10 px-5  bg-neutral-50">
         <p className="lg:text-2xl text-lg font-bold lg:w-[70%]  text-center">
           Step into a world of seamless business transactions, powered by an
