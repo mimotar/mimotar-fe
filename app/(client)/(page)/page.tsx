@@ -13,11 +13,13 @@ import gif from "../../assets/gif/How_it_works.gif";
 // import Dotsbg from "@/app/svgIconComponent/Dotsbg";
 import Dotsbg from "../../svgIconComponent/Dotsbg";
 import AbsoluteSmalldots from "@/app/svgIconComponent/AbsoluteSmalldots";
-import Link from "next/link";
-import AuthForm from "@/app/auth/AuthForm";
-import DealBtns from "../component/DealBtns";
 
-export default function Home() {
+import DealBtns from "../component/DealBtns";
+import TestingUserSessionComponent from "../component/TestingUserSessionComponent";
+import { getServerSession } from "next-auth";
+
+export default async function Home() {
+  const session = await getServerSession();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between ">
       <section className={`${dotsbgstyle.dotbg}`}>
@@ -52,6 +54,8 @@ export default function Home() {
         </div>
       </section>
       {/* py-10 sm:px-20 px-5 min-[2000px]:px-[15%] */}
+      {/* <pre>{JSON.stringify(session, null, 2)}</pre> */}
+      {/* <TestingUserSessionComponent /> */}
       <section className="flex flex-col items-center  w-full py-10 px-5  bg-neutral-50">
         <p className="lg:text-2xl text-lg font-bold lg:w-[70%]  text-center">
           Step into a world of seamless business transactions, powered by an

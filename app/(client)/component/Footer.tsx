@@ -141,7 +141,7 @@ export default function Footer() {
             width={300}
             className=" h-8 w-auto self-start"
           />
-          <ul className="min-[500px]:inline-flex hidden gap-4 text-sm">
+          <ul className="min-[500px]:inline-flex hidden gap-4 text-base">
             <li>
               <Link href={""} className="hover:text-slate-300">
                 How it works
@@ -181,7 +181,7 @@ export default function Footer() {
             </li>
           </ul>
 
-          {/* mobile device */}
+          {/* mobile device fdgd  */}
           <div className="min-[500px]:hidden grid grid-cols-2">
             <ul className="space-y-3 text-left">
               <li>
@@ -235,11 +235,11 @@ export default function Footer() {
               name=""
               id=""
               placeholder="Enter your email"
-              className="p-2 rounded-md"
+              className="p-3 rounded-md"
             />
             <PrimaryButton
               type="button"
-              className="min-[500px]:w-fit h-fit p-2 w-full px-6"
+              className="min-[500px]:w-fit h-fit p-3 w-full px-6"
             >
               Subscribe
             </PrimaryButton>
