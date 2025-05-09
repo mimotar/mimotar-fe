@@ -5,7 +5,9 @@ export default withAuth(function middleware(req) {}, {
     authorized: ({ req, token }) => {
       if (req.nextUrl.pathname.startsWith(`/dashboard`)) {
         // console.log("token", token);
-        if (!token) return false;
+        if (!token) {
+          return false;
+        }
       }
       return true;
     },
