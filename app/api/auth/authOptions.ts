@@ -85,20 +85,20 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXT_AUTH_SECRET,
   session: { strategy: "jwt" },
   callbacks: {
-    async signIn({ user, account }: { user: any; account: any }) {
-      try {
-        if (account?.provider == "credentials") {
-          return true;
-        }
-        if (account?.provider == "google") {
-          return true;
-        }
-      } catch (error) {
-        return false;
-      }
+    // async signIn({ user, account }: { user: any; account: any }) {
+    //   try {
+    //     if (account?.provider == "credentials") {
+    //       return true;
+    //     }
+    //     if (account?.provider == "google") {
+    //       return true;
+    //     }
+    //   } catch (error) {
+    //     return false;
+    //   }
 
-      return false;
-    },
+    //   return false;
+    // },
 
     jwt: async ({ token, user, account, profile }) => {
       // console.log("profile", profile);
