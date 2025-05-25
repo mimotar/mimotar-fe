@@ -48,6 +48,7 @@ export default function StepFour() {
           </h2>
           <div className="flex items-center w-fit gap-4 ">
             <RadioInput
+              value="BUYER"
               type="radio"
               id="buyer"
               name="buyer"
@@ -56,6 +57,7 @@ export default function StepFour() {
             />
 
             <RadioInput
+              value="SELLER"
               type="radio"
               id="seller"
               name="seller"

@@ -30,6 +30,7 @@ export default function StepThree() {
           </p>
           <div className="flex sm:flex-row flex-col gap-3 items-center w-full mt-2">
             <RadioInput
+              value="BUYER"
               labelClassName=""
               type="radio"
               id="buyer"
@@ -38,6 +39,7 @@ export default function StepThree() {
               className="text-base h-4 w-4"
             />
             <RadioInput
+              value="SELLER"
               type="radio"
               id="seller"
               name="seller"
@@ -48,6 +50,7 @@ export default function StepThree() {
             <RadioInput
               type="radio"
               id="both"
+              value="BOTH"
               name="both"
               labelName="Both (50% - 50%)"
               className="text-base h-4 w-4"
@@ -74,6 +77,7 @@ export default function StepThree() {
           </p>
           <div className="flex sm:flex-row flex-col gap-3 items-center w-full mt-2">
             <RadioInput
+              value="BUYER"
               type="radio"
               id="buyer"
               name="buyer"
@@ -81,6 +85,7 @@ export default function StepThree() {
               className="text-base h-4 w-4"
             />
             <RadioInput
+              value="SELLER"
               type="radio"
               id="seller"
               name="seller"
@@ -89,6 +94,7 @@ export default function StepThree() {
             />
 
             <RadioInput
+              value="BOTH"
               type="radio"
               id="both"
               name="both"

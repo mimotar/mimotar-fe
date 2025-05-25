@@ -23,6 +23,7 @@ export default function StepTwo() {
         />
         <h2>Transaction type</h2>
         <RadioInput
+          value="PHYSICAL"
           type="radio"
           id="physical"
           name="physical"
@@ -30,6 +31,7 @@ export default function StepTwo() {
           className="text-base h-4 w-4"
         />
         <RadioInput
+          value="ONLINE"
           type="radio"
           id="Online"
           name="Online"
@@ -38,6 +40,7 @@ export default function StepTwo() {
         />
 
         <RadioInput
+          value="SERVICE"
           type="radio"
           id="service"
           name="service"

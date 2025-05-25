@@ -55,7 +55,7 @@ export default function page({
   ];
 
   return (
-    <section className="flex flex-col h-screen w-full">
+    <section className="flex flex-col h-screen w-full overflow-y-auto py-4">
       <div className="h-full flex sm:flex-row flex-col justify-between xl:gap-20 lg:gap-14 md:gap-10 ">
         {/* <div className="w-fit h-full overflow-y-auto"> */}
 
