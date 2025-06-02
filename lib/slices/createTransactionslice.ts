@@ -3,24 +3,28 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ITransaction } from "@/app/types.ts/ICreateTransaction";
 
 const initialState: ITransaction = {
-  amount: 0,
-  transaction_description: "",
-  pay_escrow_fee: "",
-  additional_agreement: "",
-  pay_shipping_cost: "",
   creator_fullname: "",
   creator_email: "",
   creator_no: "",
   creator_address: "",
   creator_role: "",
+
+  amount: 0,
+  transaction_description: "",
+  attachment: null,
+  transactionType: "",
+
+  pay_escrow_fee: "",
+  inspection_duration: 0,
+  pay_shipping_cost: "",
+  additional_agreement: "",
+
   receiver_fullname: "",
   reciever_email: "",
   receiver_no: "",
   receiver_address: "",
   reciever_role: "",
   terms: "",
-  transactionType: "",
-  inspection_duration: 0,
   expiresAt: null,
 };
 

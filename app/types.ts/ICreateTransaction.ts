@@ -7,9 +7,19 @@ export interface ITransaction {
 
   amount: number;
   transaction_description: string;
+  attachment: File[] | File | FileList | null;
+  transactionType:
+    | "PHYSICAL_PRODUCT"
+    | "ONLINE_PRODUCT"
+    | "SERVICE"
+    | ""
+    | null;
+
   pay_escrow_fee: "SELLER" | "BUYER" | "BOTH" | "" | null;
-  additional_agreement: string;
+  inspection_duration: number; // in days
+  expiresAt: number | null;
   pay_shipping_cost: "SELLER" | "BUYER" | "BOTH" | "" | null;
+  additional_agreement: string;
 
   receiver_fullname: string;
   reciever_email: string;
@@ -17,12 +27,4 @@ export interface ITransaction {
   receiver_address: string;
   reciever_role: "SELLER" | "BUYER" | "" | null;
   terms: string;
-  transactionType:
-    | "PHYSICAL_PRODUCT"
-    | "DIGITAL_PRODUCT"
-    | "SERVICE"
-    | ""
-    | null;
-  inspection_duration: number; // in days
-  expiresAt: Date | null; // in days or a timestamp depending on usage
 }

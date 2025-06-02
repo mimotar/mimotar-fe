@@ -9,9 +9,36 @@ import Link from "next/link";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { IoMdArrowBack } from "react-icons/io";
 import { useRouter } from "next/navigation";
+import { useRef } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  IStage3TicketSchema,
+  stage3TicketSchema,
+} from "@/lib/schemas/CreateTransactionsSchema";
+import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
 
 export default function StepThree() {
   const navigate = useRouter();
+
+  const dispatch = useAppDispatch();
+  const transactionData = useAppSelector((state) => state.createTransaction);
+  const nextBtnRef = useRef<HTMLFormElement>(null);
+  console.log("Transaction Data:", transactionData);
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<IStage3TicketSchema>({
+    resolver: zodResolver(stage3TicketSchema),
+  });
+
+  const onSubmit = (data: IStage3TicketSchema) => {
+    console.log(data);
+    dispatch(setTransactionDetails(data));
+    navigate.push("generate-link?step=4");
+  };
   return (
     <section className="flex flex-col w-full h-full">
       <h1 className="font-bold text-lg">Terms and Agreement</h1>
@@ -20,7 +47,11 @@ export default function StepThree() {
         must agree to this.
       </h3>
 
-      <div className="space-y-5 mt-6 ">
+      <form
+        ref={nextBtnRef}
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-5 mt-6 "
+      >
         <div className="flex flex-col">
           <p className="inline-flex items-center  gap-1 font-semibold">
             Who will pay the escrow fee?{" "}
@@ -34,7 +65,7 @@ export default function StepThree() {
               labelClassName=""
               type="radio"
               id="buyer"
-              name="buyer"
+              {...register("pay_escrow_fee")}
               labelName="Buyer (100%)"
               className="text-base h-4 w-4"
             />
@@ -42,7 +73,7 @@ export default function StepThree() {
               value="SELLER"
               type="radio"
               id="seller"
-              name="seller"
+              {...register("pay_escrow_fee")}
               labelName="Seller (100%)"
               className="text-base h-4 w-4"
             />
@@ -51,11 +82,15 @@ export default function StepThree() {
               type="radio"
               id="both"
               value="BOTH"
-              name="both"
+              {...register("pay_escrow_fee")}
               labelName="Both (50% - 50%)"
               className="text-base h-4 w-4"
             />
           </div>
+
+          <small className="text-red-400">
+            {errors?.pay_escrow_fee?.message}
+          </small>
         </div>
 
         <div className="flex flex-col">
@@ -65,7 +100,31 @@ export default function StepThree() {
               <AiOutlineExclamationCircle className="inline-flex" />
             </Link>
           </p>
-          <Input isShowLabel={false} placeholder="between 1 to 30 days" />
+          <Input
+            {...register("inspection_duration", {
+              valueAsNumber: true,
+            })}
+            error={errors?.inspection_duration?.message}
+            isShowLabel={false}
+            placeholder="between 1 to 30 days"
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <p className="inline-flex items-center  gap-1 font-semibold">
+            Ticket Expires At?
+            <Link title="gddgdbdhvjdhdh" href={"#"}>
+              <AiOutlineExclamationCircle className="inline-flex" />
+            </Link>
+          </p>
+          <Input
+            {...register("expiresAt", {
+              valueAsNumber: true,
+            })}
+            error={errors?.expiresAt?.message}
+            isShowLabel={false}
+            placeholder="between 1 to 30 days"
+          />
         </div>
 
         <div className="flex flex-col">
@@ -80,7 +139,7 @@ export default function StepThree() {
               value="BUYER"
               type="radio"
               id="buyer"
-              name="buyer"
+              {...register("pay_shipping_cost")}
               labelName="Buyer (100%)"
               className="text-base h-4 w-4"
             />
@@ -88,7 +147,7 @@ export default function StepThree() {
               value="SELLER"
               type="radio"
               id="seller"
-              name="seller"
+              {...register("pay_shipping_cost")}
               labelName="Seller (100%)"
               className="text-base h-4 w-4"
             />
@@ -97,21 +156,36 @@ export default function StepThree() {
               value="BOTH"
               type="radio"
               id="both"
-              name="both"
+              {...register("pay_shipping_cost")}
               labelName="Both (50% - 50%)"
               className="text-base h-4 w-4"
             />
           </div>
+
+          <small className="text-red-400">
+            {errors?.pay_shipping_cost?.message}
+          </small>
         </div>
 
         <TextAreaInput
+          {...register("additional_agreement")}
+          error={errors?.additional_agreement?.message}
           labelName="Additional agreement (Optional)"
           id="how_long"
           rows={5}
           placeholder="Discuss with the other person before you add any terms."
           isShowLabel={true}
         />
-      </div>
+
+        <TextAreaInput
+          {...register("terms")}
+          error={errors?.terms?.message}
+          labelName="Term and Condition"
+          isShowLabel={true}
+          rows={4}
+          id="terms"
+        />
+      </form>
 
       <div className="flex justify-between w-full h-fit mt-10">
         <PrimaryButton
@@ -125,7 +199,7 @@ export default function StepThree() {
         </PrimaryButton>
 
         <SecondaryButton
-          onClick={() => navigate.push("generate-link?step=4")}
+          onClick={() => nextBtnRef.current?.requestSubmit()}
           className="w-36 text-lg bg-[#A21CAF] text-white"
         >
           <span className="inline-flex gap-1 items-center ">

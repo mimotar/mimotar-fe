@@ -14,14 +14,7 @@ export const useMutateAction = <TData, TVariables>(
         const response = await axiosService[method]<TData>(url, data);
         return response.data;
       } catch (error) {
-        if (error instanceof Error) {
-          throw new Error(error.message || "something went wrong");
-        }
-
-        if (error instanceof AxiosError) {
-          throw new Error(error.message || "something went wrong");
-        }
-        throw new Error("Operation failed...");
+        throw error;
       }
     },
     onSuccess: (data) => {

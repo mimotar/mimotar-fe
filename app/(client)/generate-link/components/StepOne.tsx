@@ -4,16 +4,16 @@ import Input, { InputAndCountryFlag } from "@/app/commons/Input";
 import RadioInput from "@/app/commons/RadioInput";
 import SecondaryButton from "@/app/commons/SecondaryButton";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import {
-  IStage1Schema,
-  stage1Schema,
-} from "@/lib/schemas/CreateTransactionsSchema";
 import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { IoMdArrowBack } from "react-icons/io";
+import {
+  IStage1TicketSchema,
+  stage1TicketSchema,
+} from "@/lib/schemas/CreateTransactionsSchema";
 
 export default function StepOne() {
   const navigate = useRouter();
@@ -25,11 +25,11 @@ export default function StepOne() {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<IStage1Schema>({
-    resolver: zodResolver(stage1Schema),
+  } = useForm<IStage1TicketSchema>({
+    resolver: zodResolver(stage1TicketSchema),
   });
 
-  const onSubmit = (data: IStage1Schema) => {
+  const onSubmit = (data: IStage1TicketSchema) => {
     console.log(data);
     dispatch(setTransactionDetails(data));
     navigate.push("generate-link?step=2");

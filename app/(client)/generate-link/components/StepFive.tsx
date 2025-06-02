@@ -4,9 +4,12 @@ import { useRouter } from "next/navigation";
 import PrimaryButton from "@/app/commons/PrimaryButtons";
 import React from "react";
 import { MdContentCopy } from "react-icons/md";
+import { useAppSelector } from "@/lib/hooks";
 
 export default function StepFive() {
   const navigate = useRouter();
+  const transactionData = useAppSelector((state) => state.createTransaction);
+  console.log(transactionData);
   return (
     <section className="flex flex-col w-full h-full justify-center">
       <div className="flex flex-col justify-center items-center bg-[#F1F5F9] rounded-md py-6 space-y-2">
