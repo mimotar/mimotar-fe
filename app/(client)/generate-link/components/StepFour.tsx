@@ -10,17 +10,24 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useRef } from "react";
 import {
   IStage4TicketSchema,
+  mergedTicketSchema,
   stage4TicketSchema,
 } from "@/lib/schemas/CreateTransactionsSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
+import {
+  setTransactionDetails,
+  resetTransactionDetails,
+} from "@/lib/slices/createTransactionslice";
 import TextAreaInput from "@/app/commons/TextAreaInput";
 import { useMutateAction } from "@/app/hooks/useMutation";
 import Loader from "@/components/Loader";
 import { ITransaction } from "@/app/types.ts/ICreateTransaction";
 import { AxiosErrorHandler } from "@/app/utils/axiosErrorHandler";
 import toast from "react-hot-toast";
+import { ITicketSuccessPayload } from "@/app/types.ts/ITicketSuccessPayload";
+import { createTicketSuccessPayload } from "@/lib/slices/TicketSuccessSlice";
+import { z } from "zod";
 
 export default function StepFour() {
   const navigate = useRouter();
@@ -30,10 +37,10 @@ export default function StepFour() {
   const nextBtnRef = useRef<HTMLFormElement>(null);
   // console.log("Transaction Data:", transactionData);
 
-  const { isError, isPending, mutate } = useMutateAction<any, FormData>(
-    "post",
-    "ticket"
-  );
+  const { isError, isPending, mutate } = useMutateAction<
+    { data: ITicketSuccessPayload },
+    FormData
+  >("post", "ticket");
 
   const {
     handleSubmit,
@@ -44,36 +51,58 @@ export default function StepFour() {
   });
 
   const onSubmit = async (data: IStage4TicketSchema) => {
-    console.log(data);
     dispatch(setTransactionDetails(data));
+
+    const mergedData = { ...transactionData, ...data };
+    const parseResult = mergedTicketSchema.safeParse(mergedData);
+
+    if (!parseResult.success) {
+      // console.log(parseResult.error);
+      const errorMsgObj = parseResult.error;
+      let errorMsg = "";
+      if (errorMsgObj instanceof z.ZodError) {
+        errorMsg = errorMsgObj.errors.map((err) => err.message).join(" | ");
+      }
+
+      console.log("error", errorMsg);
+      toast.error(errorMsg);
+      return;
+    }
 
     const formData = new FormData();
 
-    // Append all transactionData fields (except files)
-    for (const [key, value] of Object.entries({
-      ...transactionData,
-      ...data,
-    })) {
+    // Append all fields except 'attachment'
+    for (const [key, value] of Object.entries(mergedData)) {
       if (key !== "attachment" && value !== undefined) {
-        formData.append(key, value as string);
+        formData.append(key, String(value));
       }
     }
 
-    // Handle and append file(s)
+    // Append attachment(s) properly
     const attachments = transactionData?.attachment;
 
     if (attachments) {
       if (attachments instanceof FileList) {
-        Array.from(attachments).forEach((file) =>
-          formData.append("attachment", file)
-        );
+        Array.from(attachments).forEach((file) => {
+          formData.append("attachment", file);
+        });
       } else if (Array.isArray(attachments)) {
-        attachments.forEach((file) => formData.append("attachment", file));
+        attachments.forEach((file) => {
+          if (file instanceof File) {
+            formData.append("attachment", file);
+          }
+        });
       } else if (attachments instanceof File) {
         formData.append("attachment", attachments);
       }
     }
 
+    // Debug: log all FormData entries
+    Array.from(formData.entries()).forEach(([key, value]) => {
+      console.log(`${key}:`, value);
+    });
+
+    // Submit to the server
     mutate(formData, {
       onError: (error) => {
         const errorObj = AxiosErrorHandler(error);
@@ -81,6 +110,7 @@ export default function StepFour() {
       },
       onSuccess: (data) => {
         console.log("Transaction created successfully:", data);
+        dispatch(createTicketSuccessPayload(data.data));
         toast.success("Transaction created successfully!");
         navigate.push("generate-link?step=5");
       },
@@ -179,7 +209,7 @@ export default function StepFour() {
           className="w-36 text-lg bg-[#A21CAF] text-white inline-flex items-center justify-center"
         >
           <span className="inline-flex gap-1 items-center ">
-            Next <IoMdArrowBack className="rotate-180" />
+            Submit <IoMdArrowBack className="rotate-180" />
           </span>
 
           {isPending ? (

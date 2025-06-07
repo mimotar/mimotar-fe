@@ -15,6 +15,7 @@ import userSlice from "../slices/userSlice";
 import createTransactionStateSlice from "../slices/createTransactionStateSlice";
 // import createTransactionProcessDataSlice from "../slices/createTransactionProcessDataSlice";
 import createTransactionSlice from "../slices/createTransactionslice";
+import TicketSuccessSlice from "../slices/TicketSuccessSlice";
 
 const persistConfig = {
   key: "root",
@@ -25,6 +26,7 @@ const persistConfig = {
     "createTransactionStateModal",
     // "createTransactionProcessData",
     "createTransaction",
+    "TicketSuccessPayload",
   ],
 };
 
@@ -33,6 +35,7 @@ const rootReducer = combineReducers({
   createTransactionStateModal: createTransactionStateSlice,
   // createTransactionProcessData: createTransactionProcessDataSlice,
   createTransaction: createTransactionSlice,
+  TicketSuccessPayload: TicketSuccessSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

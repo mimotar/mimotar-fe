@@ -5,11 +5,14 @@ import PrimaryButton from "@/app/commons/PrimaryButtons";
 import React from "react";
 import { MdContentCopy } from "react-icons/md";
 import { useAppSelector } from "@/lib/hooks";
+import { format } from "date-fns";
 
 export default function StepFive() {
   const navigate = useRouter();
-  const transactionData = useAppSelector((state) => state.createTransaction);
-  console.log(transactionData);
+  const TicketSuccessPayload = useAppSelector(
+    (state) => state.TicketSuccessPayload
+  );
+  console.log(TicketSuccessPayload);
   return (
     <section className="flex flex-col w-full h-full justify-center">
       <div className="flex flex-col justify-center items-center bg-[#F1F5F9] rounded-md py-6 space-y-2">
@@ -34,19 +37,26 @@ export default function StepFive() {
         <div className="flex flex-col space-y-6">
           <div className="flex flex-col space-y-1">
             <h1 className="text-lg">Second transactor</h1>
-            <h2 className="font-semibold">Olawale Ade</h2>
-            <h3>olawale02@gmail.com</h3>
-            <h4>+234 813 123 2276</h4>
+            <h2 className="font-semibold">
+              {TicketSuccessPayload.receiver_fullname}
+            </h2>
+            <h3> {TicketSuccessPayload.reciever_email}</h3>
+            <h4> {TicketSuccessPayload.receiver_no}</h4>
           </div>
 
           <div className="flex flex-col space-y-1">
             <h1 className="text-lg">Transaction ID</h1>
-            <h2 className="font-semibold">60024321</h2>
+            <h2 className="font-semibold">{TicketSuccessPayload.id}</h2>
           </div>
 
           <div className="flex flex-col space-y-1">
             <h1 className="text-lg">Date</h1>
-            <h2 className="font-semibold">5th June 2024</h2>
+            <h2 className="font-semibold">
+              {format(
+                new Date(TicketSuccessPayload.created_at),
+                "do MMMM yyyy"
+              )}
+            </h2>
           </div>
         </div>
 
@@ -54,12 +64,15 @@ export default function StepFive() {
         <div className="flex flex-col space-y-6 ">
           <div className="flex flex-col space-y-1">
             <h1 className="text-lg">Transaction description</h1>
-            <p>Purchase of a HP Elitebook 820 UK-used laptop</p>
+            <p>{TicketSuccessPayload.transaction_description}</p>
           </div>
 
           <div className="flex flex-col  space-y-1">
             <h1 className="text-lg mt-16">Amount</h1>
-            <h2 className="font-semibold">NGN 340,000</h2>
+            <h2 className="font-semibold">
+              {TicketSuccessPayload.currency || ""}{" "}
+              {TicketSuccessPayload.amount}
+            </h2>
           </div>
         </div>
       </div>

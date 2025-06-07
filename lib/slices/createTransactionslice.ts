@@ -36,7 +36,7 @@ const createTransactionSlice = createSlice({
       state,
       action: PayloadAction<Partial<ITransaction>>
     ) => {
-      console.log("Setting transaction details:", action.payload);
+      // console.log("Setting transaction details:", action.payload);
       return { ...state, ...action.payload };
     },
     resetTransactionDetails: () => initialState,

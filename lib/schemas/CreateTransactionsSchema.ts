@@ -86,3 +86,11 @@ export const stage4TicketSchema = z.object({
 });
 
 export type IStage4TicketSchema = z.infer<typeof stage4TicketSchema>;
+
+// Merged Schema: All Stages Combined
+export const mergedTicketSchema = stage1TicketSchema
+  .merge(stage2TicketSchema)
+  .merge(stage3TicketSchema)
+  .merge(stage4TicketSchema);
+
+export type IMergedTicketSchema = z.infer<typeof mergedTicketSchema>;
