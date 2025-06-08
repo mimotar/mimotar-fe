@@ -17,8 +17,12 @@ export function useFetch<TQueryFnData, TError, TData = TQueryFnData>(
   const query = useQuery<TQueryFnData, TError, TData>({
     queryKey,
     queryFn: async () => {
-      const response = await axiosService.get(url);
-      return response.data;
+      try {
+        const response = await axiosService.get(url);
+        return response.data;
+      } catch (error) {
+        throw error;
+      }
     },
     ...options,
   });

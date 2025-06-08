@@ -99,7 +99,6 @@ export const authOptions: AuthOptions = {
 
     //   return false;
     // },
-
     jwt: async ({ token, user, account, profile }) => {
       // console.log("profile", profile);
       // console.log("account", account);

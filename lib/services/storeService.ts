@@ -13,7 +13,9 @@ import { combineReducers } from "redux";
 import { storageService } from "./storageService";
 import userSlice from "../slices/userSlice";
 import createTransactionStateSlice from "../slices/createTransactionStateSlice";
-import createTransactionProcessDataSlice from "../slices/createTransactionProcessDataSlice";
+// import createTransactionProcessDataSlice from "../slices/createTransactionProcessDataSlice";
+import createTransactionSlice from "../slices/createTransactionslice";
+import TicketSuccessSlice from "../slices/TicketSuccessSlice";
 
 const persistConfig = {
   key: "root",
@@ -22,14 +24,18 @@ const persistConfig = {
     "leftPanelVisibility",
     "customerCount",
     "createTransactionStateModal",
-    "createTransactionProcessData",
+    // "createTransactionProcessData",
+    "createTransaction",
+    "TicketSuccessPayload",
   ],
 };
 
 const rootReducer = combineReducers({
   user: userSlice,
   createTransactionStateModal: createTransactionStateSlice,
-  createTransactionProcessData: createTransactionProcessDataSlice,
+  // createTransactionProcessData: createTransactionProcessDataSlice,
+  createTransaction: createTransactionSlice,
+  TicketSuccessPayload: TicketSuccessSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
