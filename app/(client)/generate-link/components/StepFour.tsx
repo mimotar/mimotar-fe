@@ -7,7 +7,7 @@ import SecondaryButton from "@/app/commons/SecondaryButton";
 import Input, { InputAndCountryFlag } from "@/app/commons/Input";
 import RadioInput from "@/app/commons/RadioInput";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   IStage4TicketSchema,
   mergedTicketSchema,
@@ -28,6 +28,7 @@ import toast from "react-hot-toast";
 import { ITicketSuccessPayload } from "@/app/types.ts/ITicketSuccessPayload";
 import { createTicketSuccessPayload } from "@/lib/slices/TicketSuccessSlice";
 import { z } from "zod";
+import { base64ToFile } from "@/app/utils/base64ToFile";
 
 export default function StepFour() {
   const navigate = useRouter();
@@ -45,10 +46,24 @@ export default function StepFour() {
   const {
     handleSubmit,
     register,
+    setValue,
     formState: { errors },
   } = useForm<IStage4TicketSchema>({
     resolver: zodResolver(stage4TicketSchema),
   });
+
+  useEffect(() => {
+    setValue("receiver_address", transactionData.receiver_address);
+    setValue("receiver_fullname", transactionData.receiver_fullname);
+    setValue("receiver_no", transactionData.receiver_no);
+    setValue("reciever_email", transactionData.reciever_email);
+    if (
+      transactionData.reciever_role === "BUYER" ||
+      transactionData.reciever_role === "SELLER"
+    ) {
+      setValue("reciever_role", transactionData.reciever_role);
+    }
+  }, [transactionData, setValue]);
 
   const onSubmit = async (data: IStage4TicketSchema) => {
     dispatch(setTransactionDetails(data));
@@ -57,9 +72,9 @@ export default function StepFour() {
     const parseResult = mergedTicketSchema.safeParse(mergedData);
 
     if (!parseResult.success) {
-      // console.log(parseResult.error);
       const errorMsgObj = parseResult.error;
       let errorMsg = "";
+
       if (errorMsgObj instanceof z.ZodError) {
         errorMsg = errorMsgObj.errors.map((err) => err.message).join(" | ");
       }
@@ -78,22 +93,22 @@ export default function StepFour() {
       }
     }
 
-    // Append attachment(s) properly
+    // ✅ Corrected attachment handling
     const attachments = transactionData?.attachment;
 
-    if (attachments) {
-      if (attachments instanceof FileList) {
-        Array.from(attachments).forEach((file) => {
-          formData.append("attachment", file);
-        });
-      } else if (Array.isArray(attachments)) {
-        attachments.forEach((file) => {
-          if (file instanceof File) {
-            formData.append("attachment", file);
-          }
-        });
-      } else if (attachments instanceof File) {
-        formData.append("attachment", attachments);
+    if (attachments && Array.isArray(attachments)) {
+      for (let i = 0; i < attachments.length; i++) {
+        const base64 = attachments[i];
+
+        try {
+          const file = base64ToFile(base64, `attachment_${i}`); // optional: extract MIME to get extension
+          // console.log(file);
+          formData.append("files", file);
+        } catch (err) {
+          console.error("Error converting base64 to file:", err);
+          toast.error("Failed to process attachment.");
+          return;
+        }
       }
     }
 

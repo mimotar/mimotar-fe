@@ -9,7 +9,7 @@ import Link from "next/link";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { IoMdArrowBack } from "react-icons/io";
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,6 +29,7 @@ export default function StepThree() {
   const {
     handleSubmit,
     register,
+    setValue,
     formState: { errors },
   } = useForm<IStage3TicketSchema>({
     resolver: zodResolver(stage3TicketSchema),
@@ -39,6 +40,29 @@ export default function StepThree() {
     dispatch(setTransactionDetails(data));
     navigate.push("generate-link?step=4");
   };
+
+  useEffect(() => {
+    setValue("additional_agreement", transactionData.additional_agreement);
+    setValue("expiresAt", transactionData.expiresAt!);
+    setValue("inspection_duration", transactionData.inspection_duration);
+    if (
+      transactionData.pay_escrow_fee === "BOTH" ||
+      transactionData.pay_escrow_fee === "BUYER" ||
+      transactionData.pay_escrow_fee === "SELLER"
+    ) {
+      setValue("pay_escrow_fee", transactionData.pay_escrow_fee);
+    }
+
+    if (
+      transactionData.pay_shipping_cost === "BOTH" ||
+      transactionData.pay_shipping_cost === "BUYER" ||
+      transactionData.pay_shipping_cost === "SELLER"
+    ) {
+      setValue("pay_shipping_cost", transactionData.pay_shipping_cost);
+    }
+
+    setValue("terms", transactionData.terms);
+  }, [transactionData, setValue]);
   return (
     <section className="flex flex-col w-full h-full">
       <h1 className="font-bold text-lg">Terms and Agreement</h1>

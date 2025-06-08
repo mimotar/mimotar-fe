@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { IoMdArrowBack } from "react-icons/io";
 import {
@@ -24,6 +24,7 @@ export default function StepOne() {
   const {
     handleSubmit,
     register,
+    setValue,
     formState: { errors },
   } = useForm<IStage1TicketSchema>({
     resolver: zodResolver(stage1TicketSchema),
@@ -37,6 +38,16 @@ export default function StepOne() {
 
   console.log("Form Errors:", errors);
 
+  useEffect(() => {
+    const role = transactionData.creator_role;
+    setValue("creator_address", transactionData.creator_address);
+    setValue("creator_email", transactionData.creator_email);
+    setValue("creator_fullname", transactionData.creator_fullname);
+    setValue("creator_no", transactionData.creator_no);
+    if (role === "SELLER" || role === "BUYER") {
+      setValue("creator_role", role);
+    }
+  }, [transactionData, setValue]);
   return (
     <section className="flex flex-col h-full w-full">
       <h1 className="font-bold text-lg">Personal information</h1>
