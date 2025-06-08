@@ -139,8 +139,9 @@ export default function StepTwo() {
             isShowLabel={true}
           />
           <small className="inline-flex gap-2 mt-2">
-            {filePreview.map((base64) => (
+            {filePreview.map((base64, key) => (
               <Image
+                key={key}
                 src={base64}
                 alt=""
                 height={50}

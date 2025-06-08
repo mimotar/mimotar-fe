@@ -4,10 +4,13 @@ import { useRouter } from "next/navigation";
 import PrimaryButton from "@/app/commons/PrimaryButtons";
 import React from "react";
 import { MdContentCopy } from "react-icons/md";
-import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { format } from "date-fns";
+import { resetTransactionDetails } from "@/lib/slices/createTransactionslice";
+import { resetTicketSuccessPayload } from "@/lib/slices/TicketSuccessSlice";
 
 export default function StepFive() {
+  const dispatch = useAppDispatch();
   const navigate = useRouter();
   const TicketSuccessPayload = useAppSelector(
     (state) => state.TicketSuccessPayload
@@ -79,7 +82,11 @@ export default function StepFive() {
 
       <div className="flex sm:justify-end justify-center w-full mt-10">
         <PrimaryButton
-          onClick={() => navigate.push("/")}
+          onClick={() => {
+            dispatch(resetTransactionDetails());
+            dispatch(resetTicketSuccessPayload());
+            navigate.push("/");
+          }}
           className="bg-white text-[#A21CAF] border border-[#A21CAF] text-lg "
         >
           <span className="inline-flex gap-1 items-center ">
