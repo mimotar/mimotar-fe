@@ -31,7 +31,11 @@ axiosService.interceptors.response.use(
       // Redirect to login page if unauthenticated
       toast.error("unauthenticated", { position: "top-right" });
       const data = await signOut({ redirect: false, callbackUrl: "/" });
-      useRouter().push(data.url);
+      // useRouter().push(data.url);
+
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1000); // give toast 1.5s to show
 
       return Promise.reject(error);
     }

@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { format } from "date-fns";
 import { resetTransactionDetails } from "@/lib/slices/createTransactionslice";
 import { resetTicketSuccessPayload } from "@/lib/slices/TicketSuccessSlice";
+import toast from "react-hot-toast";
 
 export default function StepFive() {
   const dispatch = useAppDispatch();
@@ -16,6 +17,16 @@ export default function StepFive() {
     (state) => state.TicketSuccessPayload
   );
   console.log(TicketSuccessPayload);
+
+  const handleClipboardCopy = async (data: string) => {
+    try {
+      await navigator.clipboard.writeText(data);
+      toast.success("Link copied");
+    } catch (error) {
+      toast.error("Link copy failed");
+    }
+  };
+
   return (
     <section className="flex flex-col w-full h-full justify-center">
       <div className="flex flex-col justify-center items-center bg-[#F1F5F9] rounded-md py-6 space-y-2">
@@ -26,11 +37,15 @@ export default function StepFive() {
         <div className="relative  flex  justify-center w-[70%]">
           <input
             readOnly
+            value={TicketSuccessPayload.txn_link}
             placeholder="hdeji3i33i3ui3uh4fbfejnefjh23fio32ui"
             type="text"
             className="p-2 rounded-md w-full  outline-none  border border-gray-400"
           />
-          <MdContentCopy className="absolute right-2 top-2.5 text-lg cursor-pointer" />
+          <MdContentCopy
+            onClick={() => handleClipboardCopy(TicketSuccessPayload.txn_link)}
+            className="absolute right-2 top-2.5 text-lg cursor-pointer"
+          />
         </div>
       </div>
 
@@ -56,7 +71,7 @@ export default function StepFive() {
             <h1 className="text-lg">Date</h1>
             <h2 className="font-semibold">
               {format(
-                new Date(TicketSuccessPayload.created_at),
+                new Date(TicketSuccessPayload.created_at || Date.now()),
                 "do MMMM yyyy"
               )}
             </h2>
@@ -85,7 +100,7 @@ export default function StepFive() {
           onClick={() => {
             dispatch(resetTransactionDetails());
             dispatch(resetTicketSuccessPayload());
-            navigate.push("/");
+            navigate.replace("/");
           }}
           className="bg-white text-[#A21CAF] border border-[#A21CAF] text-lg "
         >
