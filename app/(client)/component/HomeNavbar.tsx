@@ -10,12 +10,13 @@ import PrimaryButton from "../../commons/PrimaryButtons";
 // import { usePathname } from "next/navigation";
 import SecondaryButton from "../../commons/SecondaryButton";
 import { RxHamburgerMenu } from "react-icons/rx";
+import { useSession } from "next-auth/react";
 
 const HomeNavbar: React.FC = () => {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
-
+  const { data } = useSession();
   const handleDialogChange = (isOpen: boolean) => {
     setOpen(isOpen);
   };
@@ -63,6 +64,14 @@ const HomeNavbar: React.FC = () => {
       </span>
 
       <div className="md:flex hidden items-center min-[932px]:gap-10 gap-5">
+        {data?.user && data.user.verified && (
+          <Link
+            href="dashboard"
+            className="text-[#A21CAF]  hover:text-[#D946EF]"
+          >
+            Dashboard
+          </Link>
+        )}
         <Button
           onClick={() => handleOpen("login")}
           className="min-[932px]:w-[118px] min-[932px]:h-[48px] text-[#A21CAF] hover:text-[#F8FAFC] font-bold  hover w-[80px] h-[35px] border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"

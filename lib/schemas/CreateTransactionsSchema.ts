@@ -42,7 +42,7 @@ export type IStage1TicketSchema = z.infer<typeof stage1TicketSchema>;
 export const stage2TicketSchema = z.object({
   amount: z.number().min(1),
   transaction_description: z.string().min(1),
-  attachment: z.array(z.any()).min(1),
+  attachment: z.array(z.any()).optional(),
   // .any()
   // .refine((files) => files instanceof FileList, {
   //   message: "Attachment must be a FileList or an array of files.",

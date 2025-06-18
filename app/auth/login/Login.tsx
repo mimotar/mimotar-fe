@@ -47,7 +47,7 @@ const Login = () => {
         redirect: false,
         email: data.email,
         password: data.password,
-        callbackUrl: "/dashboard",
+        callbackUrl: "/",
       });
       console.log(result);
       if (result?.ok && result.status == 200) {
