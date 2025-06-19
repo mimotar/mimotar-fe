@@ -221,10 +221,11 @@ export default function StepFour() {
         <SecondaryButton
           disabled={isPending}
           onClick={() => nextBtnRef.current?.requestSubmit()}
-          className="w-36 text-lg bg-[#A21CAF] text-white inline-flex items-center justify-center"
+          className="w-36 text-lg bg-[#A21CAF] gap-1 text-white inline-flex items-center justify-center"
         >
           <span className="inline-flex gap-1 items-center ">
-            Submit <IoMdArrowBack className="rotate-180" />
+            Submit
+            {/* <IoMdArrowBack className="rotate-180" /> */}
           </span>
 
           {isPending ? (
