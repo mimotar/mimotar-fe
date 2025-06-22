@@ -1,4 +1,4 @@
-export type ITicket = {
+export type ITicketToken = {
   id: string;
   amount: number;
   user_id: number;
@@ -12,21 +12,24 @@ export type ITicket = {
   receiver_address: string;
   link_expires: boolean;
   txn_link: string;
-  created_at: string; // ISO date string
+  created_at: string; // ISO timestamp string
   inspection_duration: number;
-  reciever_role: "BUYER" | "SELLER"; // assuming fixed roles
+  reciever_role: "BUYER" | "SELLER"; // assuming roles are enums
   terms: string;
   transactionType: "PHYSICAL_PRODUCT" | "ONLINE_PRODUCT" | "SERVICE";
+
   transaction_description: string;
-  pay_escrow_fee: "SELLER" | "BUYER" | "BOTH"; // assuming these are the only options
-  pay_shipping_cost: "SELLER" | "BUYER" | "BOTH"; // assuming these are the only options
-  creator_role: "BUYER" | "SELLER"; // same assumption
-  status: "CREATED" | string; // extend with other status values as needed
+  pay_escrow_fee: "SELLER" | "BUYER" | "BOTH";
+  pay_shipping_cost: "SELLER" | "BUYER" | "BOTH";
+  creator_role: "BUYER" | "SELLER";
+  status: "CREATED" | string;
   currency: string;
-  expiresAt: string; // ISO date string
+  expiresAt: string; // ISO timestamp string
   transactionToken: string;
   reciever_email: string;
   approveStatus: boolean;
-  files: any | null; // adjust type if files are structured
+  otp: string;
+  otp_created_at: string; // ISO timestamp string
+  files: any | null; // define more specifically if known
   payment_id: number | null;
 };
