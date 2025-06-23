@@ -1,6 +1,3 @@
-import PrimaryButton from "@/app/commons/PrimaryButtons";
-import SecondaryButton from "@/app/commons/SecondaryButton";
-import ExpiryBox from "./components/ExpiryBox";
 import Info from "../../../assets/icons/info.svg";
 import jwt from "jsonwebtoken";
 import { getServerSession } from "next-auth";
@@ -9,6 +6,7 @@ import { getTransaction } from "./DAL/getTransaction";
 import { ITicket } from "./types/ITransactionDetail";
 import { formatDateWithOrdinal } from "@/app/utils/DatefnLib";
 import AcceptRejectForm from "./components/AcceptRejectForm";
+import ExpireBoxContainer from "./components/ExpireBoxContainer";
 
 export default async function ApproveTransaction({
   params,
@@ -71,11 +69,7 @@ export default async function ApproveTransaction({
         {/* <pre>{JSON.stringify(TicketResult, null, 2)}</pre> */}
         <div className="flex items-center gap-2">
           <p className="text-[#64748B]"> This link will expire in:</p>
-          <div className="flex items-center gap-2">
-            <ExpiryBox amount={0} duration={"DAYS"} />
-            <ExpiryBox amount={10} duration={"HOURS"} />
-            <ExpiryBox amount={20} duration={"MINS"} />
-          </div>
+          <ExpireBoxContainer expireAt={TicketResult.expiresAt} />
         </div>
       </section>
       <section className="flex flex-col md:flex-row gap-12 justify-between">

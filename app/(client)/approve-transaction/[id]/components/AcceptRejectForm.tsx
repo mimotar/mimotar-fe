@@ -11,10 +11,10 @@ import { ITicketToken } from "../types/ITicketToken";
 export default function AcceptRejectForm({ id }: { id: string }) {
   const [token, setToken] = useState("");
   //request token
-  const { mutate, isPending, data, isError } = useMutateAction<
+  const { mutate, isPending, isError } = useMutateAction<
     { data: ITicketToken },
     null
-  >("post", `/ticket/${id}/request-token`);
+  >("post", `ticket/${id}/request-token`);
 
   const handleRequestToken = () => {
     mutate(null, {
@@ -55,6 +55,36 @@ export default function AcceptRejectForm({ id }: { id: string }) {
         },
         onError: (error: unknown) => {
           toast.error("Error accepting Ticket");
+        },
+      }
+    );
+  };
+
+  //cancel ticket
+  const {
+    mutate: CancelTicketMutate,
+    isPending: isCancelTicketPending,
+    data: CancelTicketData,
+    isError: isCancelTicketError,
+  } = useMutateAction<{ data: any }, { otp: string }>(
+    "put",
+    `/ticket/reject/${id}`
+  );
+
+  const handleCancelTicket = () => {
+    if (!token) {
+      toast.error("Require Token to approve the Ticket");
+      return;
+    }
+    CancelTicketMutate(
+      { otp: token },
+      {
+        onSuccess: (data) => {
+          console.log(data.data);
+          toast.success("Ticket reject successfully. ");
+        },
+        onError: (error: unknown) => {
+          toast.error("Error Rejecting Ticket");
         },
       }
     );
@@ -109,8 +139,16 @@ export default function AcceptRejectForm({ id }: { id: string }) {
         </p>
       </label>
       <hr className="w-full" />
-      <SecondaryButton className="h-14 md:h-auto p-2">
-        Cancel Agreement
+      <SecondaryButton
+        onClick={handleCancelTicket}
+        className="h-14 md:h-auto p-2"
+      >
+        Cancel Agreement{" "}
+        {isCancelTicketPending && (
+          <div className="w-6 h-6">
+            <Loader />
+          </div>
+        )}
       </SecondaryButton>
     </section>
   );
