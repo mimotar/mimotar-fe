@@ -13,7 +13,7 @@ export default async function ApproveTransaction({
 }: {
   params: { id: string };
 }) {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
   let decodeToken:
     | string
     | (jwt.JwtPayload & {

@@ -21,7 +21,15 @@ export type ITicket = {
   pay_escrow_fee: "SELLER" | "BUYER" | "BOTH"; // assuming these are the only options
   pay_shipping_cost: "SELLER" | "BUYER" | "BOTH"; // assuming these are the only options
   creator_role: "BUYER" | "SELLER"; // same assumption
-  status: "CREATED" | string; // extend with other status values as needed
+  status:
+    | "CREATED"
+    | "APPROVED"
+    | "ONGOING"
+    | "COMPLETED"
+    | "DISPUTE"
+    | "REJECTED"
+    | "CANCELED"
+    | "EXPIRED"; // extend with other status values as needed
   currency: string;
   expiresAt: string; // ISO date string
   transactionToken: string;

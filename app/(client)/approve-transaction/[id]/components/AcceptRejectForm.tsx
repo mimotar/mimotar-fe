@@ -7,27 +7,37 @@ import Loader from "@/components/Loader";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { ITicketToken } from "../types/ITicketToken";
+import { useRouter } from "next/navigation";
 
 export default function AcceptRejectForm({ id }: { id: string }) {
   const [token, setToken] = useState("");
+  const router = useRouter();
   //request token
-  const { mutate, isPending, isError } = useMutateAction<
-    { data: ITicketToken },
-    null
-  >("post", `ticket/${id}/request-token`);
-
+  const { mutate, isPending, isError } = useMutateAction(
+    "post",
+    `ticket/${id}/request-token`
+  );
+  // <
+  //     { data: ITicketToken },
+  //     ""
+  //   >
   const handleRequestToken = () => {
-    mutate(null, {
-      onSuccess: (data) => {
-        toast.success(
-          "Token requested successfully. Check your email for the token."
-        );
-        setToken(data.data.otp);
-      },
-      onError: (error: unknown) => {
-        toast.error("Error requesting token");
-      },
-    });
+    mutate(
+      {},
+      {
+        onSuccess: (data: any) => {
+          console.log(data);
+          toast.success(
+            "Token requested successfully. Check your email for the token."
+          );
+          setToken(data?.data.otp);
+          return;
+        },
+        onError: (error: unknown) => {
+          toast.error("Error requesting token");
+        },
+      }
+    );
   };
 
   //approve/accept ticket
@@ -50,8 +60,9 @@ export default function AcceptRejectForm({ id }: { id: string }) {
       { otp: token },
       {
         onSuccess: (data) => {
-          console.log(data.data);
+          console.log(data);
           toast.success("Ticket accept/approve successfully. ");
+          router.push(`./ticket-accept?id=${id}`);
         },
         onError: (error: unknown) => {
           toast.error("Error accepting Ticket");
@@ -82,6 +93,7 @@ export default function AcceptRejectForm({ id }: { id: string }) {
         onSuccess: (data) => {
           console.log(data.data);
           toast.success("Ticket reject successfully. ");
+          return;
         },
         onError: (error: unknown) => {
           toast.error("Error Rejecting Ticket");

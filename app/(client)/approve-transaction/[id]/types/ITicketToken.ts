@@ -22,7 +22,15 @@ export type ITicketToken = {
   pay_escrow_fee: "SELLER" | "BUYER" | "BOTH";
   pay_shipping_cost: "SELLER" | "BUYER" | "BOTH";
   creator_role: "BUYER" | "SELLER";
-  status: "CREATED" | string;
+  status:
+    | "CREATED"
+    | "APPROVED"
+    | "ONGOING"
+    | "COMPLETED"
+    | "DISPUTE"
+    | "REJECTED"
+    | "CANCELED"
+    | "EXPIRED";
   currency: string;
   expiresAt: string; // ISO timestamp string
   transactionToken: string;
