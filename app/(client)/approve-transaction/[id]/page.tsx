@@ -1,22 +1,75 @@
-import PrimaryButton from "@/app/commons/PrimaryButtons";
-import SecondaryButton from "@/app/commons/SecondaryButton";
-import ExpiryBox from "./ExpiryBox";
 import Info from "../../../assets/icons/info.svg";
+import jwt from "jsonwebtoken";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/authOptions";
+import { getTransaction } from "./DAL/getTransaction";
+import { ITicket } from "./types/ITransactionDetail";
+import { formatDateWithOrdinal } from "@/app/utils/DatefnLib";
+import AcceptRejectForm from "./components/AcceptRejectForm";
+import ExpireBoxContainer from "./components/ExpireBoxContainer";
 
-export default function ApproveTransaction() {
+export default async function ApproveTransaction({
+  params,
+}: {
+  params: { id: string };
+}) {
+  // const session = await getServerSession(authOptions);
+  let decodeToken:
+    | string
+    | (jwt.JwtPayload & {
+        creator_email: string;
+        reciever_email: string;
+        transaction_id: number;
+        iat: number;
+        exp: number;
+      }) = "";
+
+  let isInvalid = false;
+  try {
+    decodeToken = jwt.verify(
+      params.id,
+      process.env.JWT_SECRET as string
+    ) as jwt.JwtPayload & {
+      creator_email: string;
+      reciever_email: string;
+      transaction_id: number;
+      iat: number;
+      exp: number;
+    };
+  } catch (err: any) {
+    isInvalid = err?.message || "token expired or web token error";
+  }
+  if (isInvalid) {
+    return (
+      <main className="px-5 lg:px-10 2xl:px-16 py-3 text-center">
+        <h3 className="text-black font-semibold text-2xl">
+          Invalid or Expired Link
+        </h3>
+        <p className="text-[#64748B] mt-2">
+          The link you are trying to access is either invalid or has expired.
+          Please check the link and try again.
+        </p>
+      </main>
+    );
+  }
+
+  const transactionId =
+    typeof decodeToken !== "string"
+      ? decodeToken.transaction_id.toString()
+      : "";
+
+  const TicketResult: ITicket = await getTransaction(transactionId);
+
   return (
     <main className="px-5 lg:px-10 2xl:px-16 py-3 grid gap-14">
       <section className="flex flex-col-reverse md:flex-row w-full justify-between gap-3  md:items-center">
         <h3 className="text-black font-semibold text-2xl">
           Transaction Detail & Agreement
         </h3>
+        {/* <pre>{JSON.stringify(TicketResult, null, 2)}</pre> */}
         <div className="flex items-center gap-2">
           <p className="text-[#64748B]"> This link will expire in:</p>
-          <div className="flex items-center gap-2">
-            <ExpiryBox amount={0} duration={"DAYS"} />
-            <ExpiryBox amount={10} duration={"HOURS"} />
-            <ExpiryBox amount={20} duration={"MINS"} />
-          </div>
+          <ExpireBoxContainer expireAt={TicketResult.expiresAt} />
         </div>
       </section>
       <section className="flex flex-col md:flex-row gap-12 justify-between">
@@ -24,7 +77,6 @@ export default function ApproveTransaction() {
           <div className=" grid ">
             <div className="bg-[#F8FAFC] w-full px-6 rounded-tr-lg rounded-tl-lg py-4">
               <h4 className="text-black leading-5 text-xl">
-                {" "}
                 Transaction details
               </h4>
             </div>
@@ -35,14 +87,15 @@ export default function ApproveTransaction() {
                     {" "}
                     First transactor
                   </h5>
-                  <p className="text-[#0F172A] font-semibold"> Salisu Isa </p>
-                  <p className="text-[#0F172A] font-normal">
+                  <p className="text-[#0F172A] font-semibold">
                     {" "}
-                    salisuisa@gmail.com{" "}
+                    {TicketResult.creator_fullname}{" "}
                   </p>
                   <p className="text-[#0F172A] font-normal">
-                    {" "}
-                    +234 806 566 5461
+                    {TicketResult.creator_email}
+                  </p>
+                  <p className="text-[#0F172A] font-normal">
+                    {TicketResult.creator_no}
                   </p>
                 </div>
                 <div className="flex flex-col justify-start gap-1">
@@ -50,14 +103,15 @@ export default function ApproveTransaction() {
                     {" "}
                     Second transactor
                   </h5>
-                  <p className="text-[#0F172A] font-semibold"> Olawale Ade </p>
-                  <p className="text-[#0F172A] font-normal">
+                  <p className="text-[#0F172A] font-semibold">
                     {" "}
-                    olawale02@gmail.com
+                    {TicketResult.receiver_fullname}
                   </p>
                   <p className="text-[#0F172A] font-normal">
-                    {" "}
-                    +234 806 566 5461
+                    {TicketResult.reciever_email}
+                  </p>
+                  <p className="text-[#0F172A] font-normal">
+                    {TicketResult.receiver_no}
                   </p>
                 </div>
               </div>
@@ -68,7 +122,7 @@ export default function ApproveTransaction() {
                     Transaction description
                   </h5>
                   <p className="text-[#0F172A] font-normal">
-                    Purchase of a HP Elitebook 820 UK-used laptop
+                    {TicketResult.transaction_description}
                   </p>
                 </div>
                 <div className="flex flex-col justify-start gap-1">
@@ -76,7 +130,9 @@ export default function ApproveTransaction() {
                     {" "}
                     Amount
                   </h5>
-                  <p className="text-[#0F172A] font-normal"> NGN 340,000 </p>
+                  <p className="text-[#0F172A] font-normal">
+                    {TicketResult.currency} {TicketResult.amount}
+                  </p>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2">
@@ -85,14 +141,20 @@ export default function ApproveTransaction() {
                     {" "}
                     Transaction ID
                   </h5>
-                  <p className="text-[#0F172A] font-normal">60024321</p>
+                  <p className="text-[#0F172A] font-normal">
+                    {" "}
+                    {TicketResult.id}
+                  </p>
                 </div>
                 <div className="flex flex-col justify-start gap-1">
                   <h5 className="text-[#64748B] font-semibold text-lg">
                     {" "}
                     Date
                   </h5>
-                  <p className="text-[#0F172A] font-normal"> 5th June 2024</p>
+                  <p className="text-[#0F172A] font-normal">
+                    {" "}
+                    {formatDateWithOrdinal(new Date(TicketResult.created_at))}
+                  </p>
                 </div>
               </div>
             </div>
@@ -113,7 +175,10 @@ export default function ApproveTransaction() {
                     <Info />{" "}
                   </button>
                 </span>
-                <p className=" font-semibold"> Both (50% - 50%)</p>
+                <p className=" font-semibold">
+                  {/* Both (50% - 50%)  */}
+                  {TicketResult.pay_escrow_fee}
+                </p>
               </div>
               <div className="">
                 <span className="flex items-center gap-1">
@@ -123,7 +188,9 @@ export default function ApproveTransaction() {
                     <Info />{" "}
                   </button>
                 </span>
-                <p className=" font-semibold"> 3 days</p>
+                <p className=" font-semibold">
+                  {TicketResult.inspection_duration} day(s)
+                </p>
               </div>
               <div className="">
                 <span className="flex items-center gap-1">
@@ -133,7 +200,9 @@ export default function ApproveTransaction() {
                     <Info />{" "}
                   </button>
                 </span>
-                <p className=" font-semibold"> Seller (100%)</p>
+                <p className=" font-semibold">
+                  {TicketResult.pay_shipping_cost}
+                </p>
               </div>
               <div className="">
                 <span className="flex items-center gap-1">
@@ -144,9 +213,8 @@ export default function ApproveTransaction() {
                   </button>
                 </span>
                 <p className=" font-semibold">
-                  During the inspection or testing period, buyer should test the
-                  laptop carefully as I wont accept it back if there is any dent
-                  or external issues.
+                  {TicketResult.additional_agreement ||
+                    "No additional agreement"}
                 </p>
               </div>
             </div>
@@ -158,18 +226,8 @@ export default function ApproveTransaction() {
             Please check that the information provided for the transaction are
             correct and that you accept the transaction agreement
           </p>
-          <PrimaryButton className="w-full">Accept agreement</PrimaryButton>
-          <label htmlFor="" className="flex gap-2 items-center">
-            <input type="checkbox" className="" />
-            <p className="text-xs font-semibold">
-              {" "}
-              I agree to the Mimotar Terms of Service and Privacy Policy
-            </p>
-          </label>
-          <hr className="w-full" />
-          <SecondaryButton className="h-14 md:h-auto">
-            Cancel Agreement
-          </SecondaryButton>
+
+          <AcceptRejectForm id={TicketResult.id} />
         </div>
       </section>
     </main>
