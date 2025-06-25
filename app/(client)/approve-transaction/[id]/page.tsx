@@ -131,8 +131,7 @@ export default async function ApproveTransaction({
                     Amount
                   </h5>
                   <p className="text-[#0F172A] font-normal">
-                    {" "}
-                    NGN {TicketResult.amount}
+                    {TicketResult.currency} {TicketResult.amount}
                   </p>
                 </div>
               </div>

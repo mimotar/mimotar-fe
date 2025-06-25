@@ -34,7 +34,12 @@ export default function AcceptRejectForm({ id }: { id: string }) {
           return;
         },
         onError: (error: unknown) => {
-          toast.error("Error requesting token");
+          if (error instanceof Error) {
+            toast.error(error.message || "Error requesting token");
+            return;
+          } else {
+            toast.error("Error requesting token");
+          }
         },
       }
     );
@@ -65,6 +70,10 @@ export default function AcceptRejectForm({ id }: { id: string }) {
           router.push(`./ticket-accept?id=${id}`);
         },
         onError: (error: unknown) => {
+          if (error instanceof Error) {
+            toast.error(error.message || "Error accepting Ticket");
+            return;
+          }
           toast.error("Error accepting Ticket");
         },
       }
@@ -77,10 +86,7 @@ export default function AcceptRejectForm({ id }: { id: string }) {
     isPending: isCancelTicketPending,
     data: CancelTicketData,
     isError: isCancelTicketError,
-  } = useMutateAction<{ data: any }, { otp: string }>(
-    "put",
-    `/ticket/reject/${id}`
-  );
+  } = useMutateAction<any, { otp: string }>("put", `/ticket/reject/${id}`);
 
   const handleCancelTicket = () => {
     if (!token) {
@@ -91,12 +97,19 @@ export default function AcceptRejectForm({ id }: { id: string }) {
       { otp: token },
       {
         onSuccess: (data) => {
-          console.log(data.data);
+          // console.log(data.data);
           toast.success("Ticket reject successfully. ");
           return;
         },
         onError: (error: unknown) => {
-          toast.error("Error Rejecting Ticket");
+          console.log(error);
+          if (error instanceof Error) {
+            toast.error(error.message || "Error rejecting Ticket");
+            return;
+          } else {
+            toast.error("Error rejecting Ticket");
+            return;
+          }
         },
       }
     );
@@ -153,7 +166,7 @@ export default function AcceptRejectForm({ id }: { id: string }) {
       <hr className="w-full" />
       <SecondaryButton
         onClick={handleCancelTicket}
-        className="h-14 md:h-auto p-2"
+        className="h-14 md:h-auto p-2 inline-flex items-center justify-center"
       >
         Cancel Agreement{" "}
         {isCancelTicketPending && (

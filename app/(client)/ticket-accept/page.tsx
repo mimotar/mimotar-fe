@@ -3,6 +3,9 @@ import Link from "next/link";
 import NotifyInfo from "./component/NotifyInfo";
 import { getTransaction } from "../approve-transaction/[id]/DAL/getTransaction";
 import { ITicket } from "../approve-transaction/[id]/types/ITransactionDetail";
+import { notFound } from "next/navigation";
+import NotApproveTicket from "@/app/commons/NotApproveTicket";
+import ExpireTicket from "@/app/commons/ExpireTicket";
 
 export default async function page({
   searchParams,
@@ -12,28 +15,15 @@ export default async function page({
   const id = searchParams.id || "";
 
   const TicketResult: ITicket = await getTransaction(id);
+  if (!TicketResult) {
+    notFound();
+  }
   if (TicketResult.status !== "APPROVED") {
-    return (
-      <main className="px-5 lg:px-10 2xl:px-16 py-3 text-center">
-        <h3 className="text-black font-semibold text-2xl">
-          Ticket not yet approved
-        </h3>
-        <p className="text-[#64748B] mt-2">
-          The ticket you are trying to access has not yet approved.
-        </p>
-      </main>
-    );
+    return <NotApproveTicket />;
   }
 
   if (new Date(TicketResult.expiresAt) < new Date()) {
-    return (
-      <main className="px-5 lg:px-10 2xl:px-16 py-3 text-center">
-        <h3 className="text-black font-semibold text-2xl">Ticket expired</h3>
-        <p className="text-[#64748B] mt-2">
-          The ticket you are trying to access has expired.
-        </p>
-      </main>
-    );
+    return <ExpireTicket />;
   }
 
   return (
