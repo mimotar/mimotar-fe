@@ -49,7 +49,7 @@ export default function StepOne() {
     }
   }, [transactionData, setValue]);
   return (
-    <section className="flex flex-col h-full w-full">
+    <section className="flex flex-col  w-full">
       <h1 className="font-bold text-lg">Personal information</h1>
       <h3>Input your correct personal details here.</h3>
       <form

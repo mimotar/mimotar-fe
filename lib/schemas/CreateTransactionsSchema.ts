@@ -33,7 +33,7 @@ export const stage1TicketSchema = z.object({
   creator_fullname: z.string().min(1),
   creator_email: z.string().email(),
   creator_no: z.string(),
-  creator_address: z.string().min(2),
+  creator_address: z.string().min(2).optional().or(z.literal("")),
   creator_role: z.enum(["SELLER", "BUYER"]),
 });
 
