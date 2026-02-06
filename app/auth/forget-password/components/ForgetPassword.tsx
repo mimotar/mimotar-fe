@@ -6,13 +6,36 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { FormEvent } from "react";
 import { IoMdArrowBack } from "react-icons/io";
+import { useMutateAction } from "@/app/hooks/useMutation";
+import toast from "react-hot-toast";
+import Loader from "@/components/Loader";
 
 export default function ForgetPassword() {
+  const { isPending, mutate } = useMutateAction(
+    "post",
+    "password-reset/confirm-email-password-reset"
+  );
   const navigate = useRouter();
   const handleResetPassword = (event: FormEvent) => {
     event.preventDefault();
-    navigate.push("/auth/forget-password?type=check-mail");
-    // alert("hello");
+    const form = event.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    const email = formData.get("email") as string;
+    // alert(email);
+    mutate(
+      { email },
+      {
+        onError: (error) => {
+          toast(error.message);
+          return;
+        },
+        onSuccess: () => {
+          toast("Reset link sent to your email");
+          navigate.push("/auth/forget-password?type=check-mail");
+          return;
+        },
+      }
+    );
   };
 
   return (
@@ -27,7 +50,8 @@ export default function ForgetPassword() {
           <label htmlFor="email">Email</label>
           <input
             type="email"
-            name=""
+            required
+            name="email"
             id="email"
             placeholder="name@gmail.com"
             className="placeholder:text-base border rounded-md w-full p-2 border-neutral-500"
@@ -35,7 +59,7 @@ export default function ForgetPassword() {
         </div>
 
         <Button type="submit" className="w-full mt-4 text-base">
-          Reset password
+          {isPending ? <Loader /> : "Reset password"}
         </Button>
       </form>
       <Link

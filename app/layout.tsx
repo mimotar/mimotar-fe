@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { StoreProvider } from "../lib/providers/StoreProvider";
 import SessionProvider from "../lib/providers/SessionProvider";
 import { getServerSession } from "next-auth";
+import QueryClientProviderWrapper from "@/lib/providers/QueryClientProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,11 +23,13 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession();
   return (
-    <html lang="en">
-      <body className={`${inter.className}`}>
-        <SessionProvider session={session}>
-          <StoreProvider>{children}</StoreProvider>
-        </SessionProvider>
+    <html lang="en" className={inter.className}>
+      <body>
+        <QueryClientProviderWrapper>
+          <SessionProvider session={session}>
+            <StoreProvider>{children}</StoreProvider>
+          </SessionProvider>
+        </QueryClientProviderWrapper>
       </body>
     </html>
   );

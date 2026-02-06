@@ -1,14 +1,9 @@
 "use client";
-import Password from "@/app/commons/Password";
-
-import { TextInput } from "@/app/commons/TextInput";
-import { AuthTypes } from "@/lib/types/AuthTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
-import { UseFormRegisterReturn } from "react-hook-form";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import { ZodType, z } from "zod";
+
 import {
   Form,
   FormControl,
@@ -16,12 +11,40 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { AuthFormSchema } from "@/lib/schemas/loginSchema";
+import { AuthTypes } from "@/lib/types/AuthTypes";
+import { AuthFormSchema, IAuthFormSchema } from "@/lib/schemas/loginSchema";
 import { Input, PasswordInput } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/Loader";
 import { Label } from "@/components/ui/label";
-const Register = () => {
+import { useMutateAction } from "@/app/hooks/useMutation";
+import toast from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
+import { unTokenAxiosInstance } from "@/lib/services/axiosService";
+import { AxiosError } from "axios";
+import { AxiosErrorHandler } from "@/app/utils/axiosErrorHandler";
+import { useRouter } from "next/navigation";
+
+interface IRegisterFormProps {
+  closeModal: () => void;
+}
+const Register = ({ closeModal }: IRegisterFormProps) => {
+  const navigate = useRouter();
+  const { isPending, isError, mutate } = useMutation({
+    mutationFn: async (data: AuthTypes) => {
+      try {
+        const req = await unTokenAxiosInstance({
+          url: "/user",
+          method: "POST",
+          data,
+        });
+        const result = await req.data;
+        return result;
+      } catch (error) {
+        throw error;
+      }
+    },
+  });
   const form = useForm<AuthTypes>({
     resolver: zodResolver(AuthFormSchema),
     defaultValues: {
@@ -29,10 +52,24 @@ const Register = () => {
       password: "",
     },
   });
-  const onSubmit = (data: AuthTypes) => {
-    return setTimeout(() => {
-      console.log(data);
-    }, 2000);
+
+  const onSubmit: SubmitHandler<AuthTypes> = (dataPayload) => {
+    mutate(dataPayload, {
+      onSuccess: (data) => {
+        console.log(data);
+        navigate.push("/otp");
+        toast.success("Registration successful, please check your email");
+        closeModal();
+      },
+      onError: (error) => {
+        const errorMessage = AxiosErrorHandler(error);
+        toast.error(errorMessage);
+      },
+    });
+  };
+
+  const handleGoogleRegister = () => {
+    window.location.href = `https://mim-backend.onrender.com/api/auth/signup/google`;
   };
   return (
     <div className=" w-full h-full p- xl:p-4 flex flex-col  items-center">
@@ -41,6 +78,41 @@ const Register = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 w-full"
         >
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <Label className="font-bold">First name</Label>
+                <FormControl>
+                  <Input
+                    placeholder="Joe"
+                    {...field}
+                    className="focus:outline-none focus:border-0"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <Label className="font-bold">Last name</Label>
+                <FormControl>
+                  <Input
+                    placeholder="Doe"
+                    {...field}
+                    className="focus:outline-none focus:border-0"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"
@@ -77,7 +149,7 @@ const Register = () => {
             text-xs xl:text-base  h-10 font-bold text-neutral-50"
             type="submit"
           >
-            {form.formState.isSubmitting ? (
+            {isPending ? (
               <div className="w-8 h-8">
                 <Loader />
               </div>
@@ -99,7 +171,10 @@ const Register = () => {
           <div className="h-[1px] bg-neutral-900 xl:text-sm text-xs w-[50%] "></div>
         </div>
         <div className="w-full">
-          <Button className="border flex gap-x-2 hover:bg-transparent bg-white border-[#A21CAF] w-full">
+          <Button
+            onClick={handleGoogleRegister}
+            className="border flex gap-x-2 hover:bg-transparent bg-white border-[#A21CAF] w-full"
+          >
             <FcGoogle className="h-4 w-4" />
             <p className="text-[#A21CAF] font-bold  text-xs xl:text-sm">
               Register with your Google account

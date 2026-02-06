@@ -1,4 +1,4 @@
-import "../../../app/globals.css";
+// import "../../../app/globals.css";
 import LogoIcon from "@/app/svgIconComponent/Logo";
 import Link from "next/link";
 import MobileHamburger from "./components/MobileHamburger";

@@ -11,13 +11,12 @@ export default function PasswordIsReset() {
       <PasswordResetIcon className="sm:w-24 sm:h-24 w-20 h-20" />
       <h1 className="sm:text-2xl text-xl font-bold mt-6">Password is reset</h1>
       <p className="sm:text-lg text-base text-center mt-2 px-6">
-        Your password has been reset successfully. Click below to log into your
-        dashboard.
+        Your password has been reset successfully. Click below to log in.
       </p>
 
       <Button
         onClick={() => navigate.push("/")}
-        type="submit"
+        type="button"
         className=" sm:w-[360px] w-[90%] mt-4 text-base"
       >
         Continue
