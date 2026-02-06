@@ -9,14 +9,19 @@ import { format } from "date-fns";
 import { resetTransactionDetails } from "@/lib/slices/createTransactionslice";
 import { resetTicketSuccessPayload } from "@/lib/slices/TicketSuccessSlice";
 import toast from "react-hot-toast";
+import { useMemo } from "react";
 
 export default function StepFive() {
   const dispatch = useAppDispatch();
   const navigate = useRouter();
   const TicketSuccessPayload = useAppSelector(
-    (state) => state.TicketSuccessPayload
+    (state) => state.TicketSuccessPayload,
   );
   console.log(TicketSuccessPayload);
+
+  // const createdAtDate = useMemo(() => {
+  //   return new Date(TicketSuccessPayload?.created_at ?? new Date());
+  // }, [TicketSuccessPayload.created_at]);
 
   const handleClipboardCopy = async (data: string) => {
     try {
@@ -70,10 +75,12 @@ export default function StepFive() {
           <div className="flex flex-col space-y-1">
             <h1 className="text-lg">Date</h1>
             <h2 className="font-semibold">
-              {format(
-                new Date(TicketSuccessPayload.created_at || Date.now()),
-                "do MMMM yyyy"
-              )}
+              {TicketSuccessPayload?.created_at
+                ? format(
+                    new Date(TicketSuccessPayload?.created_at),
+                    "do MMMM yyyy",
+                  )
+                : ""}
             </h2>
           </div>
         </div>

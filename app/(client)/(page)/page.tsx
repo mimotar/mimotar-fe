@@ -15,11 +15,11 @@ import Dotsbg from "../../svgIconComponent/Dotsbg";
 import AbsoluteSmalldots from "@/app/svgIconComponent/AbsoluteSmalldots";
 
 import DealBtns from "../component/DealBtns";
-import TestingUserSessionComponent from "../component/TestingUserSessionComponent";
+// import TestingUserSessionComponent from "../component/TestingUserSessionComponent";
 import { getServerSession } from "next-auth";
 
 export default async function Home() {
-  const session = await getServerSession();
+  // const session = await getServerSession();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between ">
       <section className={`${dotsbgstyle.dotbg}`}>
@@ -41,9 +41,11 @@ export default async function Home() {
           </div>
 
           <div className="  w-full h-full relative block">
-            <img
+            <Image
               src={Images.banner}
               alt="banner"
+              width={100}
+              height={100}
               className="object-cover rounded-bl-lg rounded-tr-lg"
               style={{
                 width: "100%",
@@ -124,6 +126,8 @@ export default async function Home() {
         <Image
           src={gif}
           alt=""
+          width={100}
+          height={100}
           unoptimized={true}
           sizes="100vw"
           // Make the image display full width
@@ -139,11 +143,13 @@ export default async function Home() {
 
       <section className="flex bg-neutral-50 w-full py-16">
         <section className="lg:w-[80%] w-[90%] gap-6 mx-auto flex md:flex-row flex-col items-center relative">
-          <div className="w-full h-[412px] relative block sm:mt-0 mt-16 sm:order-1 order-2">
+          <div className="w-full  h-[412px] relative block sm:mt-0 mt-16 sm:order-1 order-2">
             <Image
               src={Images.transactionStepImg}
-              fill
-              sizes="100vw"
+              // fill
+              width={500}
+              height={500}
+              // sizes="100vw"
               alt=""
               className="object-cover z-50"
             />

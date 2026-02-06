@@ -23,8 +23,8 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession();
   return (
-    <html lang="en">
-      <body className={`${inter.className}`}>
+    <html lang="en" className={inter.className}>
+      <body>
         <QueryClientProviderWrapper>
           <SessionProvider session={session}>
             <StoreProvider>{children}</StoreProvider>
