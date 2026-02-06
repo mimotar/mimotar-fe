@@ -1,10 +1,10 @@
 import axios from "axios";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/authOptions";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "@/app/api/auth/authOptions";
 import { getSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 
 const axiosService = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
@@ -45,9 +45,9 @@ axiosService.interceptors.response.use(
 
       toast.error("session expired", { position: "top-right" });
       const data = await signOut({ redirect: false, callbackUrl: "/" });
-      useRouter().push(data.url);
+      // useRouter().push(data.url);
     }
-  }
+  },
 );
 export default axiosService;
 

@@ -1,4 +1,4 @@
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import Stepper from "./components/Stepper";
 import StepTwo from "./components/StepTwo";
 import StepOne from "./components/StepOne";
@@ -16,14 +16,15 @@ interface StepperDataType {
   stage: string | number | string[] | number[] | undefined;
 }
 
-export default function page({
+export default async function page({
   searchParams,
 }: {
-  searchParams: {
+  searchParams: Promise<{
     [key: string]: string | number | string[] | number[] | undefined;
-  };
+  }>;
 }) {
-  const params = searchParams.step ?? 0;
+  const searchParam = await searchParams;
+  const params = searchParam.step ?? 0;
   // console.log(params);
   const stepperData: StepperDataType[] = [
     {

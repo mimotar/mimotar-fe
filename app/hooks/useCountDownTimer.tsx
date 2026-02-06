@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 function useCountdownTimer(targetDate: Date) {
-  const calculateTimeRemaining = () => {
+  const calculateTimeRemaining = useCallback(() => {
     const now = new Date().getTime();
     const timeRemaining = targetDate.getTime() - now;
 
@@ -13,7 +13,7 @@ function useCountdownTimer(targetDate: Date) {
       .padStart(2, "0");
 
     const hours = Math.floor(
-      (timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      (timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
     )
       .toString()
       .padStart(2, "0");
@@ -27,7 +27,7 @@ function useCountdownTimer(targetDate: Date) {
       .padStart(2, "0");
 
     return { days, hours, minutes, seconds };
-  };
+  }, [targetDate]);
 
   const [countdown, setCountdown] = useState(calculateTimeRemaining);
 
@@ -39,7 +39,7 @@ function useCountdownTimer(targetDate: Date) {
     return () => {
       clearInterval(interval);
     };
-  }, [targetDate]);
+  }, [targetDate, calculateTimeRemaining]);
 
   return countdown;
 }
