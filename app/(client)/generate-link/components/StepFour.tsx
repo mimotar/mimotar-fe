@@ -96,21 +96,21 @@ export default function StepFour() {
     // ✅ Corrected attachment handling
     const attachments = transactionData?.attachment;
 
-    if (attachments && Array.isArray(attachments)) {
-      for (let i = 0; i < attachments.length; i++) {
-        const base64 = attachments[i];
+    // if (attachments && Array.isArray(attachments)) {
+    //   for (let i = 0; i < attachments.length; i++) {
+    //     const base64 = attachments[i];
 
-        try {
-          const file = base64ToFile(base64, `attachment_${i}`); // optional: extract MIME to get extension
-          // console.log(file);
-          formData.append("files", file);
-        } catch (err) {
-          console.error("Error converting base64 to file:", err);
-          toast.error("Failed to process attachment.");
-          return;
-        }
-      }
-    }
+    //     try {
+    //       const file = base64ToFile(base64, `attachment_${i}`); // optional: extract MIME to get extension
+    //       // console.log(file);
+    //       formData.append("files", file);
+    //     } catch (err) {
+    //       console.error("Error converting base64 to file:", err);
+    //       toast.error("Failed to process attachment.");
+    //       return;
+    //     }
+    //   }
+    // }
 
     // Debug: log all FormData entries
     Array.from(formData.entries()).forEach(([key, value]) => {
@@ -223,7 +223,7 @@ export default function StepFour() {
           onClick={() => nextBtnRef.current?.requestSubmit()}
           className="w-36 text-lg bg-[#A21CAF] gap-1 text-white inline-flex items-center justify-center"
         >
-          <span className="inline-flex gap-1 items-center ">
+          <span className="inline-flex gap-1 items-center cursor-pointer">
             Submit
             {/* <IoMdArrowBack className="rotate-180" /> */}
           </span>

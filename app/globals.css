@@ -61,6 +61,11 @@
   }
 }
 
+@theme {
+  --color-brand-primary: #701a75;
+  --color-brand-secondary: #713f12;
+}
+
 /* @layer base {
   * {
     @apply border-border;
