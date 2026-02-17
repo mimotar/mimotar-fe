@@ -12,7 +12,7 @@ export default function Error({
       {/* <Image src={Images.pawPawErrorImg} alt="error" className="size-80" /> */}
       <h2>Something went wrong!</h2>
       <button
-        className="p-1 rounded-md bg-red-300 text-white"
+        className="py-1 px-4 rounded-md bg-red-300 text-white cursor-pointer mt-4 "
         onClick={() => reset()}
       >
         Try again

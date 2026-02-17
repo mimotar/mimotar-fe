@@ -2,44 +2,56 @@ import Info from "../../../assets/icons/info.svg";
 import jwt from "jsonwebtoken";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/authOptions";
-import { getTransaction } from "./DAL/getTransaction";
+import { getTransaction } from "./actions/getTransaction";
 import { ITicket } from "./types/ITransactionDetail";
 import { formatDateWithOrdinal } from "@/app/utils/DatefnLib";
 import AcceptRejectForm from "./components/AcceptRejectForm";
 import ExpireBoxContainer from "./components/ExpireBoxContainer";
+import { notFound } from "next/navigation";
+import { verifyTicketToken } from "./actions/VerifyToken";
 
 export default async function ApproveTransaction({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   // const session = await getServerSession(authOptions);
-  let decodeToken:
-    | string
-    | (jwt.JwtPayload & {
-        creator_email: string;
-        reciever_email: string;
-        transaction_id: number;
-        iat: number;
-        exp: number;
-      }) = "";
+  const id = (await params).id;
 
-  let isInvalid = false;
-  try {
-    decodeToken = jwt.verify(
-      params.id,
-      process.env.JWT_SECRET as string
-    ) as jwt.JwtPayload & {
-      creator_email: string;
-      reciever_email: string;
-      transaction_id: number;
-      iat: number;
-      exp: number;
-    };
-  } catch (err: any) {
-    isInvalid = err?.message || "token expired or web token error";
+  // let decodeToken:
+  //   | string
+  //   | (jwt.JwtPayload & {
+  //       creator_email: string;
+  //       reciever_email: string;
+  //       transaction_id: number;
+  //       iat: number;
+  //       exp: number;
+  //     }) = "";
+
+  // let isInvalid = false;
+  // try {
+  //   decodeToken = jwt.verify(
+  //     id,
+  //     process.env.JWT_SECRET as string,
+  //   ) as jwt.JwtPayload & {
+  //     creator_email: string;
+  //     reciever_email: string;
+  //     transaction_id: number;
+  //     iat: number;
+  //     exp: number;
+  //   };
+  // } catch (err: any) {
+  //   isInvalid = err?.message || "token expired or web token error";
+  // }
+
+  if (!id) {
+    return notFound();
   }
-  if (isInvalid) {
+
+  const verifyUrlToken = await verifyTicketToken();
+  console.log(verifyUrlToken);
+
+  if (!verifyUrlToken) {
     return (
       <main className="px-5 lg:px-10 2xl:px-16 py-3 text-center">
         <h3 className="text-black font-semibold text-2xl">
@@ -53,12 +65,12 @@ export default async function ApproveTransaction({
     );
   }
 
-  const transactionId =
-    typeof decodeToken !== "string"
-      ? decodeToken.transaction_id.toString()
-      : "";
+  // const transactionId =
+  //   typeof decodeToken !== "string"
+  //     ? decodeToken.transaction_id.toString()
+  //     : "";
 
-  const TicketResult: ITicket = await getTransaction(transactionId);
+  const TicketResult: ITicket = await getTransaction("1");
 
   return (
     <main className="px-5 lg:px-10 2xl:px-16 py-3 grid gap-14">

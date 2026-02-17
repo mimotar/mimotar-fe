@@ -214,7 +214,7 @@ export default function StepThree() {
       <div className="flex justify-between w-full h-fit mt-10">
         <PrimaryButton
           onClick={() => navigate.push("generate-link?step=2")}
-          className="bg-white text-[#A21CAF] border border-[#A21CAF] text-lg w-36"
+          className="bg-white text-brand-primary border-2 cursor-pointer border-brand-primary text-lg w-36"
         >
           <span className="inline-flex gap-1 items-center ">
             <IoMdArrowBack />
@@ -224,7 +224,7 @@ export default function StepThree() {
 
         <SecondaryButton
           onClick={() => nextBtnRef.current?.requestSubmit()}
-          className="w-36 text-lg bg-[#A21CAF] text-white"
+          className="w-36 text-lg bg-brand-primary cursor-pointer text-white"
         >
           <span className="inline-flex gap-1 items-center ">
             Next <IoMdArrowBack className="rotate-180" />

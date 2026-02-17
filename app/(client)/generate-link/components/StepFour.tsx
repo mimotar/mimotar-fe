@@ -210,7 +210,7 @@ export default function StepFour() {
       <div className="flex justify-between w-full h-fit mt-10">
         <PrimaryButton
           onClick={() => navigate.push("generate-link?step=3")}
-          className="bg-white text-[#A21CAF] border border-[#A21CAF] text-lg w-36"
+          className="bg-white text-brand-primary border-2 cursor-pointer border-brand-primary text-lg w-36"
         >
           <span className="inline-flex gap-1 items-center ">
             <IoMdArrowBack />
