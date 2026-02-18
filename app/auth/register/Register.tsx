@@ -91,7 +91,7 @@ const Register = ({ closeModal }: IRegisterFormProps) => {
                     className="focus:outline-none focus:border-0"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
@@ -109,7 +109,7 @@ const Register = ({ closeModal }: IRegisterFormProps) => {
                     className="focus:outline-none focus:border-0"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
@@ -123,10 +123,10 @@ const Register = ({ closeModal }: IRegisterFormProps) => {
                   <Input
                     placeholder="email@gmail.com"
                     {...field}
-                    className="focus:outline-none focus:border-0"
+                    className="focus:outline-none focus:border-0 "
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
@@ -140,21 +140,19 @@ const Register = ({ closeModal }: IRegisterFormProps) => {
                 <FormControl>
                   <PasswordInput field={field} />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
           <Button
-            className="w-full
-            text-xs xl:text-base  h-10 font-bold text-neutral-50"
+            className="w-full text-xs xl:text-base inline-flex gap-2 items-center justify-center bg-brand-primary cursor-pointer   h-10 font-bold text-neutral-50"
             type="submit"
           >
-            {isPending ? (
+            Register{" "}
+            {isPending && (
               <div className="w-8 h-8">
                 <Loader />
               </div>
-            ) : (
-              "Register"
             )}
           </Button>
         </form>

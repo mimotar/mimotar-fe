@@ -64,8 +64,8 @@ export default function StepThree() {
     setValue("terms", transactionData.terms);
   }, [transactionData, setValue]);
   return (
-    <section className="flex flex-col w-full h-full">
-      <h1 className="font-bold text-lg">Terms and Agreement</h1>
+    <section className="flex flex-col w-full h-screen">
+      <h1 className="font-bold text-lg mt-4">Terms and Agreement</h1>
       <h3>
         Everything that should determine how the transaction goes. Both parties
         must agree to this.
@@ -74,7 +74,7 @@ export default function StepThree() {
       <form
         ref={nextBtnRef}
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-5 mt-6 "
+        className="space-y-5 mt-6 h-full overflow-y-auto"
       >
         <div className="flex flex-col">
           <p className="inline-flex items-center  gap-1 font-semibold">
@@ -214,7 +214,7 @@ export default function StepThree() {
       <div className="flex justify-between w-full h-fit mt-10">
         <PrimaryButton
           onClick={() => navigate.push("generate-link?step=2")}
-          className="bg-white text-[#A21CAF] border border-[#A21CAF] text-lg w-36"
+          className="bg-white text-brand-primary border-2 cursor-pointer border-brand-primary text-lg w-36"
         >
           <span className="inline-flex gap-1 items-center ">
             <IoMdArrowBack />
@@ -224,7 +224,7 @@ export default function StepThree() {
 
         <SecondaryButton
           onClick={() => nextBtnRef.current?.requestSubmit()}
-          className="w-36 text-lg bg-[#A21CAF] text-white"
+          className="w-36 text-lg bg-brand-primary cursor-pointer text-white"
         >
           <span className="inline-flex gap-1 items-center ">
             Next <IoMdArrowBack className="rotate-180" />

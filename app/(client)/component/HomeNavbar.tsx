@@ -74,26 +74,26 @@ const HomeNavbar: React.FC = () => {
         )}
         <Button
           onClick={() => handleOpen("login")}
-          className="min-[932px]:w-[118px] min-[932px]:h-[48px] text-[#A21CAF] hover:text-[#F8FAFC] font-bold  hover w-[80px] h-[35px] border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
+          className="min-[932px]:w-[118px] min-[932px]:h-[48px] cursor-pointer text-[#A21CAF] hover:text-[#F8FAFC] font-bold  hover w-[80px] h-[35px] border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
         >
           Login
         </Button>
 
-        <AuthForm
-          open={open}
-          setOpen={handleDialogChange}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-        />
-
         <Button
           onClick={() => handleOpen("register")}
-          className="min-[932px]:w-[118px] min-[932px]:h-[48px] w-[80px] h-[35px] text-[#F8FAFC] hover:text-[#F8FAFC]  bg-[#A21CAF] rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
+          className="min-[932px]:w-[118px] min-[932px]:h-[48px] w-[80px] h-[35px] cursor-pointer text-[#F8FAFC] hover:text-[#F8FAFC]  bg-[#A21CAF] rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
         >
           Register
         </Button>
       </div>
       <RxHamburgerMenu className="hover:bg-gray-200 rounded-full p-1 text-2xl md:hidden" />
+
+      <AuthForm
+        open={open}
+        setOpen={handleDialogChange}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
     </section>
   );
 };

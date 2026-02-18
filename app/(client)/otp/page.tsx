@@ -91,7 +91,7 @@ export default function OtpPage() {
           const errorMessage = AxiosErrorHandler(error);
           toast.error(errorMessage);
         },
-      }
+      },
     );
   };
   return (
@@ -150,14 +150,13 @@ export default function OtpPage() {
           <Button
             //   onClick={handleSubmitResetPassword}
             type="submit"
-            className="w-full mt-4 text-base"
+            className="w-full mt-4 text-base text-white cursor-pointer bg-brand-primary inline-flex gap-2 items-center justify-center"
           >
-            {isPending ? (
+            Verify OTP{" "}
+            {isPending && (
               <div className="w-8 h-8">
                 <Loader />
               </div>
-            ) : (
-              "Verify OTP"
             )}
           </Button>
         </form>

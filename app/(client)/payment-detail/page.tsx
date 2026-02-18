@@ -1,6 +1,6 @@
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import PaymentHowYouPayMethodSection from "./components/PaymentHowYouPayMethodSection";
-import { getTransaction } from "../approve-transaction/[id]/DAL/getTransaction";
+import { getTransaction } from "../approve-transaction/[id]/actions/getTransaction";
 import { ITicket } from "../approve-transaction/[id]/types/ITransactionDetail";
 import { notFound } from "next/navigation";
 import NotApproveTicket from "@/app/commons/NotApproveTicket";
