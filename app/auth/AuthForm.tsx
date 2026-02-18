@@ -25,7 +25,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className=" w-[420px] h-[500px] overflow-y-auto">
+      <DialogContent className=" w-[420px] h-[500px] overflow-y-auto   bg-white">
         <div className="w-full flex flex-row items-center justify-center">
           <div className="border-b">
             <div className="flex flex-row gap-x-4 ">

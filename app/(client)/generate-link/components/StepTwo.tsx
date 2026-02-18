@@ -44,7 +44,7 @@ export default function StepTwo() {
   };
 
   const handleAttachment = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = event.target.files;
 
@@ -59,7 +59,7 @@ export default function StepTwo() {
 
       try {
         const base64Arr = await Promise.all(
-          fileArray.map((file) => fileToBase64(file))
+          fileArray.map((file) => fileToBase64(file)),
         );
         console.log("Base64 Array:", base64Arr);
         // Continue processing: e.g., save to Redux, form state, etc.
@@ -70,7 +70,7 @@ export default function StepTwo() {
         dispatch(
           setTransactionDetails({
             attachment: [...(transactionData.attachment ?? []), ...base64Arr],
-          })
+          }),
         );
       } catch (err) {
         toast.error("Error converting files");
@@ -95,10 +95,14 @@ export default function StepTwo() {
     }
     setValue(
       "transaction_description",
-      transactionData.transaction_description
+      transactionData.transaction_description,
     );
     setValue("attachment", transactionData.attachment ?? []);
   }, [setValue, transactionData]);
+
+  const handleClearFile = () => {
+    dispatch(setTransactionDetails({ ...transactionData, attachment: [] }));
+  };
   return (
     <section className="flex flex-col h-full w-full">
       <h1 className="font-bold text-lg">Transaction Details</h1>
@@ -127,29 +131,39 @@ export default function StepTwo() {
           id="description"
         />
 
-        <div>
-          <Input
-            onChange={handleAttachment}
-            type="file"
-            multiple
-            accept=".png, .jpg, .jpeg,"
-            // {...register("attachment")}
-            error={errors?.attachment && errors.attachment.message}
-            labelName="Attachment"
-            isShowLabel={true}
-          />
-          <small className="inline-flex gap-2 mt-2">
-            {filePreview.map((base64, key) => (
-              <Image
-                key={key}
-                src={base64}
-                alt=""
-                height={50}
-                width={50}
-                className="rounded-md object-contain"
-              />
-            ))}
-          </small>
+        <div className="flex justify-between ">
+          <div className="flex flex-col">
+            <Input
+              onChange={handleAttachment}
+              type="file"
+              multiple
+              accept=".png, .jpg, .jpeg,"
+              // {...register("attachment")}
+              error={errors?.attachment && errors.attachment.message}
+              labelName="Attachment"
+              isShowLabel={true}
+            />
+            <small className="inline-flex gap-2 mt-2">
+              {filePreview.map((base64, key) => (
+                <Image
+                  key={key}
+                  src={base64}
+                  alt=""
+                  height={50}
+                  width={50}
+                  className="rounded-md object-contain "
+                />
+              ))}
+            </small>
+          </div>
+
+          <button
+            onClick={handleClearFile}
+            type="button"
+            className="rounded-md text-white self-start bg-brand-secondary hover:bg-brand-secondary/80 cursor-pointer p-2"
+          >
+            Clear
+          </button>
         </div>
 
         <h2>Transaction type</h2>
@@ -188,7 +202,7 @@ export default function StepTwo() {
       <div className="flex justify-between w-full h-fit mt-10">
         <PrimaryButton
           onClick={() => navigate.push("generate-link")}
-          className="bg-white text-[#A21CAF] border border-[#A21CAF] text-lg w-36"
+          className="bg-white text-brand-primary border-2 cursor-pointer border-brand-primary text-lg w-36"
         >
           <span className="inline-flex gap-1 items-center ">
             <IoMdArrowBack />
@@ -198,7 +212,7 @@ export default function StepTwo() {
 
         <SecondaryButton
           onClick={() => nextBtnRef.current?.requestSubmit()}
-          className="w-36 text-lg bg-[#A21CAF] text-white"
+          className="w-36 text-lg bg-brand-primary cursor-pointer text-white"
         >
           <span className="inline-flex gap-1 items-center ">
             Next <IoMdArrowBack className="rotate-180" />

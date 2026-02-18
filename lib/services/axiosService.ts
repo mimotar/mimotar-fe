@@ -4,7 +4,6 @@ import axios from "axios";
 import { getSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { signOut } from "next-auth/react";
-// import { useRouter } from "next/navigation";
 
 const axiosService = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,

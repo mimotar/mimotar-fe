@@ -93,24 +93,29 @@ export default function StepFour() {
       }
     }
 
-    // ✅ Corrected attachment handling
-    const attachments = transactionData?.attachment;
+    const attachments = transactionData?.attachment as string[] | undefined;
 
-    if (attachments && Array.isArray(attachments)) {
-      for (let i = 0; i < attachments.length; i++) {
-        const base64 = attachments[i];
-
-        try {
-          const file = base64ToFile(base64, `attachment_${i}`); // optional: extract MIME to get extension
-          // console.log(file);
-          formData.append("files", file);
-        } catch (err) {
-          console.error("Error converting base64 to file:", err);
-          toast.error("Failed to process attachment.");
-          return;
-        }
-      }
+    if (attachments?.length) {
+      attachments.forEach((file) => {
+        formData.append("files", file);
+      });
     }
+
+    // if (attachments && Array.isArray(attachments)) {
+    //   for (let i = 0; i < attachments.length; i++) {
+    //     const base64 = attachments[i];
+
+    //     try {
+    //       const file = base64ToFile(base64, `attachment_${i}`); // optional: extract MIME to get extension
+    //       // console.log(file);
+    //       formData.append("files", file);
+    //     } catch (err) {
+    //       console.error("Error converting base64 to file:", err);
+    //       toast.error("Failed to process attachment.");
+    //       return;
+    //     }
+    //   }
+    // }
 
     // Debug: log all FormData entries
     Array.from(formData.entries()).forEach(([key, value]) => {
@@ -210,7 +215,7 @@ export default function StepFour() {
       <div className="flex justify-between w-full h-fit mt-10">
         <PrimaryButton
           onClick={() => navigate.push("generate-link?step=3")}
-          className="bg-white text-[#A21CAF] border border-[#A21CAF] text-lg w-36"
+          className="bg-white text-brand-primary border-2 cursor-pointer border-brand-primary text-lg w-36"
         >
           <span className="inline-flex gap-1 items-center ">
             <IoMdArrowBack />
@@ -223,7 +228,7 @@ export default function StepFour() {
           onClick={() => nextBtnRef.current?.requestSubmit()}
           className="w-36 text-lg bg-[#A21CAF] gap-1 text-white inline-flex items-center justify-center"
         >
-          <span className="inline-flex gap-1 items-center ">
+          <span className="inline-flex gap-1 items-center cursor-pointer">
             Submit
             {/* <IoMdArrowBack className="rotate-180" /> */}
           </span>

@@ -125,7 +125,7 @@ export default function StepOne() {
         <SecondaryButton
           onClick={() => nextBtnRef.current?.requestSubmit()}
           // onClick={() => navigate.push("generate-link?step=2")}
-          className="w-36 h-14 text-lg bg-[#A21CAF] text-white"
+          className="w-36 h-14 text-lg bg-brand-primary cursor-pointer text-white"
         >
           <span className="inline-flex gap-1 items-center ">
             Next <IoMdArrowBack className="rotate-180" />

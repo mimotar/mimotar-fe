@@ -115,7 +115,7 @@ const Login = () => {
           <Button
             // disabled={form.formState.isSubmitting}
             type="submit"
-            className="w-full h-10 font-bold text-neutral-50 text-xs xl:text-base"
+            className="w-full cursor-pointer h-10 font-bold text-neutral-50 bg-brand-primary text-xs xl:text-base"
           >
             {form.formState.isSubmitting ? (
               <div className="w-8 h-8">
