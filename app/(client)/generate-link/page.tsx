@@ -56,8 +56,8 @@ export default async function page({
   ];
 
   return (
-    <section className="flex flex-col h-full w-full overflow-y-auto ">
-      <div className=" flex sm:flex-row flex-col justify-between xl:gap-20 lg:gap-14 md:gap-10 ">
+    <section className="flex flex-col h-screen w-full">
+      <div className=" flex sm:flex-row h-full flex-col justify-between xl:gap-20 lg:gap-14 md:gap-10 ">
         {/* <div className="w-fit h-full overflow-y-auto"> */}
 
         <div className="flex flex-row sm:flex-col sm:h-full h-fit sm:w-[413px] w-full overflow-y-auto justify-center items-center xl:pr-14 lg:pr-7 px-4 py-14 bg-[#0F172A] text-white z-0">
@@ -98,6 +98,7 @@ export default async function page({
           </div>
         </div>
       </div>
+
       <Footer />
     </section>
   );

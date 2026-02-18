@@ -33,8 +33,8 @@ export default function StepFive() {
   };
 
   return (
-    <section className="flex flex-col w-full h-full justify-center">
-      <div className="flex flex-col justify-center items-center bg-[#F1F5F9] rounded-md py-6 space-y-2">
+    <section className="flex flex-col w-full h-full">
+      <div className="flex flex-col mt-6 justify-center items-center bg-[#F1F5F9] rounded-md py-6 space-y-2">
         <p className="font-semibold ">
           You can choose to copy the link below and paste into chat or email to
           share
@@ -109,9 +109,9 @@ export default function StepFive() {
             dispatch(resetTicketSuccessPayload());
             navigate.replace("/");
           }}
-          className="bg-white text-[#A21CAF] border border-[#A21CAF] text-lg "
+          className="bg-white text-brand-primary  cursor-pointer border border-brand-primary text-lg "
         >
-          <span className="inline-flex gap-1 items-center ">
+          <span className="inline-flex gap-1 items-center font-semibold ">
             Go to home page
           </span>
         </PrimaryButton>

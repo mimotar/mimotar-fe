@@ -64,8 +64,8 @@ export default function StepThree() {
     setValue("terms", transactionData.terms);
   }, [transactionData, setValue]);
   return (
-    <section className="flex flex-col w-full h-full">
-      <h1 className="font-bold text-lg">Terms and Agreement</h1>
+    <section className="flex flex-col w-full h-screen">
+      <h1 className="font-bold text-lg mt-4">Terms and Agreement</h1>
       <h3>
         Everything that should determine how the transaction goes. Both parties
         must agree to this.
@@ -74,7 +74,7 @@ export default function StepThree() {
       <form
         ref={nextBtnRef}
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-5 mt-6 "
+        className="space-y-5 mt-6 h-full overflow-y-auto"
       >
         <div className="flex flex-col">
           <p className="inline-flex items-center  gap-1 font-semibold">

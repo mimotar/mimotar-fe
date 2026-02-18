@@ -93,8 +93,13 @@ export default function StepFour() {
       }
     }
 
-    // ✅ Corrected attachment handling
-    const attachments = transactionData?.attachment;
+    const attachments = transactionData?.attachment as string[] | undefined;
+
+    if (attachments?.length) {
+      attachments.forEach((file) => {
+        formData.append("files", file);
+      });
+    }
 
     // if (attachments && Array.isArray(attachments)) {
     //   for (let i = 0; i < attachments.length; i++) {
