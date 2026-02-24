@@ -10,13 +10,28 @@ import ExpireTicket from "@/app/commons/ExpireTicket";
 export default async function page({
   searchParams,
 }: {
-  searchParams: { id: string };
+  searchParams: Promise<{ id: string }>;
 }) {
-  const id = searchParams.id || "";
+  const id = (await searchParams).id;
 
-  const TicketResult: ITicket = await getTransaction(id);
-  if (!TicketResult) {
+  console.log("id", id);
+
+  const TicketResult: ITicket = await getTransaction(Number(id));
+  console.log(TicketResult);
+  if (!id) {
     notFound();
+  }
+
+  if (TicketResult.status === "REJECTED") {
+    return (
+      <div className="h-36 flex flex-col justify-center items-center">
+        <h2 className="text-2xl font-semibold">Ticket Rejected</h2>
+        <p className="text-center text-black/80">
+          Unfortunately, this Ticket has been rejected. The Reason for Rejection
+          are these: <br />
+        </p>
+      </div>
+    );
   }
   if (TicketResult.status !== "APPROVED") {
     return <NotApproveTicket />;
