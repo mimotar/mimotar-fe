@@ -7,6 +7,7 @@ import { signOut } from "next-auth/react";
 
 const axiosService = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
+  // withCredentials: true,
 });
 axiosService.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -45,7 +46,11 @@ axiosService.interceptors.response.use(
       toast.error("session expired", { position: "top-right" });
       const data = await signOut({ redirect: false, callbackUrl: "/" });
       // useRouter().push(data.url);
+
+      return Promise.reject(error);
     }
+
+    return Promise.reject(error);
   },
 );
 export default axiosService;

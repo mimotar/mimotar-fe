@@ -6,12 +6,13 @@ import { AxiosError } from "axios";
 export const useMutateAction = <TData, TVariables>(
   method: "post" | "put",
   url: string,
-  options?: UseMutationOptions<TData, Error, TVariables>
+  options?: UseMutationOptions<TData, Error, TVariables>,
 ) => {
   return useMutation<TData, Error, TVariables>({
     mutationFn: async (data: TVariables) => {
       try {
         const response = await axiosService[method]<TData>(url, data);
+        console.log("response", response);
         return response.data;
       } catch (error) {
         throw error;
@@ -32,4 +33,3 @@ export const useMutateAction = <TData, TVariables>(
     ...options,
   });
 };
-// zibixe@mailinator.com

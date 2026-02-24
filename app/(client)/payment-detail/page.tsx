@@ -9,12 +9,13 @@ import ExpireTicket from "@/app/commons/ExpireTicket";
 export default async function page({
   searchParams,
 }: {
-  searchParams: { id: string };
+  searchParams: Promise<{ id: string }>;
 }) {
-  const id = searchParams.id || "";
+  const id = (await searchParams).id;
 
-  const TicketResult: ITicket = await getTransaction(id);
-  if (!TicketResult) {
+  const TicketResult: ITicket = await getTransaction(Number(id));
+  console.log("TicketResult:", TicketResult);
+  if (!id) {
     notFound();
   }
   if (TicketResult.status !== "APPROVED") {
