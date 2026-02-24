@@ -5,7 +5,7 @@ export default function NotApproveTicket() {
         Ticket not yet approved
       </h3>
       <p className="text-[#64748B] mt-2">
-        The ticket you are trying to access has not yet approved.
+        The ticket you are trying to access has not yet been approved.
       </p>
     </main>
   );

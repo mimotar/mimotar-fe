@@ -1,7 +1,4 @@
 import Info from "../../../assets/icons/info.svg";
-import jwt from "jsonwebtoken";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/authOptions";
 import { getTransaction } from "./actions/getTransaction";
 import { ITicket } from "./types/ITransactionDetail";
 import { formatDateWithOrdinal } from "@/app/utils/DatefnLib";
@@ -9,6 +6,8 @@ import AcceptRejectForm from "./components/AcceptRejectForm";
 import ExpireBoxContainer from "./components/ExpireBoxContainer";
 import { notFound } from "next/navigation";
 import { verifyTicketToken } from "./actions/VerifyToken";
+import { IVerifyTokenResponse } from "./types/IVerifyToken";
+import Image from "next/image";
 
 export default async function ApproveTransaction({
   params,
@@ -16,40 +15,16 @@ export default async function ApproveTransaction({
   params: Promise<{ id: string }>;
 }) {
   // const session = await getServerSession(authOptions);
-  const id = (await params).id;
+  const token = (await params).id;
 
-  // let decodeToken:
-  //   | string
-  //   | (jwt.JwtPayload & {
-  //       creator_email: string;
-  //       reciever_email: string;
-  //       transaction_id: number;
-  //       iat: number;
-  //       exp: number;
-  //     }) = "";
-
-  // let isInvalid = false;
-  // try {
-  //   decodeToken = jwt.verify(
-  //     id,
-  //     process.env.JWT_SECRET as string,
-  //   ) as jwt.JwtPayload & {
-  //     creator_email: string;
-  //     reciever_email: string;
-  //     transaction_id: number;
-  //     iat: number;
-  //     exp: number;
-  //   };
-  // } catch (err: any) {
-  //   isInvalid = err?.message || "token expired or web token error";
-  // }
-
-  if (!id) {
+  if (!token) {
     return notFound();
   }
 
-  const verifyUrlToken = await verifyTicketToken();
-  console.log(verifyUrlToken);
+  const verifyUrlToken = (await verifyTicketToken(
+    token,
+  )) as IVerifyTokenResponse;
+  console.log("data", verifyUrlToken);
 
   if (!verifyUrlToken) {
     return (
@@ -65,12 +40,10 @@ export default async function ApproveTransaction({
     );
   }
 
-  // const transactionId =
-  //   typeof decodeToken !== "string"
-  //     ? decodeToken.transaction_id.toString()
-  //     : "";
-
-  const TicketResult: ITicket = await getTransaction("1");
+  const TicketResult: ITicket = await getTransaction(
+    verifyUrlToken.data.transaction_id,
+  );
+  console.log("TicketResult", TicketResult);
 
   return (
     <main className="px-5 lg:px-10 2xl:px-16 py-3 grid gap-14">
@@ -183,8 +156,8 @@ export default async function ApproveTransaction({
                 <span className="flex items-center gap-1">
                   Who will pay the escrow fee?
                   <button title="Here is the information" className="">
-                    {" "}
-                    <Info />{" "}
+                    {/* <Info /> */}
+                    <Image src={Info} alt="info" width={16} height={16} />
                   </button>
                 </span>
                 <p className=" font-semibold">
@@ -196,8 +169,8 @@ export default async function ApproveTransaction({
                 <span className="flex items-center gap-1">
                   How long is the inspection period?
                   <button title="Here is the information" className="">
-                    {" "}
-                    <Info />{" "}
+                    {/* <Info />{" "} */}
+                    <Image src={Info} alt="info" width={16} height={16} />
                   </button>
                 </span>
                 <p className=" font-semibold">
@@ -208,8 +181,8 @@ export default async function ApproveTransaction({
                 <span className="flex items-center gap-1">
                   Who will pay shipping costs?
                   <button title="Here is the information" className="">
-                    {" "}
-                    <Info />{" "}
+                    {/* <Info />{" "} */}
+                    <Image src={Info} alt="info" width={16} height={16} />
                   </button>
                 </span>
                 <p className=" font-semibold">
@@ -221,7 +194,8 @@ export default async function ApproveTransaction({
                   Additional agreement
                   <button title="Here is the information" className="">
                     {" "}
-                    <Info />{" "}
+                    {/* <Info />{" "} */}
+                    <Image src={Info} alt="info" width={16} height={16} />
                   </button>
                 </span>
                 <p className=" font-semibold">

@@ -14,7 +14,7 @@ export default function PaymentHowYouPayMethodSection({ id }: { id: string }) {
   const [isChecked, setIsChecked] = useState({ type: "card", isChecked: true });
   const { mutate, isPending, isError } = useMutateAction(
     "post",
-    `payment/initialize/${id}`
+    `payment/initialize/${id}`,
   );
 
   const handlePayment = () => {
@@ -38,7 +38,7 @@ export default function PaymentHowYouPayMethodSection({ id }: { id: string }) {
               }
             } else {
               toast.error(
-                FlutterwaveData.message || "Payment initialization failed"
+                FlutterwaveData.message || "Payment initialization failed",
               );
               return;
             }
@@ -47,7 +47,7 @@ export default function PaymentHowYouPayMethodSection({ id }: { id: string }) {
             toast.error(error.message || "An error occurred during payment");
             return;
           },
-        }
+        },
       );
     }
   };
@@ -131,7 +131,7 @@ export default function PaymentHowYouPayMethodSection({ id }: { id: string }) {
 
         <PrimaryButton
           onClick={handlePayment}
-          className="w-full p-1 font-semibold inline-flex gap-2 items-center justify-center "
+          className="w-full p-1 cursor-pointer font-semibold inline-flex gap-2 items-center justify-center "
         >
           Confirm payment{" "}
           {isPending && (
