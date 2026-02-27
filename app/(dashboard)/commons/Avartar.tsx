@@ -3,16 +3,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface AvatarProps {
   imgUrl?: string;
   className: string;
+  nameAcronyms?: string;
 }
 
-export default function Avata({ className, imgUrl }: AvatarProps) {
+export default function Avata({
+  className,
+  imgUrl,
+  nameAcronyms,
+}: AvatarProps) {
   return (
     <Avatar className={className}>
-      <AvatarImage
-        src={`${imgUrl ? imgUrl : "https://github.com/shadcn.png"}`}
-      />
-      <AvatarFallback className="p-1">CN</AvatarFallback>
+      <AvatarImage src={`${imgUrl ? imgUrl : "/womanAvatar.PNG"}`} />
+      <AvatarFallback className="p-1">{imgUrl ?? nameAcronyms}</AvatarFallback>
     </Avatar>
   );
 }
-("https://github.com/shadcn.png");
