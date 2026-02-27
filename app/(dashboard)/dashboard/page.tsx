@@ -1,4 +1,4 @@
-import PrimaryButton, { PrimaryOutline } from "@/app/commons/PrimaryButtons";
+import { PrimaryOutline } from "@/app/commons/PrimaryButtons";
 import Card from "./(components)/Card";
 import ChartSession from "./(components)/ChartSession";
 import CreateTransactionSection from "./(components)/CreateTransactionSection";
@@ -6,7 +6,7 @@ import CreateTransactionSection from "./(components)/CreateTransactionSection";
 export default function page() {
   return (
     <section className="bg-white flex flex-col h-full w-full 2xl:p-10 sm:p-8 p-3 overflow-y-auto ">
-      <div className="flex justify-between items-center gap-2 flex-wrap">
+      {/* <div className="flex justify-between items-center gap-2 flex-wrap">
         <div className="flex flex-col">
           <h1 className="font-bold sm:text-2xl text-lg">
             Welcome back, Olawale
@@ -14,9 +14,9 @@ export default function page() {
           <p className="text-neutral-900 text-sm">
             Stay updated with the overview of your escrow transactions.
           </p>
-        </div>
-        <CreateTransactionSection />
-      </div>
+        </div> */}
+      <CreateTransactionSection />
+      {/* </div> */}
       {/* //https://deploy-preview-30--mimotar.netlify.app/dashboard */}
 
       <div className="grid min-[700px]:grid-cols-3 min-[500px]:grid-cols-2 grid-cols-1 gap-4 mt-6">

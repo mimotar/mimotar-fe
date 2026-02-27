@@ -14,6 +14,7 @@ import ProfileDropDown from "../dashboard/profile/component/ProfileDropDown";
 export default function DashboardNavbar() {
   const [isNotificationDropDown, setIsNotificationDropDown] = useState(false);
   const [isProfileDropdown, setIsProfileDropdown] = useState(false);
+
   return (
     <section className="flex justify-between items-center sm:p-5 p-3 bg-[#FFFFFF] gap-3">
       <div className="relative">
@@ -71,7 +72,7 @@ export default function DashboardNavbar() {
           {isProfileDropdown && (
             <ProfileDropDown
               closeDropdown={() => setIsProfileDropdown(false)}
-              className="absolute top-11 right-4 w-64"
+              className="absolute top-11 sm:right-4 -right-2 w-64"
             />
           )}
         </div>
