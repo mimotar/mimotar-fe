@@ -27,7 +27,7 @@ import { AxiosErrorHandler } from "@/app/utils/axiosErrorHandler";
 interface ILoginFormProps {
   closeModal: () => void;
 }
-const Login = () => {
+const Login = ({ closeModal }: ILoginFormProps) => {
   const navigate = useRouter();
 
   const form = useForm<Omit<AuthTypes, "firstName" | "lastName">>({
@@ -51,10 +51,9 @@ const Login = () => {
       });
       console.log(result);
       if (result?.ok && result.status == 200) {
-        // closeModal();
         navigate.push(result.url as string);
         toast.success("login successful.");
-
+        closeModal();
         return;
       }
       if (result?.error && result.status == 401) {
