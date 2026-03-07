@@ -2,13 +2,12 @@
 
 import PrimaryButton, { PrimaryOutline } from "@/app/commons/PrimaryButtons";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { setStage } from "@/lib/slices/createTransactionStateSlice";
+// import { setSecondTransactorInfo } from "@/lib/slices/createTransactionProcessDataSlice";
 import {
-  SecondTransactorInfoSchema,
-  SecondTransactorInfoSchemaType,
-  TermAndAgreementSchema,
-  TermAndAgreementSchemaType,
-} from "@/lib/schemas/createTransactionSchema";
-import { setIsOpen, setStage } from "@/lib/slices/createTransactionStateSlice";
+  resetTransactionDetails,
+  setTransactionDetails,
+} from "@/lib/slices/createTransactionslice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { IoMdArrowBack } from "react-icons/io";
@@ -16,9 +15,21 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import Image from "next/image";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { Suspense, useEffect, useState } from "react";
-import axiosService from "@/lib/services/axiosService";
-import axios from "axios";
 import { countriesCode } from "@/app/data/CountryCode";
+import { useMutateAction } from "@/app/hooks/useMutation";
+import toast from "react-hot-toast";
+import { AxiosErrorHandler } from "@/app/utils/axiosErrorHandler";
+import {
+  IStage1TicketSchema,
+  IStage4TicketSchema,
+  mergedTicketSchema,
+  stage4TicketSchema,
+} from "@/lib/schemas/CreateTransactionsSchema";
+import z from "zod";
+import { useSession } from "next-auth/react";
+import { ITicketSuccessPayload } from "@/app/types.ts/ITicketSuccessPayload";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { createTicketSuccessPayload } from "@/lib/slices/TicketSuccessSlice";
 
 export default function SecondTransactorInfo() {
   const [countryCode, setCountryCode] = useState<{
@@ -27,26 +38,105 @@ export default function SecondTransactorInfo() {
   }>({ flag: "https://flagcdn.com/16x12/ng.png" });
 
   const [isFlagDropdown, setIsFlagDropdown] = useState(false);
-  const getCreateTransactionStateModal = useAppSelector(
-    (state) => state.createTransactionStateModal
-  );
+  const { stepState, transactionData } = useAppSelector((state) => ({
+    stepState: state.createTransactionStateModal,
+    transactionData: state.createTransaction,
+  }));
+
+  const session = useSession();
   const dispatch = useAppDispatch();
+  const { isPending, mutate } = useMutateAction<
+    { data: ITicketSuccessPayload },
+    FormData
+  >("post", "ticket");
+
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
-  } = useForm<SecondTransactorInfoSchemaType>({
-    resolver: zodResolver(SecondTransactorInfoSchema),
-    defaultValues: {
-      countryCode: { flag: countryCode.flag },
-    },
+  } = useForm<IStage4TicketSchema>({
+    resolver: zodResolver(stage4TicketSchema),
   });
 
-  const handleNext = (data: SecondTransactorInfoSchemaType) => {
-    console.log(data);
-    dispatch(setStage(4));
+  const onSubmit = async (data: IStage4TicketSchema) => {
+    dispatch(setTransactionDetails(data));
+
+    const creatorDetail: IStage1TicketSchema = {
+      creator_fullname:
+        (session.data?.user.firstName ?? "") +
+        " " +
+        (session.data?.user?.lastName ?? ""),
+      creator_email: session.data?.user?.email as string,
+      creator_no: "082728237",
+      creator_role: "BUYER" as "SELLER" | "BUYER",
+      creator_address: "Jigbo go",
+    };
+    const mergedData = { ...transactionData, ...data, ...creatorDetail };
+    const dashboardCreateTicket = mergedTicketSchema.safeParse(mergedData);
+
+    if (!dashboardCreateTicket.success) {
+      const errorMsgObj = dashboardCreateTicket.error;
+      let errorMsg = "";
+
+      if (errorMsgObj instanceof z.ZodError) {
+        errorMsg = errorMsgObj.errors.map((err) => err.message).join(" | ");
+      }
+
+      console.log("error", errorMsg);
+      toast.error(errorMsg);
+      return;
+    }
+
+    const formData = new FormData();
+
+    // Append all fields except 'attachment'
+    for (const [key, value] of Object.entries(mergedData)) {
+      if (key !== "attachment" && value !== undefined) {
+        formData.append(key, String(value));
+      }
+    }
+
+    // const attachments = transactionData?.attachment as string[] | undefined;
+
+    // if (attachments?.length) {
+    //   attachments.forEach((file) => {
+    //     formData.append("files", file);
+    //   });
+    // }
+    Array.from(formData.entries()).forEach(([key, value]) => {
+      console.log(`${key}:`, value);
+    });
+
+    // Submit to the server
+    mutate(formData, {
+      onError: (error) => {
+        const errorObj = AxiosErrorHandler(error);
+        toast.error(errorObj);
+      },
+      onSuccess: (data) => {
+        console.log("Transaction created successfully:", data);
+        dispatch(createTicketSuccessPayload(data.data));
+        dispatch(resetTransactionDetails());
+        toast.success("Transaction created successfully!");
+
+        dispatch(setStage(4));
+      },
+    });
   };
-  console.log(errors);
+
+  useEffect(() => {
+    setValue("receiver_address", transactionData.receiver_address);
+    setValue("receiver_fullname", transactionData.receiver_fullname);
+    setValue("receiver_no", transactionData.receiver_no);
+    setValue("reciever_email", transactionData.reciever_email);
+    if (
+      transactionData.reciever_role === "BUYER" ||
+      transactionData.reciever_role === "SELLER"
+    ) {
+      setValue("reciever_role", transactionData.reciever_role);
+    }
+  }, [transactionData, setValue]);
 
   return (
     <section className="flex flex-col mx-auto sm:w-[580px] w-[95%]">
@@ -62,7 +152,7 @@ export default function SecondTransactorInfo() {
 
       <div className="flex flex-col h-full w-full mt-6">
         <form
-          onSubmit={handleSubmit(handleNext)}
+          onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col 2xl:gap-8 gap-4"
         >
           <div className="flex flex-col">
@@ -71,13 +161,15 @@ export default function SecondTransactorInfo() {
             </label>
             <input
               id="full_name"
-              {...register("full_name")}
+              {...register("receiver_fullname")}
               type="text"
               className="p-3 rounded-md border "
               placeholder="First name and Surname"
             />
-            {errors.full_name && (
-              <small className="text-red-400">{errors.full_name.message}</small>
+            {errors.receiver_fullname && (
+              <small className="text-red-400">
+                {errors.receiver_fullname.message}
+              </small>
             )}
           </div>
 
@@ -90,14 +182,16 @@ export default function SecondTransactorInfo() {
               <span className="px-2 bg-neutral-100 rounded-full">Optional</span>
             </label>
             <input
-              {...register("email")}
+              {...register("reciever_email")}
               type="email"
               id="email"
               className="p-3 rounded-md border "
               placeholder="name@email.com"
             />
-            {errors.email && (
-              <small className="text-red-400">{errors.email.message}</small>
+            {errors.reciever_email && (
+              <small className="text-red-400">
+                {errors.reciever_email.message}
+              </small>
             )}
           </div>
 
@@ -112,7 +206,7 @@ export default function SecondTransactorInfo() {
               <div className="relative sm:flex hidden justify-between items-center gap-2 border rounded-l-lg w-20 px-2">
                 <Image
                   src={countryCode.flag}
-                  {...register("countryCode.flag")}
+                  // {...register("countryCode.flag")}
                   width="20"
                   height="16"
                   alt="Ukraine"
@@ -149,23 +243,23 @@ export default function SecondTransactorInfo() {
               </div>
               <input
                 type="tel"
-                {...register("phone_number")}
+                {...register("receiver_no")}
                 id="phone_number"
                 className="p-3 outline-none border flex-grow rounded-r-lg"
                 placeholder="+234"
               />
             </div>
 
-            {errors.phone_number && (
+            {errors.receiver_no && (
               <small className="text-red-400">
-                {errors.phone_number.message}
+                {errors.receiver_no.message}
               </small>
             )}
-            {errors.countryCode?.flag && (
+            {/* {errors.countryCode?.flag && (
               <small className="text-red-400">
                 {errors.countryCode.flag.message}
               </small>
-            )}
+            )} */}
           </div>
 
           <div className="flex flex-col">
@@ -177,14 +271,16 @@ export default function SecondTransactorInfo() {
               <span className="px-2 bg-neutral-100 rounded-full">Optional</span>
             </label>
             <input
-              {...register("address")}
+              {...register("receiver_address")}
               type="text"
               id="address"
               className="p-3 rounded-md border "
               placeholder="House number, Street, Town/City, State."
             />
-            {errors.address && (
-              <small className="text-red-400">{errors.address.message}</small>
+            {errors.receiver_address && (
+              <small className="text-red-400">
+                {errors.receiver_address.message}
+              </small>
             )}
           </div>
           <div className="flex flex-col">
@@ -195,9 +291,9 @@ export default function SecondTransactorInfo() {
               <div className="inline-flex gap-2 items-center">
                 <input
                   type="radio"
-                  {...register("optionThatDesPerson")}
+                  {...register("reciever_role")}
                   id="optionThatDesPerson_buyer"
-                  value={"Buyer (100%)"}
+                  value={"BUYER"}
                   className="p-2 rounded-md border w-5 h-5 cursor-pointer accent-purple-800"
                 />
 
@@ -211,9 +307,9 @@ export default function SecondTransactorInfo() {
               <div className="inline-flex gap-2 items-center">
                 <input
                   type="radio"
-                  {...register("optionThatDesPerson")}
+                  {...register("reciever_role")}
                   id="optionThatDesPerson_seller"
-                  value="Seller (100%)"
+                  value="SELLER"
                   className="p-2 rounded-md border w-5 h-5 cursor-pointer accent-purple-800"
                 />
 
@@ -226,9 +322,9 @@ export default function SecondTransactorInfo() {
               </div>
             </div>
 
-            {errors.optionThatDesPerson && (
+            {errors.reciever_role && (
               <small className="text-red-400">
-                {errors.optionThatDesPerson.message}
+                {errors.reciever_role.message}
               </small>
             )}
           </div>
@@ -237,7 +333,7 @@ export default function SecondTransactorInfo() {
             <PrimaryOutline
               type="button"
               onClick={() => dispatch(setStage(2))}
-              className="px-6"
+              className="px-6 cursor-pointer"
             >
               <IoMdArrowBack />
               Back
@@ -245,9 +341,13 @@ export default function SecondTransactorInfo() {
 
             <PrimaryButton
               type="submit"
-              className="inline-flex w-fit h-fit justify-center items-center gap-2 px-6 py-2"
+              disabled={isPending}
+              className="inline-flex cursor-pointer w-fit h-fit justify-center items-center gap-2 px-6 py-2"
             >
-              Generate link
+              Generate link{" "}
+              {isPending && (
+                <AiOutlineLoading3Quarters className="animate-spin text-yellow-300" />
+              )}
             </PrimaryButton>
           </div>
         </form>

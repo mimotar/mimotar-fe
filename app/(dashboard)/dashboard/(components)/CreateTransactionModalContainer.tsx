@@ -15,7 +15,7 @@ export default function CreateTransactionModalContainer({
 }: CreateTransactionModalContainerProps) {
   const dispatch = useAppDispatch();
   const getCreateTransactionModalStage = useAppSelector(
-    (state) => state.createTransactionStateModal
+    (state) => state.createTransactionStateModal,
   );
 
   return (
@@ -25,7 +25,7 @@ export default function CreateTransactionModalContainer({
       }}
     >
       <section
-        className={`flex flex-col ${className} sm:min-w-[730px] h-full bg-white rounded-md shadow-md sm:p-6 p-4`}
+        className={`flex flex-col ${className} sm:min-w-[730px] h-11/12 bg-white rounded-md shadow-md sm:p-6 p-4`}
       >
         <div className="flex flex-col space-y-3 mb-10">
           <div className="flex w-[90%] mx-auto items-center justify-center">

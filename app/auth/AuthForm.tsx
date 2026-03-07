@@ -51,12 +51,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
         <div className="h-full flex flex-col items-center justify-center  w-full overflow-y-auto">
           {activeTab === "login" && (
             <div className="w-full">
-              <Login closeModal={() => setOpen(true)} />
+              <Login closeModal={() => setOpen(false)} />
             </div>
           )}
           {activeTab === "register" && (
             <div className="w-full h-full">
-              <Register closeModal={() => setOpen(true)} />
+              <Register closeModal={() => setOpen(false)} />
             </div>
           )}
         </div>

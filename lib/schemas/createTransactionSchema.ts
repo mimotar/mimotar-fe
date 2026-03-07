@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const TransactionDetailSchema = z.object({
+export const TransactionDetailSchema = z.object({
   amount: z.string().min(1, "Amount is required."),
 
   transaction_description: z
@@ -16,7 +16,6 @@ const TransactionDetailSchema = z.object({
 export type TransactionDetailSchemaType = z.infer<
   typeof TransactionDetailSchema
 >;
-export default TransactionDetailSchema;
 
 // Term And Agreement Schema
 export const TermAndAgreementSchema = z.object({
@@ -24,7 +23,7 @@ export const TermAndAgreementSchema = z.object({
     ["Buyer (100%)", "Seller (100%)", "Both (50% - 50%)"],
     {
       required_error: "You must select who will pay the escrow fee.",
-    }
+    },
   ),
   inspection_period: z
     .string()

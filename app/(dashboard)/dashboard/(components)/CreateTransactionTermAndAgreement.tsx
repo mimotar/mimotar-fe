@@ -2,33 +2,59 @@
 
 import PrimaryButton, { PrimaryOutline } from "@/app/commons/PrimaryButtons";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import {
-  TermAndAgreementSchema,
-  TermAndAgreementSchemaType,
-} from "@/lib/schemas/createTransactionSchema";
-import { setIsOpen, setStage } from "@/lib/slices/createTransactionStateSlice";
+import { setStage } from "@/lib/slices/createTransactionStateSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { IoMdArrowBack } from "react-icons/io";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
+import {
+  IStage3TicketSchema,
+  stage3TicketSchema,
+} from "@/lib/schemas/CreateTransactionsSchema";
+import { useEffect } from "react";
 
 export default function CreateTransactionTermAndAgreement() {
-  const getCreateTransactionStateModal = useAppSelector(
-    (state) => state.createTransactionStateModal
-  );
+  const { stepState, transactionData } = useAppSelector((state) => ({
+    stepState: state.createTransactionStateModal,
+    transactionData: state.createTransaction,
+  }));
   const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
-  } = useForm<TermAndAgreementSchemaType>({
-    resolver: zodResolver(TermAndAgreementSchema),
+  } = useForm<IStage3TicketSchema>({
+    resolver: zodResolver(stage3TicketSchema),
   });
-
-  const handleNext = (data: TermAndAgreementSchemaType) => {
+  console.log(errors);
+  const handleNext = (data: IStage3TicketSchema) => {
     console.log(data);
     dispatch(setStage(3));
   };
+
+  useEffect(() => {
+    setValue("additional_agreement", transactionData.additional_agreement);
+    setValue("expiresAt", transactionData.expiresAt!);
+    setValue("inspection_duration", transactionData.inspection_duration);
+    if (
+      transactionData.pay_escrow_fee === "BOTH" ||
+      transactionData.pay_escrow_fee === "BUYER" ||
+      transactionData.pay_escrow_fee === "SELLER"
+    ) {
+      setValue("pay_escrow_fee", transactionData.pay_escrow_fee);
+    }
+
+    if (
+      transactionData.pay_shipping_cost === "BOTH" ||
+      transactionData.pay_shipping_cost === "BUYER" ||
+      transactionData.pay_shipping_cost === "SELLER"
+    ) {
+      setValue("pay_shipping_cost", transactionData.pay_shipping_cost);
+    }
+
+    setValue("terms", transactionData.terms);
+  }, [transactionData, setValue]);
   return (
     <section className="flex flex-col mx-auto sm:w-[580px] w-[95%]">
       <div className="flex flex-col">
@@ -56,9 +82,9 @@ export default function CreateTransactionTermAndAgreement() {
               <div className="inline-flex gap-2 items-center">
                 <input
                   type="radio"
-                  {...register("escrowFeePayer")}
+                  {...register("pay_escrow_fee")}
                   id="escrowFeePayer_buyer"
-                  value={"Buyer (100%)"}
+                  value={"BUYER"}
                   className="p-2 rounded-md border w-5 h-5 cursor-pointer accent-purple-800"
                 />
 
@@ -72,9 +98,9 @@ export default function CreateTransactionTermAndAgreement() {
               <div className="inline-flex gap-2 items-center">
                 <input
                   type="radio"
-                  {...register("escrowFeePayer")}
+                  {...register("pay_escrow_fee")}
                   id="escrowFeePayer_seller"
-                  value="Seller (100%)"
+                  value="SELLER"
                   className="p-2 rounded-md border w-5 h-5 cursor-pointer accent-purple-800"
                 />
 
@@ -88,9 +114,9 @@ export default function CreateTransactionTermAndAgreement() {
               <div className="inline-flex gap-2 items-center">
                 <input
                   type="radio"
-                  {...register("escrowFeePayer")}
+                  {...register("pay_escrow_fee")}
                   id="escrowFeePayer_both"
-                  value="Both (50% - 50%)"
+                  value="BOTH"
                   className="p-2 rounded-md border w-5 h-5 cursor-pointer accent-purple-800"
                 />
 
@@ -103,9 +129,9 @@ export default function CreateTransactionTermAndAgreement() {
               </div>
             </div>
 
-            {errors.escrowFeePayer && (
+            {errors.pay_escrow_fee && (
               <small className="text-red-400">
-                {errors.escrowFeePayer.message}
+                {errors.pay_escrow_fee.message}
               </small>
             )}
           </div>
@@ -119,15 +145,34 @@ export default function CreateTransactionTermAndAgreement() {
             </label>
             <input
               type="text"
-              {...register("inspection_period")}
+              {...register("inspection_duration", { valueAsNumber: true })}
               id="inspection_period"
               placeholder="between 1 to 30 days"
               className="p-3 rounded-md border"
             />
-            {errors.inspection_period && (
+            {errors.inspection_duration && (
               <small className="text-red-400">
-                {errors.inspection_period.message}
+                {errors.inspection_duration.message}
               </small>
+            )}
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="expiresAt" className="text-neutral-600 font-medium">
+              Ticket Expires At?
+            </label>
+
+            <input
+              {...register("expiresAt", {
+                valueAsNumber: true,
+              })}
+              id="expiresAt"
+              className="p-3 rounded-md border"
+              placeholder="between 1 to 30 days"
+            />
+
+            {errors.expiresAt && (
+              <small className="text-red-400">{errors.expiresAt.message}</small>
             )}
           </div>
 
@@ -142,9 +187,9 @@ export default function CreateTransactionTermAndAgreement() {
               <div className="inline-flex gap-2 items-center">
                 <input
                   type="radio"
-                  {...register("shipping_cost_payer")}
+                  {...register("pay_shipping_cost")}
                   id="shippingCostPayer_buyer"
-                  value={"Buyer (100%)"}
+                  value={"BUYER"}
                   className="p-2 rounded-md border w-5 h-5 cursor-pointer accent-purple-800"
                 />
 
@@ -158,9 +203,9 @@ export default function CreateTransactionTermAndAgreement() {
               <div className="inline-flex gap-2 items-center">
                 <input
                   type="radio"
-                  {...register("shipping_cost_payer")}
+                  {...register("pay_shipping_cost")}
                   id="shippingCostPayer_seller"
-                  value=" Seller (100%)"
+                  value="SELLER"
                   className="p-2 rounded-md border w-5 h-5 cursor-pointer accent-purple-800"
                 />
 
@@ -174,9 +219,9 @@ export default function CreateTransactionTermAndAgreement() {
               <div className="inline-flex gap-2 items-center">
                 <input
                   type="radio"
-                  {...register("shipping_cost_payer")}
+                  {...register("pay_shipping_cost")}
                   id="shippingCostPayer_both"
-                  value="Both (50% - 50%)"
+                  value="BOTH"
                   className="p-2 rounded-md border w-5 h-5 cursor-pointer accent-purple-800"
                 />
 
@@ -189,9 +234,9 @@ export default function CreateTransactionTermAndAgreement() {
               </div>
             </div>
 
-            {errors.shipping_cost_payer && (
+            {errors.pay_shipping_cost && (
               <small className="text-red-400">
-                {errors.shipping_cost_payer.message}
+                {errors.pay_shipping_cost.message}
               </small>
             )}
           </div>
@@ -220,10 +265,30 @@ export default function CreateTransactionTermAndAgreement() {
             )}
           </div>
 
+          <div className="flex flex-col">
+            <label
+              htmlFor="terms"
+              className="text-neutral-600 font-medium flex items-center gap-2"
+            >
+              Term and Condition
+            </label>
+            <textarea
+              {...register("terms")}
+              rows={4}
+              id="terms"
+              placeholder="Term and Condition"
+              className="p-2 rounded-md border"
+            />
+
+            {errors.terms && (
+              <small className="text-red-400">{errors.terms.message}</small>
+            )}
+          </div>
+
           <div className="flex justify-between items-center">
             <PrimaryOutline
               onClick={() => dispatch(setStage(1))}
-              className="px-6"
+              className="px-6 cursor-pointer "
             >
               <IoMdArrowBack />
               Back
@@ -231,7 +296,7 @@ export default function CreateTransactionTermAndAgreement() {
 
             <PrimaryButton
               type="submit"
-              className="inline-flex w-fit h-fit justify-center items-center gap-2 px-6 py-2"
+              className="inline-flex  cursor-pointer w-fit h-fit justify-center items-center gap-2 px-6 py-2"
             >
               Next
               <IoMdArrowBack className="rotate-180" />
