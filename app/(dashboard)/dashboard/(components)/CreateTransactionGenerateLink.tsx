@@ -2,10 +2,19 @@ import { useRef } from "react";
 import { TbCopy } from "react-icons/tb";
 import toast from "react-hot-toast";
 import { PrimaryOutline } from "@/app/commons/PrimaryButtons";
-import { useAppDispatch } from "@/lib/hooks";
-import { setIsOpen, setStage } from "@/lib/slices/createTransactionStateSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import {
+  reset,
+  setIsOpen,
+  setStage,
+} from "@/lib/slices/createTransactionStateSlice";
+import { format } from "date-fns";
 
 export default function CreateTransactionGenerateLink() {
+  const { successTicketPayload } = useAppSelector((state) => ({
+    successTicketPayload: state.TicketSuccessPayload,
+  }));
+  console.log(successTicketPayload);
   const dispatch = useAppDispatch();
   const clipboardInputRef = useRef<HTMLInputElement>(null!);
 
@@ -33,7 +42,7 @@ export default function CreateTransactionGenerateLink() {
             ref={clipboardInputRef}
             type="text"
             name=""
-            value={"hdddbjbjwjqbw721892"}
+            value={successTicketPayload.txn_link}
             readOnly
             id=""
             className="p-3 rounded-md w-full"
@@ -50,15 +59,20 @@ export default function CreateTransactionGenerateLink() {
         <div className="grid sm:grid-cols-2 grid-cols-1 w-full mt-3">
           <div className="flex flex-col">
             <h1 className="text-neutral-500">Second transactor</h1>
-            <strong>Olawale Ade</strong>
-            <p className="text-neutral-500">olawale02@gmail.com</p>
-            <p className="text-neutral-500"> +234 813 123 2276</p>
+            <strong>{successTicketPayload?.receiver_fullname}</strong>
+            <p className="text-neutral-500">
+              {successTicketPayload?.reciever_email}
+            </p>
+            <p className="text-neutral-500">
+              {" "}
+              {successTicketPayload?.receiver_no}
+            </p>
           </div>
           <div className="flex flex-col">
             <h1 className="text-neutral-500">Transaction description</h1>
 
             <p className="text-neutral-500">
-              Purchase of a HP Elitebook 820 UK-used laptop
+              {successTicketPayload?.transaction_description}
             </p>
           </div>
         </div>
@@ -67,11 +81,15 @@ export default function CreateTransactionGenerateLink() {
           <div className="flex flex-col">
             <h1 className="text-neutral-500">Transaction ID</h1>
 
-            <p className="text-neutral-500"> 60024321</p>
+            <p className="text-neutral-500"> {successTicketPayload?.id}</p>
           </div>
           <div className="flex flex-col">
             <h1 className="text-neutral-500">Amount</h1>
-            <p className="text-neutral-500">NGN 340,000</p>
+            <p className="text-neutral-500">
+              {" "}
+              {successTicketPayload.currency || ""}{" "}
+              {successTicketPayload.amount}
+            </p>
           </div>
         </div>
 
@@ -79,7 +97,15 @@ export default function CreateTransactionGenerateLink() {
           <div className="flex flex-col">
             <h1 className="text-neutral-500">Date</h1>
 
-            <p className="text-neutral-500"> 5th June 2024</p>
+            <p className="text-neutral-500">
+              {" "}
+              {successTicketPayload?.created_at
+                ? format(
+                    new Date(successTicketPayload?.created_at),
+                    "do MMMM yyyy",
+                  )
+                : ""}
+            </p>
           </div>
         </div>
       </div>
@@ -87,11 +113,8 @@ export default function CreateTransactionGenerateLink() {
       <div className="flex justify-end items-center mt-4">
         <PrimaryOutline
           type="button"
-          onClick={() => {
-            dispatch(setIsOpen(false));
-            dispatch(setStage(0));
-          }}
-          className="px-6 text-[#A21CAF]"
+          onClick={() => dispatch(reset())}
+          className="px-6 text-[#A21CAF] cursor-pointer"
         >
           Finish
         </PrimaryOutline>

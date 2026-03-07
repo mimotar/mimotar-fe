@@ -19,8 +19,10 @@ const createTransactionStateSlice = createSlice({
     setIsOpen: (state, action: PayloadAction<boolean>) => {
       state.isOpen = action.payload;
     },
+    reset: () => initialState,
   },
 });
 
-export const { setStage, setIsOpen } = createTransactionStateSlice.actions;
+export const { setStage, setIsOpen, reset } =
+  createTransactionStateSlice.actions;
 export default createTransactionStateSlice.reducer;
