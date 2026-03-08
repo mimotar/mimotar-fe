@@ -1,7 +1,5 @@
 import CreateTransactionSection from "./components/CreateTransactionSection";
-import TabSection from "./components/TabSection";
 import TransactionContainer from "./components/TransactionContainer";
-import TransactionTable from "./components/TransactionTab";
 
 export default function TransactionsPage() {
   return (

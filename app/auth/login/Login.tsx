@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { AuthFormSchema, LoginFormSchema } from "@/lib/schemas/loginSchema";
-import { Input, PasswordInput } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/Loader";
 import { Label } from "@/components/ui/label";
@@ -99,7 +99,12 @@ const Login = ({ closeModal }: ILoginFormProps) => {
                 <Label className="font-bold">Password</Label>
 
                 <FormControl>
-                  <PasswordInput field={field} />
+                  <Input
+                    type="password"
+                    placeholder="Enter your password"
+                    {...field}
+                    className="focus:outline-none focus:border-0"
+                  />
                 </FormControl>
                 <FormMessage />
                 <Link
