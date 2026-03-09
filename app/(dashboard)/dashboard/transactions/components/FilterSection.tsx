@@ -63,7 +63,7 @@ export default function FilterSection() {
         Filter
       </button>
       {openFilter && (
-        <div className="absolute top-10 bg-white rounded-md p-2  w-80 right-0 flex flex-col space-y-3">
+        <div className="absolute top-10 bg-white rounded-md p-2  sm:w-80 w-[90%] right-0 flex flex-col space-y-3">
           <Accordion
             type="multiple"
             className="max-w-lg"
