@@ -2,9 +2,14 @@ import {
   getCoreRowModel,
   useReactTable,
   flexRender,
+  Row,
 } from "@tanstack/react-table";
 import { ITransaction } from "../types/ITransactions";
 import { transactionColumns } from "../TableColumnDef/TransactionsColumnDef";
+import emptyIcon from "../../../../assets/svgs/NotransactionIcon.svg";
+import Image from "next/image";
+import { useState } from "react";
+import { TransactionsViewTab } from "./TransactionsViewTab";
 
 interface ITransactionsTableProps {
   data: ITransaction[];
@@ -19,6 +24,9 @@ export default function TransactionsTable({
   isError,
   error,
 }: ITransactionsTableProps) {
+  const [isView, setIsView] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Row<ITransaction>>();
   const table = useReactTable({
     data: data ?? [],
     columns: transactionColumns,
@@ -49,7 +57,7 @@ export default function TransactionsTable({
     <section className="mt-4 w-full overflow-x-auto">
       <table className="w-full border-collapse">
         {/* Header */}
-        <thead className="border-b bg-gray-50">
+        <thead className="border-b bg-[#FDF4FF]">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -73,7 +81,14 @@ export default function TransactionsTable({
         <tbody>
           {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b hover:bg-gray-50">
+              <tr
+                key={row.id}
+                onClick={() => {
+                  setSelectedTransaction(row);
+                  setIsView(true);
+                }}
+                className="odd:bg-white even:bg-[#F1F5F9] hover:bg-gray-50"
+              >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-4 py-3 text-sm">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -83,16 +98,35 @@ export default function TransactionsTable({
             ))
           ) : (
             <tr>
-              <td
-                colSpan={transactionColumns.length}
-                className="text-center py-10 text-gray-500"
-              >
-                No transactions found.
+              <td colSpan={table.getAllColumns().length}>
+                <div className="w-full flex flex-col items-center justify-center h-36">
+                  <Image
+                    src="/assets/svgs/NotransactionIcon.svg"
+                    height={64} // adjust size as needed
+                    width={64}
+                    alt="No transactions"
+                  />
+                  <p className="mt-2 text-gray-700">
+                    You don’t have any transactions yet.
+                  </p>
+                  <button
+                    type="button"
+                    className="mt-2 text-brand-primary border border-brand-primary/70 rounded-md py-1 px-3"
+                  >
+                    Start new transaction
+                  </button>
+                </div>
               </td>
             </tr>
           )}
         </tbody>
       </table>
+
+      <TransactionsViewTab
+        open={isView}
+        setOpen={setIsView}
+        data={selectedTransaction}
+      />
     </section>
   );
 }

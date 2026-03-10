@@ -1,5 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ITransaction } from "../types/ITransactions";
+import { TbRefreshAlert } from "react-icons/tb";
 
 export const transactionColumns: ColumnDef<ITransaction>[] = [
   {
@@ -69,22 +70,19 @@ export const transactionColumns: ColumnDef<ITransaction>[] = [
       return date.toLocaleDateString();
     },
   },
-  {
-    accessorKey: "txn_link",
-    header: "Link",
-    cell: ({ row }) => {
-      const link = row.getValue<string>("txn_link");
 
+  {
+    header: "Action",
+    cell: ({ row }) => {
+      const status = row.getValue<string>("status");
+
+      // if (status === "ONGOING") {
       return (
-        <a
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 underline"
-        >
-          View
-        </a>
+        <TbRefreshAlert className="text-brand-primary/70 w-5 h-5 cursor" />
       );
+      // }
+
+      // return null;
     },
   },
 ];
