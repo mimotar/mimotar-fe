@@ -4,10 +4,15 @@ import { useState } from "react";
 import FilterSection from "./FilterSection";
 import TransactionsTable from "./TransactionsTable";
 import { useFetch } from "@/app/hooks/useFetch";
-import { TransactionsResponse } from "../types/ITransactions";
+import { ITransaction, TransactionsResponse } from "../types/ITransactions";
+import { DisputeForm } from "./DisputeForm";
+import { Row } from "@tanstack/react-table";
 
 export default function TransactionTab() {
-  const [open, setOpen] = useState(false);
+  const [openDispute, setOpenDispute] = useState(false);
+  const [selectedDispute, setSelectedDispute] = useState<
+    Row<ITransaction> | undefined
+  >(undefined);
 
   const { data, isLoading, isError, error } = useFetch<
     TransactionsResponse,
@@ -23,6 +28,14 @@ export default function TransactionTab() {
         isLoading={isLoading}
         isError={isError}
         error={error}
+        setOpenDispute={setOpenDispute}
+        setSelectedDispute={setSelectedDispute}
+      />
+
+      <DisputeForm
+        open={openDispute}
+        setOpen={setOpenDispute}
+        transaction={selectedDispute}
       />
     </section>
   );

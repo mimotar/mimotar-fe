@@ -5,17 +5,19 @@ import {
   Row,
 } from "@tanstack/react-table";
 import { ITransaction } from "../types/ITransactions";
-import { transactionColumns } from "../TableColumnDef/TransactionsColumnDef";
-import emptyIcon from "../../../../assets/svgs/NotransactionIcon.svg";
+import { transactionColumnsFn } from "../TableColumnDef/TransactionsColumnDef";
 import Image from "next/image";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { TransactionsViewTab } from "./TransactionsViewTab";
+import { Images } from "@/app/Images";
 
 interface ITransactionsTableProps {
   data: ITransaction[];
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
+  setOpenDispute: Dispatch<SetStateAction<boolean>>;
+  setSelectedDispute: Dispatch<SetStateAction<Row<ITransaction> | undefined>>;
 }
 
 export default function TransactionsTable({
@@ -23,10 +25,20 @@ export default function TransactionsTable({
   isLoading,
   isError,
   error,
+  setOpenDispute,
+  setSelectedDispute,
 }: ITransactionsTableProps) {
   const [isView, setIsView] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<Row<ITransaction>>();
+
+  const handleSetSelectedDispute = (row: Row<ITransaction>) => {
+    setOpenDispute(true);
+    setSelectedDispute(row);
+  };
+
+  const transactionColumns = transactionColumnsFn(handleSetSelectedDispute);
+
   const table = useReactTable({
     data: data ?? [],
     columns: transactionColumns,
@@ -87,7 +99,7 @@ export default function TransactionsTable({
                   setSelectedTransaction(row);
                   setIsView(true);
                 }}
-                className="odd:bg-white even:bg-[#F1F5F9] hover:bg-gray-50"
+                className="odd:bg-white cursor-pointer even:bg-[#F1F5F9] hover:bg-gray-50"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-4 py-3 text-sm">
@@ -99,19 +111,19 @@ export default function TransactionsTable({
           ) : (
             <tr>
               <td colSpan={table.getAllColumns().length}>
-                <div className="w-full flex flex-col items-center justify-center h-36">
+                <div className="w-full flex flex-col items-center justify-center py-16">
                   <Image
-                    src="/assets/svgs/NotransactionIcon.svg"
-                    height={64} // adjust size as needed
-                    width={64}
+                    src={Images.NoDataTransactionImg}
+                    height={100} // adjust size as needed
+                    width={100}
                     alt="No transactions"
                   />
-                  <p className="mt-2 text-gray-700">
+                  <p className="mt-2 text-neutral-600">
                     You don’t have any transactions yet.
                   </p>
                   <button
                     type="button"
-                    className="mt-2 text-brand-primary border border-brand-primary/70 rounded-md py-1 px-3"
+                    className="mt-5 text-brand-primary border border-brand-primary/70 rounded-md py-1 px-3"
                   >
                     Start new transaction
                   </button>

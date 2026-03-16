@@ -7,6 +7,10 @@ export const Images = {
   banner: new URL("./assets/png/banner.png", import.meta.url).href,
   transactionStepImg: new URL(
     "./assets/png/transactionStepImg.png",
-    import.meta.url
+    import.meta.url,
+  ).href,
+  NoDataTransactionImg: new URL(
+    "./assets/png/NotransactionImg.png",
+    import.meta.url,
   ).href,
 };

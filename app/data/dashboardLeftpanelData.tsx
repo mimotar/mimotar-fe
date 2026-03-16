@@ -1,4 +1,5 @@
 import DiceIcon from "../svgIconComponent/DiceIcon";
+import { MdDashboard } from "react-icons/md";
 import HelpOutlineIcon from "../svgIconComponent/Help_outlineIcon";
 import TransactionIcon from "../svgIconComponent/TransactionIcon";
 import { IoSettingsSharp } from "react-icons/io5";
@@ -6,7 +7,7 @@ import { IoSettingsSharp } from "react-icons/io5";
 export const dashboardLeftPanelData = [
   {
     label: "Overview",
-    icon: <DiceIcon className="size-4" />,
+    icon: <MdDashboard className="size-4" />,
     link: "/dashboard",
   },
   {
