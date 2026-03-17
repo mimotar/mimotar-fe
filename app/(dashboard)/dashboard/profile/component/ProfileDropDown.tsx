@@ -44,7 +44,7 @@ export default function ProfileDropDown({
           navigate.push("/dashboard/profile");
         }}
         type="button"
-        className="text-primary outline-none text-start py-2 px-4"
+        className="text-primary outline-none cursor-pointer text-start py-2 px-4"
       >
         My profile
       </button>

@@ -1,8 +1,7 @@
-import DiceIcon from "../svgIconComponent/DiceIcon";
 import { MdDashboard } from "react-icons/md";
 import HelpOutlineIcon from "../svgIconComponent/Help_outlineIcon";
-import TransactionIcon from "../svgIconComponent/TransactionIcon";
 import { IoSettingsSharp } from "react-icons/io5";
+import { TbArrowsDoubleNwSe } from "react-icons/tb";
 
 export const dashboardLeftPanelData = [
   {
@@ -12,7 +11,7 @@ export const dashboardLeftPanelData = [
   },
   {
     label: "Transactions",
-    icon: <TransactionIcon className="size-4" />,
+    icon: <TbArrowsDoubleNwSe className="size-4 -rotate-45" />,
     link: "/dashboard/transactions",
   },
   {
