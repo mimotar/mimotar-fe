@@ -9,12 +9,12 @@ export default function page() {
     <section className="flex flex-col bg-white h-full w-full p-5 overflow-y-auto">
       <h1 className="font-bold text-2xl">Profile</h1>
 
-      <div className="border rounded-md py-6 px-3 mt-4 flex flex-col ">
-        <div className="inline-flex sm:flex-row flex-col gap-4 sm:items-center">
+      <div className="border border-neutral-200 rounded-md py-6 px-3 mt-4 flex flex-col ">
+        <div className="inline-flex sm:flex-row flex-col gap-6 sm:items-center">
           <h1 className="font-bold text-neutral-900">Personal information</h1>
           <Link
             href={"profile/edit"}
-            className="inline-flex  gap-1 items-center text-primary font-semibold"
+            className="inline-flex  gap-1 items-center text-primary font-semibold text-brand-primary"
           >
             Edit info <MdEdit />
           </Link>
@@ -22,12 +22,12 @@ export default function page() {
         <PersonalInfoFormSection />
       </div>
 
-      <div className="border rounded-md py-6 px-3 mt-4 flex flex-col ">
+      <div className="border border-neutral-200 rounded-md py-6 px-3 mt-4 flex flex-col ">
         <div className="inline-flex sm:flex-row flex-col gap-4 sm:items-center">
           <h1 className="font-bold text-neutral-900">Password management</h1>
           <Link
             href={"profile/edit-password"}
-            className="inline-flex  gap-1 items-center text-primary font-semibold"
+            className="inline-flex  gap-1 items-center text-primary font-semibold text-brand-primary"
           >
             Edit password <MdEdit />
           </Link>

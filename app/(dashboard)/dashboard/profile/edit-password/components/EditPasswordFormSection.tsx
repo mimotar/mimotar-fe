@@ -1,10 +1,12 @@
 "use client";
 
+import PrimaryButton, { PrimaryOutline } from "@/app/commons/PrimaryButtons";
 import editPasswordSchema, {
   EditPasswordSchemaType,
 } from "@/lib/schemas/editPasswordSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { forwardRef, Suspense, useState } from "react";
+import { useRouter } from "next/navigation";
+import { forwardRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { LuEye } from "react-icons/lu";
@@ -15,7 +17,8 @@ type PasswordVisibility = {
   newPassword: boolean;
 };
 
-const EditPasswordFormSection = forwardRef<HTMLFormElement>((props, ref) => {
+const EditPasswordFormSection = () => {
+  const navigate = useRouter();
   const [passwordVisibility, setPasswordVisibility] =
     useState<PasswordVisibility>({
       confirmPassword: false,
@@ -38,7 +41,6 @@ const EditPasswordFormSection = forwardRef<HTMLFormElement>((props, ref) => {
   return (
     <section className="flex flex-col mt-3 ">
       <form
-        ref={ref}
         onSubmit={handleSubmit(handleSubmitEditPassword)}
         className="space-y-4"
       >
@@ -52,7 +54,7 @@ const EditPasswordFormSection = forwardRef<HTMLFormElement>((props, ref) => {
               {...register("currentPassword")}
               id="current_password"
               placeholder={passwordVisibility.currentPassword ? "" : "********"}
-              className="border p-3 outline-none rounded-md  placeholder:text-neutral-900 placeholder:text-sm"
+              className="border border-neutral-400 p-3 outline-none rounded-md  placeholder:text-neutral-900 placeholder:text-sm"
             />
             {errors.currentPassword && (
               <small className="text-red-400">
@@ -80,7 +82,7 @@ const EditPasswordFormSection = forwardRef<HTMLFormElement>((props, ref) => {
               id="new_password"
               {...register("newPassword")}
               placeholder={passwordVisibility.newPassword ? "" : "********"}
-              className="border p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
             />
             <LuEye
               className="absolute top-10 right-3 cursor-pointer"
@@ -107,7 +109,7 @@ const EditPasswordFormSection = forwardRef<HTMLFormElement>((props, ref) => {
               id="confirm_new_password"
               {...register("confirmPassword")}
               placeholder={passwordVisibility.confirmPassword ? "" : "********"}
-              className="border p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
             />
             <LuEye
               className="absolute top-10 right-3 cursor-pointer"
@@ -125,10 +127,22 @@ const EditPasswordFormSection = forwardRef<HTMLFormElement>((props, ref) => {
             )}
           </div>
         </div>
+
+        <div className="flex justify-center items-center gap-4 mt-6">
+          <PrimaryButton className="text-white cursor-pointer w-32 h-14">
+            Saves
+          </PrimaryButton>
+          <PrimaryOutline
+            onClick={() => navigate.push("/dashboard/profile")}
+            className="text-primary w-32 h-14 cursor-pointer"
+          >
+            Cancel
+          </PrimaryOutline>
+        </div>
       </form>
     </section>
   );
-});
+};
 
 EditPasswordFormSection.displayName = "EditPasswordFormSection";
 export default EditPasswordFormSection;
