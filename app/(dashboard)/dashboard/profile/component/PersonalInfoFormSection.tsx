@@ -1,14 +1,16 @@
 "use client";
 
-import Image from "next/image";
-import { Suspense, useState } from "react";
-import { RiArrowDropDownLine } from "react-icons/ri";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
+import phoneInputStyle from "../css.module/phoneNumberStyle.module.css";
 
 export default function PersonalInfoFormSection() {
-  const [countryCode, setCountryCode] = useState<{
-    code?: string;
-    flag: string;
-  }>({ flag: "https://flagcdn.com/16x12/ng.png" });
+  const { data: session } = useSession();
+
+  const fullname =
+    `${session?.user?.firstName ?? ""} ${session?.user?.lastName ?? ""}`.trim();
 
   const [isFlagDropdown, setIsFlagDropdown] = useState(false);
   return (
@@ -21,11 +23,11 @@ export default function PersonalInfoFormSection() {
           <input
             type="text"
             id="first_name"
+            value={fullname}
             readOnly
-            placeholder="Olawale Ade"
+            placeholder="first name"
             className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
           />
-          <small className="text-red-400"></small>
         </div>
 
         <div className="flex flex-col ">
@@ -35,39 +37,31 @@ export default function PersonalInfoFormSection() {
           <input
             type="email"
             id="email"
+            value={session?.user.email}
             readOnly
-            placeholder="olawaleade@gmail.com"
+            placeholder="mail"
             className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
           />
-          <small className="text-red-400"></small>
         </div>
       </div>
       <div className="grid sm:grid-cols-2 grid-cols-1 gap-6">
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full">
           <label
             htmlFor="phone_number"
             className="text-neutral-600 inline-flex gap-2"
           >
             Phone number
           </label>
-          <div className="inline-flex">
-            <div className="relative flex  justify-between items-center gap-2 border rounded-l-lg w-20 px-2">
-              <Image
-                src={countryCode.flag}
-                width="35"
-                height="35"
-                sizes="100vw"
-                alt="Ukraine"
-              />
-
-              <RiArrowDropDownLine className={`text-3xl cursor-pointer `} />
-            </div>
-            <input
-              type="tel"
-              id="phone_number"
+          <div className={phoneInputStyle.wrapperStyle}>
+            <PhoneInput
               readOnly
-              className="p-3 bg-neutral-200 outline-none border w-full rounded-r-lg"
-              placeholder="+234"
+              international
+              defaultCountry="NG"
+              id="phone_number"
+              placeholder="Enter phone number"
+              value={""}
+              onChange={(e) => ""}
+              // className="custom-phone-input bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
             />
           </div>
         </div>
@@ -80,7 +74,7 @@ export default function PersonalInfoFormSection() {
             type="text"
             id="address"
             readOnly
-            placeholder="13 Washington Square South"
+            placeholder="address"
             className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
           />
           <small className="text-red-400"></small>
@@ -96,7 +90,7 @@ export default function PersonalInfoFormSection() {
             type="text"
             id="city"
             readOnly
-            placeholder="Abeokuta"
+            placeholder="city"
             className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
           />
           <small className="text-red-400"></small>
@@ -110,7 +104,7 @@ export default function PersonalInfoFormSection() {
             type="text"
             id="country"
             readOnly
-            placeholder="Nigeria"
+            placeholder="country"
             className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
           />
           <small className="text-red-400"></small>
@@ -125,7 +119,7 @@ export default function PersonalInfoFormSection() {
             type="text"
             id="postal_code"
             readOnly
-            placeholder="110222"
+            placeholder="postal code"
             className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
           />
           <small className="text-red-400"></small>

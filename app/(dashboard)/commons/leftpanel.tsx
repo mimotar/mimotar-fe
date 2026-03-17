@@ -14,11 +14,11 @@ export default function LeftPanel() {
           key={i}
           className={`flex items-center gap-2 rounded-md  ${
             location === data.link
-              ? "font-bold text-primary"
+              ? "font-bold text-brand-primary"
               : "text-neutral-900"
           }`}
         >
-          <span>{data.icon}</span> {data.label}
+          {data.icon} {data.label}
         </Link>
       ))}
 

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { AuthTypes } from "@/lib/types/AuthTypes";
 import { AuthFormSchema, IAuthFormSchema } from "@/lib/schemas/loginSchema";
-import { Input, PasswordInput } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/Loader";
 import { Label } from "@/components/ui/label";
@@ -138,7 +138,13 @@ const Register = ({ closeModal }: IRegisterFormProps) => {
                 <Label className="font-bold">Password</Label>
 
                 <FormControl>
-                  <PasswordInput field={field} />
+                  {/* <PasswordInput field={field} /> */}
+
+                  <Input
+                    placeholder="email@gmail.com"
+                    {...field}
+                    className="focus:outline-none focus:border-0"
+                  />
                 </FormControl>
                 <FormMessage className="text-red-500" />
               </FormItem>
