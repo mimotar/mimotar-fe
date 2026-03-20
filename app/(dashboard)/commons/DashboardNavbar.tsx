@@ -5,7 +5,7 @@ import { IoIosNotifications } from "react-icons/io";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Avata from "./Avartar";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import NotificationDropDown from "./NotificationDropDown";
 import AvatarAndContentCard from "./AvartarAndContentCard";
 import { notificationData } from "@/app/data/notificationData";
@@ -45,9 +45,9 @@ export default function DashboardNavbar() {
             dataLength={notificationData.length}
           >
             {notificationData.map((notification, i) => (
-              <>
+              <Fragment key={i}>
                 <AvatarAndContentCard
-                  key={i}
+                  // key={i}
                   content={notification.content}
                   date={notification.createdAt}
                   imgUrl={notification.imgUrl}
@@ -56,7 +56,7 @@ export default function DashboardNavbar() {
                 />
 
                 <hr />
-              </>
+              </Fragment>
             ))}
           </NotificationDropDown>
         </span>
