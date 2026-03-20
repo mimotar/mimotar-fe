@@ -1,5 +1,5 @@
 import { MdDashboard } from "react-icons/md";
-import HelpOutlineIcon from "../svgIconComponent/Help_outlineIcon";
+import { IoMdHelpCircleOutline } from "react-icons/io";
 import { IoSettingsSharp } from "react-icons/io5";
 import { TbArrowsDoubleNwSe } from "react-icons/tb";
 
@@ -16,7 +16,7 @@ export const dashboardLeftPanelData = [
   },
   {
     label: "Help",
-    icon: <HelpOutlineIcon className="size-5" />,
+    icon: <IoMdHelpCircleOutline className="size-5" />,
     link: "/dashboard/help",
   },
   {

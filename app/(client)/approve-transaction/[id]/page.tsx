@@ -157,7 +157,7 @@ export default async function ApproveTransaction({
                   Who will pay the escrow fee?
                   <button title="Here is the information" className="">
                     {/* <Info /> */}
-                    <Image src={Info} alt="info" width={16} height={16} />
+                    {/* <Image src={Info} alt="info" width={16} height={16} /> */}
                   </button>
                 </span>
                 <p className=" font-semibold">
@@ -170,7 +170,7 @@ export default async function ApproveTransaction({
                   How long is the inspection period?
                   <button title="Here is the information" className="">
                     {/* <Info />{" "} */}
-                    <Image src={Info} alt="info" width={16} height={16} />
+                    {/* <Image src={Info} alt="info" width={16} height={16} /> */}
                   </button>
                 </span>
                 <p className=" font-semibold">
@@ -182,7 +182,7 @@ export default async function ApproveTransaction({
                   Who will pay shipping costs?
                   <button title="Here is the information" className="">
                     {/* <Info />{" "} */}
-                    <Image src={Info} alt="info" width={16} height={16} />
+                    {/* <Image src={Info} alt="info" width={16} height={16} /> */}
                   </button>
                 </span>
                 <p className=" font-semibold">
@@ -195,7 +195,7 @@ export default async function ApproveTransaction({
                   <button title="Here is the information" className="">
                     {" "}
                     {/* <Info />{" "} */}
-                    <Image src={Info} alt="info" width={16} height={16} />
+                    {/* <Image src={Info} alt="info" width={16} height={16} /> */}
                   </button>
                 </span>
                 <p className=" font-semibold">
