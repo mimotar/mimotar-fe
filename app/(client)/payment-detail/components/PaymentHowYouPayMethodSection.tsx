@@ -9,17 +9,23 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { SiVisa } from "react-icons/si";
 import { FlutterwaveCheckoutResponse } from "../type/IPaymentPayload";
+import { AxiosError } from "axios";
 
 export default function PaymentHowYouPayMethodSection({ id }: { id: string }) {
   const [isChecked, setIsChecked] = useState({ type: "card", isChecked: true });
-  const { mutate, isPending, isError } = useMutateAction(
-    "post",
-    `payment/initialize/${id}`,
-  );
+  const { mutate, isPending, isError } = useMutateAction<
+    FlutterwaveCheckoutResponse,
+    any
+  >("post", `payment/initialize/${id}`);
 
   const handlePayment = () => {
-    if (!isChecked.isChecked) {
-      toast.error("Please select a payment method");
+    // if (!isChecked.isChecked) {
+    //   toast.error("Please select a payment method");
+    //   return;
+    // }
+
+    if (!id) {
+      toast.error("Invalid payment process");
       return;
     }
     if (isChecked.type === "card") {
@@ -27,7 +33,7 @@ export default function PaymentHowYouPayMethodSection({ id }: { id: string }) {
         {},
         {
           onSuccess: (data) => {
-            const FlutterwaveData = data as FlutterwaveCheckoutResponse;
+            const FlutterwaveData = data;
             console.log(data);
             if (FlutterwaveData.status === "success") {
               if (FlutterwaveData.data && FlutterwaveData.data.link) {
@@ -44,8 +50,18 @@ export default function PaymentHowYouPayMethodSection({ id }: { id: string }) {
             }
           },
           onError: (error) => {
-            toast.error(error.message || "An error occurred during payment");
-            return;
+            if (error instanceof AxiosError) {
+              toast.error(
+                error.response?.data?.message ||
+                  "An error occurred during payment",
+              );
+              return;
+            }
+            if (error instanceof Error) {
+              toast.error(error.message || "An error occurred during payment");
+              return;
+            }
+            toast.error("An error occurred during payment");
           },
         },
       );
@@ -57,7 +73,7 @@ export default function PaymentHowYouPayMethodSection({ id }: { id: string }) {
         How do you want to pay?
       </h1>
       <div className="flex flex-col gap-4 p-4 bg-[#F1F5F9]">
-        <div
+        {/* <div
           className={`flex border justify-between items-center rounded-md  p-2 ${
             isChecked.type === "card" && isChecked.isChecked
               ? " border border-[#F0ABFC]  bg-[#FDF4FF]"
@@ -90,9 +106,9 @@ export default function PaymentHowYouPayMethodSection({ id }: { id: string }) {
               className="size-4 rounded-md  accent-[#A21CAF]"
             />
           </div>
-        </div>
+        </div> */}
 
-        <div
+        {/* <div
           className={`flex  border justify-between items-center rounded-md  p-2 ${
             isChecked.type === "transfer" && isChecked.isChecked
               ? "border border-[#F0ABFC]  bg-[#FDF4FF]"
@@ -127,7 +143,7 @@ export default function PaymentHowYouPayMethodSection({ id }: { id: string }) {
               className="size-4 rounded-md  accent-[#A21CAF]"
             />
           </div>
-        </div>
+        </div> */}
 
         <PrimaryButton
           onClick={handlePayment}
