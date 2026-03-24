@@ -25,6 +25,3 @@ export const dashboardLeftPanelData = [
     link: "/dashboard/settings",
   },
 ];
-
-// Keep backward compatibility with older import name.
-export const constdashboardLeftPanelData = dashboardLeftPanelData;
