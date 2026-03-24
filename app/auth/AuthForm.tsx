@@ -25,7 +25,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className=" w-[420px] h-[500px] overflow-y-auto   bg-white">
+      <DialogContent className="sm:w-[420px] w-[90%] h-[500px]  overflow-y-auto sm:p-6 p-2  bg-white">
         <div className="w-full flex flex-row items-center justify-center">
           <div className="border-b">
             <div className="flex flex-row gap-x-4 ">
@@ -48,7 +48,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
           </div>
         </div>
 
-        <div className="h-full flex flex-col items-center justify-center  w-full overflow-y-auto">
+        <div className="h-full flex flex-col items-center justify-center  w-full overflow-y-auto p-2">
           {activeTab === "login" && (
             <div className="w-full">
               <Login closeModal={() => setOpen(false)} />

@@ -68,7 +68,7 @@ const Login = ({ closeModal }: ILoginFormProps) => {
   };
 
   return (
-    <div className=" h-full gap-y-4 p- xl:p-4 flex flex-col  items-center">
+    <div className=" h-full gap-y-4 xl:p-4 flex flex-col  items-center">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

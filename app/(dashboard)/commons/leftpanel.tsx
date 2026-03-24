@@ -4,19 +4,30 @@ import { dashboardLeftPanelData } from "@/app/data/dashboardLeftpanelData";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function LeftPanel() {
+interface LeftPanelProps {
+  className?: string;
+  linkClassName?: string;
+  onNavigate?: () => void;
+}
+
+export default function LeftPanel({
+  className,
+  linkClassName,
+  onNavigate,
+}: LeftPanelProps) {
   const location = usePathname();
   return (
-    <section className="flex flex-col space-y-5 p-5 ">
-      {dashboardLeftPanelData.map((data, i) => (
+    <section className={`flex flex-col space-y-5 p-5 ${className ?? ""}`}>
+      {dashboardLeftPanelData.map((data) => (
         <Link
           href={data.link}
-          key={i}
-          className={`flex items-center gap-2 rounded-md  ${
+          key={data.link}
+          onClick={onNavigate}
+          className={`flex items-center gap-2 rounded-md ${
             location === data.link
               ? "font-bold text-brand-primary"
               : "text-neutral-900"
-          }`}
+          } ${linkClassName ?? ""}`}
         >
           {data.icon} {data.label}
         </Link>
