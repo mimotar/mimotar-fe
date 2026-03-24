@@ -25,7 +25,7 @@ export default function NotificationDropDown({
     <section
       className={`${
         isActive ? "flex" : "hidden"
-      } flex-col w-[400px] h-[450px] overflow-y-auto rounded-md transition-all duration-1000 ${className} bg-white  shadow-md p-3`}
+      } flex-col sm:w-[400px] w-[90vw] max-w-[400px] h-[450px] overflow-y-auto rounded-md transition-all duration-1000 ${className} bg-white  shadow-md p-3`}
     >
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-semibold ">Notifications</h1>
@@ -34,9 +34,9 @@ export default function NotificationDropDown({
           onClick={() => closeDropdown}
         />
       </div>
-      <div className="flex flex-col space-y-4">
+      <div className="flex flex-col w-full space-y-4">
         {dataLength < 1 && (
-          <div className="flex flex-col justify-center items-center space-y-4">
+          <div className="flex flex-col w-full justify-center items-center space-y-4">
             <NotifyBellIcon className="w-[152px] h-[152px]" />
             <p>No notifications yet</p>
             <PrimaryButton onClick={() => navigate.push("/dashboard")}>
