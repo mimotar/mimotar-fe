@@ -55,7 +55,7 @@ const HomeNavbar: React.FC = () => {
         <LogoIcon className="text-sm md:w-auto md:h-auto w-28" />
       </Link>
 
-      <span className="md:flex hidden items-center justify-center min-[932px]:gap-10 gap-5">
+      <span className="min-[1120px]:flex hidden items-center justify-center min-[932px]:gap-10 gap-5">
         {/* <Link
           className={`text-[#0F172A] hover:font-bold md:text-base text-sm ${
             pathname === "/" ? "text-[#86198F] font-bold" : ""
@@ -86,41 +86,44 @@ const HomeNavbar: React.FC = () => {
         </Link>
       </span>
 
-      <div className="md:flex hidden items-center min-[932px]:gap-10 gap-5">
-        {data?.user && data.user.verified && (
-          <Link
-            href="/dashboard"
-            className="text-[#A21CAF]  hover:text-[#D946EF]"
+      <div className="flex items-center justify-center min-[932px]:gap-10 gap-5 ">
+        <div className="md:flex hidden items-center justify-center min-[932px]:gap-10 gap-5">
+          {data?.user && data.user.verified && (
+            <Link
+              href="/dashboard"
+              className="text-[#A21CAF]  hover:text-[#D946EF]"
+            >
+              Dashboard
+            </Link>
+          )}
+          <Button
+            onClick={() => handleOpen("login")}
+            className="min-[932px]:w-[118px] min-[932px]:h-[48px] cursor-pointer text-[#A21CAF] hover:text-[#F8FAFC] font-bold  hover w-[80px] h-[35px] border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
           >
-            Dashboard
-          </Link>
-        )}
-        <Button
-          onClick={() => handleOpen("login")}
-          className="min-[932px]:w-[118px] min-[932px]:h-[48px] cursor-pointer text-[#A21CAF] hover:text-[#F8FAFC] font-bold  hover w-[80px] h-[35px] border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
-        >
-          Login
-        </Button>
+            Login
+          </Button>
 
-        <Button
-          onClick={() => handleOpen("register")}
-          className="min-[932px]:w-[118px] min-[932px]:h-[48px] w-[80px] h-[35px] cursor-pointer text-[#F8FAFC] hover:text-[#F8FAFC]  bg-[#A21CAF] rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
+          <Button
+            onClick={() => handleOpen("register")}
+            className="min-[932px]:w-[118px] min-[932px]:h-[48px] w-[80px] h-[35px] cursor-pointer text-[#F8FAFC] hover:text-[#F8FAFC]  bg-[#A21CAF] rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
+          >
+            Register
+          </Button>
+        </div>
+
+        <button
+          aria-label="Open mobile navigation"
+          onClick={() => setIsMobileNavOpen(true)}
+          className="hover:bg-gray-200 rounded-full p-1 text-2xl min-[1120px]:hidden"
         >
-          Register
-        </Button>
+          <RxHamburgerMenu />
+        </button>
       </div>
-      <button
-        aria-label="Open mobile navigation"
-        onClick={() => setIsMobileNavOpen(true)}
-        className="hover:bg-gray-200 rounded-full p-1 text-2xl md:hidden"
-      >
-        <RxHamburgerMenu />
-      </button>
 
       <AnimatePresence>
         {isMobileNavOpen && (
           <motion.div
-            className="fixed inset-0 z-50 md:hidden"
+            className="fixed inset-0 z-50 min-[1120px]:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -152,10 +155,18 @@ const HomeNavbar: React.FC = () => {
               </div>
 
               <nav className="mt-10 flex flex-col gap-7 text-lg">
-                <Link onClick={closeMobileNav} className="text-[#0F172A]" href="/">
+                <Link
+                  onClick={closeMobileNav}
+                  className="text-[#0F172A]"
+                  href="/"
+                >
                   How it Works
                 </Link>
-                <Link onClick={closeMobileNav} className="text-[#0F172A]" href="/">
+                <Link
+                  onClick={closeMobileNav}
+                  className="text-[#0F172A]"
+                  href="/"
+                >
                   About us
                 </Link>
                 <Link
@@ -165,7 +176,11 @@ const HomeNavbar: React.FC = () => {
                 >
                   Blog
                 </Link>
-                <Link onClick={closeMobileNav} className="text-[#0F172A]" href="/">
+                <Link
+                  onClick={closeMobileNav}
+                  className="text-[#0F172A]"
+                  href="/"
+                >
                   Contact us
                 </Link>
                 {data?.user && data.user.verified && (
