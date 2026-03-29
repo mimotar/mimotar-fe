@@ -71,7 +71,13 @@ export function DisputeForm({ open, setOpen, transaction }: IDisputeFormProps) {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { isPending, mutate } = useMutateAction<any, any>("post", "dispute");
+  const { isPending, mutate } = useMutateAction<
+    {
+      message: string;
+      status: string;
+    },
+    any
+  >("post", "dispute");
 
   const {
     register,
@@ -190,17 +196,19 @@ export function DisputeForm({ open, setOpen, transaction }: IDisputeFormProps) {
       mutate(payload, {
         onError: (error) => {
           if (error instanceof AxiosError) {
-            toast.error(error.response?.data?.message || "");
+            toast.error(
+              error.response?.data?.message || "Error submitting dispute",
+            );
             return;
           }
           if (error instanceof Error) {
-            toast.error(error.message || "");
+            toast.error(error.message || "Error submitting dispute");
             return;
           }
         },
 
         onSuccess: (data) => {
-          toast.success(data.message || "");
+          toast.success(data.message || "Dispute created successfully");
           setOpen(false);
           reset();
         },

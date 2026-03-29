@@ -64,6 +64,7 @@ export const transactionColumnsFn = (
           CREATED: "text-brand-primary bg-brand-primary/10",
           REJECTED: "text-red-600 bg-red-100",
           APPROVED: "text-green-600 bg-green-100",
+          ONGOING: "text-amber-600 bg-amber-100",
         };
 
         return (
@@ -91,32 +92,32 @@ export const transactionColumnsFn = (
       cell: ({ row }) => {
         const status = row.getValue<string>("status");
 
-        // if (status === "ONGOING") {
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="default" className="cursor-pointer">
-                <TbRefreshAlert className="text-brand-primary/70 w-5 h-5 cursor" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                <DropdownMenuLabel
-                  className="cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpenDispute(
-                      row.original as unknown as Row<ITransaction>,
-                    );
-                  }}
-                >
-                  Open dispute
-                </DropdownMenuLabel>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-        // }
+        if (status === "ONGOING") {
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="default" className="cursor-pointer">
+                  <TbRefreshAlert className="text-brand-primary/70 w-5 h-5 cursor" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel
+                    className="cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenDispute(
+                        row.original as unknown as Row<ITransaction>,
+                      );
+                    }}
+                  >
+                    Open dispute
+                  </DropdownMenuLabel>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        }
 
         // return null;
       },

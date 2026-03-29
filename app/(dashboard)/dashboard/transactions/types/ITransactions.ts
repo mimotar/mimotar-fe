@@ -1,4 +1,4 @@
-export type TransactionStatus = "CREATED" | "APPROVED" | "REJECTED";
+export type TransactionStatus = "CREATED" | "APPROVED" | "REJECTED" | "ONGOING";
 
 export type ITransaction = {
   id: number;
