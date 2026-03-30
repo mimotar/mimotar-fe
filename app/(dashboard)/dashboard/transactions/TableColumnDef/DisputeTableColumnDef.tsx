@@ -53,9 +53,18 @@ export const disputeColumnDef: ColumnDef<IDispute>[] = [
     cell: ({ row }) => {
       const status = row.original.status;
 
-      if (status == "review" || status == "negotiation") {
+      if (
+        status == "review" ||
+        status == "negotiation" ||
+        status == "ongoing"
+      ) {
         return (
-          <BsChatLeftTextFill className="text-xl text-brand-primary cursor-pointer" />
+          <BsChatLeftTextFill
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className="text-xl text-brand-primary cursor-pointer"
+          />
         );
       }
     },

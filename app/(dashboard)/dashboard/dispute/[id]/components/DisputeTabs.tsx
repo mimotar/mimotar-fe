@@ -1,16 +1,18 @@
 import Link from "next/link";
-
 import type { DisputeTabKey } from "../types/dispute";
 
 interface DisputeTabsProps {
   activeTab: DisputeTabKey;
-  disputeId: string;
+  disputeId: number;
 }
 
-export default function DisputeTabs({ activeTab, disputeId }: DisputeTabsProps) {
-  const baseStyle = "text-[#64748B] pb-3 text-2xl font-medium";
+export default function DisputeTabs({
+  activeTab,
+  disputeId,
+}: DisputeTabsProps) {
+  const baseStyle = "text-neutral-600 pb-3 text-base font-medium";
   const activeStyle =
-    "text-brand-primary font-bold border-b-4 border-[#D946EF] pb-3 text-2xl";
+    "text-brand-primary font-bold border-b-4 border-[#D946EF] pb-3 text-base";
 
   return (
     <nav className="flex items-center gap-8 border-b border-[#CBD5E1]">

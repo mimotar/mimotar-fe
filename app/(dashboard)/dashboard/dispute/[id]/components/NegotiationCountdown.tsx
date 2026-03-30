@@ -1,21 +1,24 @@
-import type { CountdownData } from "../types/dispute";
+"use client";
+
+import { useEffect, useState } from "react";
 
 interface NegotiationCountdownProps {
-  countdown: CountdownData;
+  elapsesAt: string; // ISO date string
 }
 
-interface CountdownUnitProps {
-  value: number;
-  label: string;
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
 }
 
-function CountdownUnit({ value, label }: CountdownUnitProps) {
+function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
-    <div className="flex h-[72px] w-[72px] flex-col items-center justify-center rounded-xl border border-[#CBD5E1] bg-[#F8FAFC]">
-      <span className="text-3xl font-semibold leading-none text-[#0F172A]">
-        {String(value)}
+    <div className="flex sm:h-[72px] h-[50px] sm:w-[72px] w-[50px] flex-col items-center justify-center rounded-xl border border-[#CBD5E1] bg-[#F8FAFC]">
+      <span className="sm:text-2xl text-xl font-semibold leading-none text-[#0F172A]">
+        {String(value).padStart(2, "0")}
       </span>
-      <span className="text-[11px] font-semibold uppercase tracking-wide text-[#64748B]">
+      <span className="text-xs font-semibold sm:uppercase tracking-wide text-neutral-500">
         {label}
       </span>
     </div>
@@ -23,15 +26,40 @@ function CountdownUnit({ value, label }: CountdownUnitProps) {
 }
 
 export default function NegotiationCountdown({
-  countdown,
+  elapsesAt,
 }: NegotiationCountdownProps) {
+  const calculateTimeLeft = (): TimeLeft => {
+    const difference = new Date(elapsesAt).getTime() - new Date().getTime();
+
+    if (difference <= 0) {
+      return { days: 0, hours: 0, minutes: 0 };
+    }
+
+    return {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / (1000 * 60)) % 60),
+    };
+  };
+
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [elapsesAt]);
+
   return (
     <section className="flex flex-wrap items-center gap-4">
-      <p className="text-xl font-medium text-[#64748B]">Negotiation ends in:</p>
+      <p className="text-base  text-neutral-600">Negotiation ends in:</p>
+
       <div className="flex items-center gap-2.5">
-        <CountdownUnit value={countdown.days} label="Days" />
-        <CountdownUnit value={countdown.hours} label="Hours" />
-        <CountdownUnit value={countdown.minutes} label="Mins" />
+        <CountdownUnit value={timeLeft.days} label="Days" />
+        <CountdownUnit value={timeLeft.hours} label="Hours" />
+        <CountdownUnit value={timeLeft.minutes} label="Mins" />
       </div>
     </section>
   );

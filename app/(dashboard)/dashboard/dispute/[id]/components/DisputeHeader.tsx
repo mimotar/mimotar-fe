@@ -1,52 +1,64 @@
 import Link from "next/link";
-import { ArrowLeft, MessageSquare } from "lucide-react";
-
-import type { DisputeStatus } from "../types/dispute";
+import { ArrowLeft } from "lucide-react";
+import type { Dispute } from "../types/dispute";
 import DisputeStatusBadge from "./DisputeStatusBadge";
+import { BsChatLeftTextFill } from "react-icons/bs";
+import NegotiationCountdown from "./NegotiationCountdown";
 
 interface DisputeHeaderProps {
-  disputeId: string;
-  status: DisputeStatus;
+  disputeId: number;
+  dispute: Dispute;
 }
 
-export default function DisputeHeader({ disputeId, status }: DisputeHeaderProps) {
+export default function DisputeHeader({
+  disputeId,
+  dispute,
+}: DisputeHeaderProps) {
   return (
     <header className="flex flex-col gap-5">
       <Link
-        href="/dashboard/dispute"
+        href="/dashboard/transactions?tab=disputes"
         className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-brand-primary"
       >
         <ArrowLeft size={14} />
         <span>Back</span>
       </Link>
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <h1 className="text-4xl font-bold text-[#0F172A]">Dispute info</h1>
-        <DisputeStatusBadge status={status} />
+      <div className="flex gap-4 flex-wrap justify-between">
+        <h1 className="text-2xl w-fit font-bold text-neutral-900">
+          Dispute info
+        </h1>
+        <DisputeStatusBadge status={dispute.status} />
       </div>
 
-      <div className="flex flex-wrap items-center justify-end gap-3">
-        <button
-          type="button"
-          aria-label={`Open chat for dispute ${disputeId}`}
-          className="inline-flex h-[52px] w-[52px] items-center justify-center rounded-xl border border-[#D946EF] text-brand-primary"
-        >
-          <MessageSquare size={18} />
-        </button>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <NegotiationCountdown elapsesAt={dispute.elapsesAt} />
 
-        <button
-          type="button"
-          className="inline-flex h-[52px] min-w-[178px] items-center justify-center rounded-xl border border-[#D946EF] px-6 text-base font-semibold text-brand-primary"
-        >
-          Get assistance
-        </button>
+        <div className="flex gap-3 items-center">
+          <button
+            type="button"
+            aria-label={`Open chat for dispute ${disputeId}`}
+            className="inline-flex sm:h-[52px] sm:w-[52px] h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-xl border border-[#D946EF] text-brand-primary"
+          >
+            <BsChatLeftTextFill className="sm:text-xl text-base text-brand-primary cursor-pointer" />
+          </button>
 
-        <button
-          type="button"
-          className="inline-flex h-[52px] min-w-[190px] items-center justify-center rounded-xl bg-[#A21CAF] px-6 text-base font-semibold text-white"
-        >
-          Resolve dispute
-        </button>
+          {dispute.status === "negotiation" && (
+            <button
+              type="button"
+              className="inline-flex sm:h-[52px] h-[40px] min-w-[178px] items-center justify-center rounded-xl border border-[#D946EF] cursor-pointer px-6 sm:text-base text-sm font-semibold text-brand-primary"
+            >
+              Get assistance
+            </button>
+          )}
+
+          <button
+            type="button"
+            className="inline-flex sm:h-[52px] h-[40px] min-w-[190px] items-center justify-center rounded-xl bg-[#A21CAF] px-6 sm:text-base text-sm cursor-pointer font-semibold text-white"
+          >
+            Resolve dispute
+          </button>
+        </div>
       </div>
     </header>
   );

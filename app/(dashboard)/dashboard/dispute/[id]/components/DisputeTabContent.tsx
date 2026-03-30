@@ -1,10 +1,10 @@
-import type { DisputePageViewModel, DisputeTabKey } from "../types/dispute";
+import type { Dispute, DisputeTabKey } from "../types/dispute";
 import DetailsTabContent from "./DetailsTabContent";
 import ProgressTabContent from "./ProgressTabContent";
 
 interface DisputeTabContentProps {
   activeTab: DisputeTabKey;
-  data: DisputePageViewModel;
+  data: Dispute;
 }
 
 export default function DisputeTabContent({
@@ -12,13 +12,13 @@ export default function DisputeTabContent({
   data,
 }: DisputeTabContentProps) {
   if (activeTab === "progress") {
-    return <ProgressTabContent events={data.progressEvents} />;
+    return <ProgressTabContent />;
   }
 
   return (
     <DetailsTabContent
-      transactionSummary={data.transactionSummary}
-      disputeSummary={data.disputeSummary}
+      // transactionSummary={data.transactionSummary}
+      disputeSummary={data}
     />
   );
 }

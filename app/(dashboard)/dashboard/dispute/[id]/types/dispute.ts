@@ -1,11 +1,5 @@
 export type DisputeTabKey = "details" | "progress";
 
-export type DisputeStatus =
-  | "In Negotiation"
-  | "Dispute Opened"
-  | "Resolved"
-  | "Cancelled";
-
 export interface CountdownData {
   days: number;
   hours: number;
@@ -45,9 +39,42 @@ export interface ProgressEvent {
 
 export interface DisputePageViewModel {
   id: string;
-  status: DisputeStatus;
+  status: IDisputeStatus;
   countdown: CountdownData;
   transactionSummary: TransactionSummary;
   disputeSummary: DisputeSummary;
   progressEvents: ProgressEvent[];
+}
+
+// new one
+export type IDisputeStatus =
+  | "ongoing"
+  | "resolved"
+  | "cancelled"
+  | "review"
+  | "negotiation";
+
+export type ResolutionOption = "FULL_REPAYMENT" | "PARTIAL_REPAYMENT";
+
+export interface Dispute {
+  id: number;
+  transactionId: number;
+  status: IDisputeStatus;
+  createdAt: string;
+  elapsesAt: string;
+  chatId: number | null;
+  description: string;
+  reason: string;
+  resolutionOption: ResolutionOption;
+  evidenceUrl: string[];
+  evidenceId: number[];
+  buyerId: number;
+  sellerId: number;
+  creatorId: number;
+}
+
+export interface GetDisputeResponse {
+  message: string;
+  status: "success" | "error";
+  payload: Dispute;
 }
