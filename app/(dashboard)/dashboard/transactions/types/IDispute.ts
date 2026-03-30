@@ -7,10 +7,17 @@
 //   amount: string;
 // }
 
+export type IDisputeStatus =
+  | "ongoing"
+  | "resolved"
+  | "cancelled"
+  | "review"
+  | "negotiation";
+
 export interface IDispute {
   id: number;
   transactionId: number;
-  status: "ongoing" | "resolved" | "cancelled" | "review" | "negotiation"; // extend if needed
+  status: IDisputeStatus; // extend if needed
   createdAt: string; // ISO date
   elapsesAt: string; // ISO date
   chatId: number | null;

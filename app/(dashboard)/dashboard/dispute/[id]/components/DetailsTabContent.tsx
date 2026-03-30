@@ -1,56 +1,75 @@
-import type { DisputeSummary, TransactionSummary } from "../types/dispute";
+import Link from "next/link";
+import type { Dispute, TransactionSummary } from "../types/dispute";
 import EvidenceItem from "./EvidenceItem";
 import SummaryField from "./SummaryField";
+import { format } from "date-fns";
 
 interface DetailsTabContentProps {
-  transactionSummary: TransactionSummary;
-  disputeSummary: DisputeSummary;
+  // transactionSummary: TransactionSummary;
+  disputeSummary: Dispute;
 }
 
 export default function DetailsTabContent({
-  transactionSummary,
+  // transactionSummary,
   disputeSummary,
 }: DetailsTabContentProps) {
   return (
     <section className="mt-6 flex flex-col gap-6">
       <article className="rounded-2xl border border-[#CBD5E1] bg-white p-6">
-        <h2 className="text-4xl font-semibold text-[#1E293B]">Transaction summary</h2>
+        <h2 className="text-xl font-semibold text-[#1E293B]">
+          Transaction summary
+        </h2>
         <div className="mt-5 flex flex-wrap gap-x-8 gap-y-4">
-          <SummaryField label="Transaction ID" value={transactionSummary.transactionId} />
           <SummaryField
-            label="Transaction Date"
-            value={transactionSummary.transactionDate}
+            label="Transaction ID"
+            value={disputeSummary.transactionId.toString()}
           />
-          <SummaryField label="Seller's Name" value={transactionSummary.sellerName} />
-          <SummaryField label="Buyer's Name" value={transactionSummary.buyerName} />
-          <SummaryField
-            label="Payment Method"
-            value={transactionSummary.paymentMethod}
-          />
-          <SummaryField label="Total Amount" value={transactionSummary.totalAmount} />
+          <SummaryField label="Transaction Date" value={"29 Aug, 2024"} />
+          <SummaryField label="Seller's Name" value={"Jane Smith"} />
+          <SummaryField label="Buyer's Name" value={"John Doe"} />
+          <SummaryField label="Payment Method" value="Bank transfer" />
+          <SummaryField label="Total Amount" value={"$176.00"} />
         </div>
       </article>
 
       <article className="rounded-2xl border border-[#CBD5E1] bg-white p-6">
-        <h2 className="text-4xl font-semibold text-[#1E293B]">Dispute summary</h2>
+        <h2 className="text-xl font-semibold text-[#1E293B]">
+          Dispute summary
+        </h2>
         <div className="mt-5 flex flex-wrap gap-x-8 gap-y-4">
           <SummaryField
             label="Reason for Dispute"
-            value={disputeSummary.reasonForDispute}
+            value={disputeSummary.reason || "N/A"}
           />
-          <SummaryField label="Proposal" value={disputeSummary.proposal} />
+          <SummaryField
+            label="Proposal"
+            value={disputeSummary.resolutionOption || "N/A"}
+          />
           <SummaryField
             label="Dispute Submission Date"
-            value={disputeSummary.submissionDate}
+            value={
+              disputeSummary.createdAt
+                ? format(new Date(disputeSummary.createdAt), "dd MMM, yyyy")
+                : "N/A"
+            }
           />
         </div>
 
         <div className="mt-5">
           <p className="text-base font-medium text-[#94A3B8]">Evidence</p>
           <div className="mt-2 flex flex-wrap gap-3">
-            {disputeSummary.evidence.map((item) => (
-              <EvidenceItem key={item.id} evidence={item} />
-            ))}
+            {disputeSummary.evidenceUrl.length <= 0
+              ? "No Evidence Submitted"
+              : disputeSummary.evidenceUrl.map((url, i) => (
+                  <Link
+                    key={i}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View Evidence
+                  </Link>
+                ))}
           </div>
         </div>
       </article>
