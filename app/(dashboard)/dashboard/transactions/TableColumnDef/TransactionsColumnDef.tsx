@@ -11,22 +11,44 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { format } from "date-fns";
 
 export const transactionColumnsFn = (
   setOpenDispute: (Row: Row<ITransaction>) => void,
 ): ColumnDef<ITransaction>[] => {
   const transactionColumns: ColumnDef<ITransaction>[] = [
     {
+      accessorKey: "created_at",
+      header: "Date",
+      cell: ({ row }) => {
+        const date = new Date(row.getValue<string>("created_at"));
+        return <div className="min-w-32">{format(date, "dd MMM yyyy")}</div>;
+      },
+    },
+    {
       accessorKey: "id",
-      header: "ID",
+      header: "Transaction ID",
+      cell: ({ row }) => (
+        <div className="max-w-48">
+          {row.getValue<number>("id").toString().padStart(6, "0")}
+        </div>
+      ),
     },
     {
       accessorKey: "receiver_fullname",
-      header: "Receiver",
+      header: "Reciever",
       cell: ({ row }) => (
         <div className="min-w-36 min-w-56">
           {row.original.receiver_fullname}
         </div>
+      ),
+    },
+
+    {
+      accessorKey: "creator_fullname",
+      header: "Creator",
+      cell: ({ row }) => (
+        <div className="min-w-36 min-w-56">{row.original.creator_fullname}</div>
       ),
     },
     {
@@ -42,7 +64,13 @@ export const transactionColumnsFn = (
       header: "Amount",
       cell: ({ row }) => {
         const amount = row.getValue<number>("amount");
-        return <span>${amount.toLocaleString()}</span>;
+        const currency = row.original.currency ?? "";
+
+        return (
+          <span className="whitespace-nowrap">
+            {currency} {amount.toLocaleString()}
+          </span>
+        );
       },
     },
     {
@@ -65,6 +93,7 @@ export const transactionColumnsFn = (
           REJECTED: "text-red-600 bg-red-100",
           APPROVED: "text-green-600 bg-green-100",
           ONGOING: "text-amber-600 bg-amber-100",
+          COMPLETED: "text-blue-600 bg-blue-100",
         };
 
         return (
@@ -76,14 +105,6 @@ export const transactionColumnsFn = (
             {status}
           </span>
         );
-      },
-    },
-    {
-      accessorKey: "created_at",
-      header: "Created At",
-      cell: ({ row }) => {
-        const date = new Date(row.getValue<string>("created_at"));
-        return date.toLocaleDateString();
       },
     },
 

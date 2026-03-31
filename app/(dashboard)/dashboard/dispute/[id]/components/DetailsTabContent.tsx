@@ -1,16 +1,14 @@
 import Link from "next/link";
-import type { Dispute, TransactionSummary } from "../types/dispute";
+import type { Dispute } from "../types/dispute";
 import EvidenceItem from "./EvidenceItem";
 import SummaryField from "./SummaryField";
 import { format } from "date-fns";
 
 interface DetailsTabContentProps {
-  // transactionSummary: TransactionSummary;
   disputeSummary: Dispute;
 }
 
 export default function DetailsTabContent({
-  // transactionSummary,
   disputeSummary,
 }: DetailsTabContentProps) {
   return (
@@ -24,11 +22,26 @@ export default function DetailsTabContent({
             label="Transaction ID"
             value={disputeSummary.transactionId.toString()}
           />
-          <SummaryField label="Transaction Date" value={"29 Aug, 2024"} />
-          <SummaryField label="Seller's Name" value={"Jane Smith"} />
-          <SummaryField label="Buyer's Name" value={"John Doe"} />
-          <SummaryField label="Payment Method" value="Bank transfer" />
-          <SummaryField label="Total Amount" value={"$176.00"} />
+          <SummaryField
+            label="Transaction Date"
+            value={format(
+              new Date(disputeSummary.transaction?.created_at || ""),
+              "dd MMM yyyy",
+            )}
+          />
+          <SummaryField
+            label="Seller's Name"
+            value={disputeSummary?.transaction?.creator_fullname ?? "N/A"}
+          />
+          <SummaryField
+            label="Buyer's Name"
+            value={disputeSummary?.transaction?.receiver_fullname ?? "N/A"}
+          />
+          <SummaryField label="Payment Method" value="N/A" />
+          <SummaryField
+            label="Total Amount"
+            value={disputeSummary?.transaction?.amount.toString() ?? "N/A"}
+          />
         </div>
       </article>
 

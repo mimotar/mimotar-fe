@@ -30,12 +30,16 @@ export function TransactionsViewTab({
 }: ITransactionsTableProps) {
   const color =
     data?.original.status === "CREATED"
-      ? "text-teal-600"
+      ? "text-brand-primary"
       : data?.original.status === "REJECTED"
         ? "text-red-400"
         : data?.original.status === "APPROVED"
-          ? "text-blue-400"
-          : "";
+          ? "text-green-400"
+          : data?.original.status === "COMPLETED"
+            ? "text-blue-400"
+            : data?.original.status === "DISPUTE"
+              ? "text-red-400"
+              : "";
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-md bg-white">
@@ -94,14 +98,14 @@ export function TransactionsViewTab({
                 <div className="flex justify-between gap-2 flex-wrap">
                   <h1 className="text-neutral-500">Seller’s Name</h1>{" "}
                   <span className="text-neutral-900 font-semibold">
-                    {"N/A"}
+                    {data?.original.creator_fullname || "N/A"}
                   </span>
                 </div>
 
                 <div className="flex justify-between gap-2 flex-wrap">
                   <h1 className="text-neutral-500">Buyer’s Name</h1>{" "}
                   <span className="text-neutral-900 font-semibold">
-                    {data?.original.receiver_fullname}
+                    {data?.original.receiver_fullname || "N/A"}
                   </span>
                 </div>
 

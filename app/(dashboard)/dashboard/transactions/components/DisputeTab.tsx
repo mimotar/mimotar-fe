@@ -5,7 +5,7 @@ import DisputeFilter from "./DisputeFilter";
 import DisputeTable from "./DisputeTable";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import { disputeColumnDef } from "../TableColumnDef/DisputeTableColumnDef";
-import { IDispute, IGetDisputesResponse } from "../types/IDispute";
+import { IGetDisputesResponse } from "../types/IDispute";
 
 export default function DisputeTab() {
   const {

@@ -1,19 +1,19 @@
 export type DisputeTabKey = "details" | "progress";
 
-export interface CountdownData {
-  days: number;
-  hours: number;
-  minutes: number;
-}
+// export interface CountdownData {
+//   days: number;
+//   hours: number;
+//   minutes: number;
+// }
 
-export interface TransactionSummary {
-  transactionId: string;
-  transactionDate: string;
-  sellerName: string;
-  buyerName: string;
-  paymentMethod: string;
-  totalAmount: string;
-}
+// export interface TransactionSummary {
+//   transactionId: string;
+//   transactionDate: string;
+//   sellerName: string;
+//   buyerName: string;
+//   paymentMethod: string;
+//   totalAmount: string;
+// }
 
 export interface EvidenceFile {
   id: string;
@@ -22,12 +22,12 @@ export interface EvidenceFile {
   fileType: "pdf" | "image" | "other";
 }
 
-export interface DisputeSummary {
-  reasonForDispute: string;
-  proposal: string;
-  submissionDate: string;
-  evidence: EvidenceFile[];
-}
+// export interface DisputeSummary {
+//   reasonForDispute: string;
+//   proposal: string;
+//   submissionDate: string;
+//   evidence: EvidenceFile[];
+// }
 
 export interface ProgressEvent {
   id: string;
@@ -37,14 +37,14 @@ export interface ProgressEvent {
   color: "accent" | "neutral";
 }
 
-export interface DisputePageViewModel {
-  id: string;
-  status: IDisputeStatus;
-  countdown: CountdownData;
-  transactionSummary: TransactionSummary;
-  disputeSummary: DisputeSummary;
-  progressEvents: ProgressEvent[];
-}
+// export interface DisputePageViewModel {
+//   id: string;
+//   status: IDisputeStatus;
+//   countdown: CountdownData;
+//   transactionSummary: TransactionSummary;
+//   disputeSummary: DisputeSummary;
+//   progressEvents: ProgressEvent[];
+// }
 
 // new one
 export type IDisputeStatus =
@@ -71,6 +71,42 @@ export interface Dispute {
   buyerId: number;
   sellerId: number;
   creatorId: number;
+  transaction: Transaction | null;
+}
+
+export interface Transaction {
+  id: number;
+  amount: number;
+  user_id: number;
+  additional_agreement: string;
+  creator_fullname: string;
+  creator_email: string;
+  creator_no: string;
+  creator_address: string;
+  receiver_fullname: string;
+  receiver_no: string;
+  receiver_address: string;
+  link_expires: boolean;
+  txn_link: string;
+  created_at: string; // ISO date
+  inspection_duration: number;
+  reciever_role: "BUYER" | "SELLER" | string;
+  terms: string;
+  transactionType: "ONLINE_PRODUCT" | string;
+  transaction_description: string;
+  pay_escrow_fee: "BOTH" | "BUYER" | "SELLER" | string;
+  pay_shipping_cost: "BUYER" | "SELLER" | string;
+  creator_role: "BUYER" | "SELLER" | string;
+  status: string;
+  currency: string;
+  expiresAt: string; // ISO date
+  transactionToken: string;
+  reciever_email: string;
+  approveStatus: boolean;
+  otp: string;
+  otp_created_at: string; // ISO date
+  files: string[] | null;
+  payment_id: string | null;
 }
 
 export interface GetDisputeResponse {
