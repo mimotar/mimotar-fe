@@ -1,12 +1,3 @@
-// export interface IDispute {
-//   date: string;
-//   id: string;
-//   transaction_id: string;
-//   recipient: string;
-//   status: "CREATED" | "ONGOING" | "REJECTED" | "APPROVED";
-//   amount: string;
-// }
-
 export type IDisputeStatus =
   | "ongoing"
   | "resolved"

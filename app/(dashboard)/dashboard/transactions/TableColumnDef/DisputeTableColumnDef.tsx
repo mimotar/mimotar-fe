@@ -18,6 +18,11 @@ export const disputeColumnDef: ColumnDef<IDispute>[] = [
   },
 
   {
+    header: "Dispute ID",
+    accessorKey: "id",
+  },
+
+  {
     header: "Transaction ID",
     accessorKey: "transactionId",
   },
@@ -25,7 +30,30 @@ export const disputeColumnDef: ColumnDef<IDispute>[] = [
     header: "Recipient",
     accessorKey: "transaction.receiver_fullname",
   },
-  { header: "Amount", accessorKey: "transaction.amount" },
+  {
+    header: "Creator",
+    accessorKey: "transaction.creator_fullname",
+  },
+
+  {
+    header: "Resolution Option",
+    accessorKey: "resolutionOption",
+  },
+
+  {
+    header: "Amount",
+    accessorKey: "transaction.amount",
+    cell: ({ row }) => {
+      const amount = row.original?.transaction?.amount;
+      const currency = row.original.transaction.currency ?? "";
+
+      return (
+        <span className="whitespace-nowrap">
+          {currency} {amount.toLocaleString()}
+        </span>
+      );
+    },
+  },
   {
     header: "Status",
     accessorKey: "status",

@@ -15,10 +15,5 @@ export default function DisputeTabContent({
     return <ProgressTabContent />;
   }
 
-  return (
-    <DetailsTabContent
-      // transactionSummary={data.transactionSummary}
-      disputeSummary={data}
-    />
-  );
+  return <DetailsTabContent disputeSummary={data} />;
 }
