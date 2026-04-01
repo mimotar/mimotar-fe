@@ -46,7 +46,7 @@ export default function DisputeTable({
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className="px-4 py-3 text-left text-sm font-semibold"
+                  className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap"
                 >
                   {header.isPlaceholder
                     ? null
