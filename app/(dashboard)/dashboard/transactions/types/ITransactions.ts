@@ -8,6 +8,9 @@ export type TransactionStatus =
 
 export type DisputeStatus = "ongoing" | "resolved" | "closed"; // flexible
 
+export type PaymentStatus = "COMPLETED" | "PENDING" | "FAILED" | string;
+export type PaymentMethod = "USSD" | "CARD" | "TRANSFER" | string;
+
 export type ResolutionOption =
   | "FULL_REFUND"
   | "PARTIAL_REPAYMENT"
@@ -30,6 +33,18 @@ export interface IDispute {
   creatorId: number;
 }
 
+export interface Payment {
+  id: number;
+  transaction_id: number;
+  transaction_reference: string;
+  amount: number;
+  payment_method: PaymentMethod;
+  status: PaymentStatus;
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string
+  title: string;
+}
+
 export interface ITransaction {
   id: number;
   receiver_fullname: string;
@@ -49,6 +64,7 @@ export interface ITransaction {
 
   // ✅ new nested object
   dispute: IDispute | null;
+  payment: Payment | null;
 }
 
 export interface TransactionsResponse {

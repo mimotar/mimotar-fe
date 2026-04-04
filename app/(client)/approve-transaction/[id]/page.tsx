@@ -7,7 +7,6 @@ import ExpireBoxContainer from "./components/ExpireBoxContainer";
 import { notFound } from "next/navigation";
 import { verifyTicketToken } from "./actions/VerifyToken";
 import { IVerifyTokenResponse } from "./types/IVerifyToken";
-import Image from "next/image";
 
 export default async function ApproveTransaction({
   params,
