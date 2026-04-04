@@ -112,7 +112,7 @@ export function TransactionsViewTab({
                 <div className="flex justify-between gap-2 flex-wrap">
                   <h1 className="text-neutral-500">Payment Method</h1>{" "}
                   <span className="text-neutral-900 font-semibold">
-                    {"N/A"}
+                    {data?.original.payment?.payment_method ?? "N/A"}
                   </span>
                 </div>
 
