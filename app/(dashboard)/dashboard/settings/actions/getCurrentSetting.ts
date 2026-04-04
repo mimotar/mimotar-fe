@@ -3,29 +3,30 @@
 import { authOptions } from "@/app/api/auth/authOptions";
 import { getServerSession } from "next-auth";
 
-export async function getTransaction(id: number) {
+export async function GetCurrentSetting() {
   const session = await getServerSession(authOptions);
   try {
-    const response = await fetch(`${process.env.API_BASE_URL}/ticket/${id}`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/settings`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.user?.accessToken}`,
       },
+      next: { tags: ["setting"], revalidate: 3600 },
     });
-    // ticket/transactions
+
     const result = await response.json();
     if (!response.ok) {
-      throw new Error(result?.message || "Failed to fetch Ticket");
+      throw new Error(result?.message || "Failed to fetch user setting");
     }
 
     return result.data;
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Error fetching Ticket:", error);
+      console.error("Failed to fetch user setting:", error);
       throw error;
     }
-    console.error("Error fetching Ticket:", error);
-    throw new Error("Error fetching Ticket");
+    console.error("Failed to fetch user setting:", error);
+    throw new Error("Failed to fetch user setting");
   }
 }

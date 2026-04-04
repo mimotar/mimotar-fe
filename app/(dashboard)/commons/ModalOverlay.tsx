@@ -21,7 +21,7 @@ export default function ModalOverlay({
     <section
       onClick={handleCloseModalOverlay}
       id="modal-container"
-      className={`fixed h-full w-full inset-0 flex flex-col justify-center items-center overflow-y-auto bg-transparent ${className}`}
+      className={`fixed h-full w-full inset-0 z-40 flex flex-col justify-center items-center overflow-y-auto bg-transparent ${className}`}
     >
       {children}
     </section>

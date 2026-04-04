@@ -10,7 +10,7 @@ import SecondTransactorInfo from "./SecondTransactorInfo";
 import CreateTransactionGenerateLink from "./CreateTransactionGenerateLink";
 import { useSession } from "next-auth/react";
 
-export default function CreateTransactionSection() {
+export default function HeaderSection() {
   const dispatch = useAppDispatch();
   const getCreateTransactionStateModal = useAppSelector(
     (state) => state.createTransactionStateModal,
