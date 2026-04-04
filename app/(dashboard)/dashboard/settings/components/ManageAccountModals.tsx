@@ -8,6 +8,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+type ManageDeleteAccountModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onDelete: () => void;
+};
+
 type ManageAccountModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -16,7 +22,8 @@ type ManageAccountModalProps = {
 export function DeleteAccountModal({
   open,
   onOpenChange,
-}: ManageAccountModalProps) {
+  onDelete,
+}: ManageDeleteAccountModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px] w-[90%] rounded-2xl border-0 bg-white p-6 sm:p-7 [&>button]:hidden">
@@ -42,6 +49,7 @@ export function DeleteAccountModal({
             No, cancel
           </button>
           <button
+            onClick={onDelete}
             type="button"
             className="h-12 w-full sm:flex-1 rounded-lg bg-[#E11D48] text-white text-base font-semibold cursor-pointer "
           >

@@ -19,12 +19,12 @@ export default function Tab() {
         Transactions
       </Link>
 
-      <Link
+      {/* <Link
         href="?tab=security"
         className={activeTab === "security" ? activeStyle : baseStyle}
       >
         Security
-      </Link>
+      </Link> */}
 
       <Link
         href="?tab=manage"

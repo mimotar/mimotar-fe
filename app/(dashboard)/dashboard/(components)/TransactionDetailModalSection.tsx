@@ -12,6 +12,7 @@ import {
   stage2TicketSchema,
 } from "@/lib/schemas/CreateTransactionsSchema";
 import { useEffect } from "react";
+import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
 
 export default function TransactionDetailModalSection() {
   const { stepState, transactionData } = useAppSelector((state) => ({
@@ -32,6 +33,7 @@ export default function TransactionDetailModalSection() {
 
   const handleNext = (data: IStage2TicketSchema) => {
     console.log(data);
+    dispatch(setTransactionDetails(data));
     dispatch(setStage(2));
   };
 
