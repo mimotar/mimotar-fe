@@ -70,7 +70,7 @@ export default function SecondTransactorInfo() {
       creator_email: session.data?.user?.email as string,
       creator_no: "082728237",
       creator_role: "BUYER" as "SELLER" | "BUYER",
-      creator_address: "Jigbo go",
+      creator_address: "",
     };
     const mergedData = { ...transactionData, ...data, ...creatorDetail };
     const dashboardCreateTicket = mergedTicketSchema.safeParse(mergedData);

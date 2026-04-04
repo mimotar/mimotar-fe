@@ -28,10 +28,12 @@ type INotification = "SMS" | "EMAIL" | "BOTH";
 type InitiateState = { msg: string; state: "error" | "success" | "" };
 
 export default function TransactionSetting() {
-  const [defaultCurrency, setDefaultCurrency] = useState<
-    ICurrency | undefined
-  >();
-  const [notification, setNotification] = useState<INotification | undefined>();
+  const [defaultCurrency, setDefaultCurrency] = useState<ICurrency | undefined>(
+    "NGN",
+  );
+  const [notification, setNotification] = useState<INotification | undefined>(
+    "BOTH",
+  );
 
   const queryclient = useQueryClient();
 
@@ -172,36 +174,42 @@ export default function TransactionSetting() {
           <div className="flex flex-col space-y-3">
             <h1 className="text-neutral-900">Notification Preferences</h1>
             <button
-              onClick={() =>
-                setNotification((prev) => (prev === "SMS" ? undefined : "SMS"))
-              }
+              // onClick={() =>
+              //   setNotification((prev) => (prev === "SMS" ? undefined : "SMS"))
+              // }
+
+              onClick={() => setNotification("BOTH")}
               type="button"
               className="p-2 rounded-md border border-neutral-400 flex justify-between items-center cursor-pointer"
             >
-              SMS <Switch id="SMS" checked={notification === "SMS"} />
+              SMS <Switch disabled id="SMS" checked={notification === "BOTH"} />
             </button>
 
             <button
-              onClick={() =>
-                setNotification((prev) =>
-                  prev === "EMAIL" ? undefined : "EMAIL",
-                )
-              }
+              // onClick={() =>
+              //   setNotification((prev) =>
+              //     prev === "EMAIL" ? undefined : "EMAIL",
+              //   )
+              // }
+              onClick={() => setNotification("BOTH")}
               type="button"
               className="p-2 rounded-md border border-neutral-400 flex justify-between items-center cursor-pointer"
             >
-              EMAIL <Switch id="EMAIL" checked={notification === "EMAIL"} />
+              EMAIL{" "}
+              <Switch disabled id="EMAIL" checked={notification === "BOTH"} />
             </button>
             <button
-              onClick={() =>
-                setNotification((prev) =>
-                  prev === "BOTH" ? undefined : "BOTH",
-                )
-              }
+              // onClick={() =>
+              //   setNotification((prev) =>
+              //     prev === "BOTH" ? undefined : "BOTH",
+              //   )
+              // }
+              onClick={() => setNotification("BOTH")}
               type="button"
               className="p-2 rounded-md border border-neutral-400 flex justify-between items-center cursor-pointer"
             >
-              BOTH <Switch id="BOTH" checked={notification === "BOTH"} />
+              BOTH{" "}
+              <Switch disabled id="BOTH" checked={notification === "BOTH"} />
             </button>
           </div>
 

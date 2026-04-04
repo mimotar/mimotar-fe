@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+// @ts-ignore: no type declarations for the package's CSS side-effect import
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import phoneInputStyle from "../css.module/phoneNumberStyle.module.css";
@@ -54,7 +55,7 @@ export default function PersonalInfoFormSection() {
           </label>
           <div className={phoneInputStyle.wrapperStyle}>
             <PhoneInput
-              readOnly
+              // readOnly
               international
               defaultCountry="NG"
               id="phone_number"

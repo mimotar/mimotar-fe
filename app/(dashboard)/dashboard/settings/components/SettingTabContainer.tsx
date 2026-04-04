@@ -15,7 +15,7 @@ export default function SettingTabContainer() {
       <Tab />
 
       {activeTab === "transaction" && <TransactionSetting />}
-      {activeTab === "security" && <SecurityContent />}
+      {/* {activeTab === "security" && <SecurityContent />} */}
       {activeTab === "manage" && <ManageAccountContent />}
     </section>
   );
