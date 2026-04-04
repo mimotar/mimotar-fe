@@ -3,10 +3,43 @@
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { DeleteAccountModal, DisableAccountModal } from "./ManageAccountModals";
+import { useMutateAction } from "@/app/hooks/useMutation";
+import { GetSettingsResponse } from "../types/ISetting";
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import { signOut } from "next-auth/react";
 
 export default function ManageAccountContent() {
   const [isDisableModalOpen, setIsDisableModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const { mutateAsync, isPending } = useMutateAction<
+    GetSettingsResponse,
+    { accountStatus: boolean }
+  >("put", "settings");
+
+  const handleDelete = async () => {
+    try {
+      await mutateAsync({ accountStatus: true });
+      toast.success("Account Deleted successful");
+      await signOut({
+        redirect: false,
+        callbackUrl: process.env.NEXT_PUBLIC_CLIENT_DOMAIN,
+      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data || "Account deleting Failed");
+        return;
+      }
+
+      if (error instanceof Error) {
+        toast.error(error.message || "Account deleting Failed");
+        return;
+      }
+
+      toast.error("Account deleting Failed");
+    }
+  };
 
   return (
     <section className="flex flex-col mt-6 w-full pb-6">
@@ -63,6 +96,7 @@ export default function ManageAccountContent() {
       <DeleteAccountModal
         open={isDeleteModalOpen}
         onOpenChange={setIsDeleteModalOpen}
+        onDelete={() => ""}
       />
     </section>
   );

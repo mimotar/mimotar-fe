@@ -12,6 +12,7 @@ import {
   stage3TicketSchema,
 } from "@/lib/schemas/CreateTransactionsSchema";
 import { useEffect } from "react";
+import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
 
 export default function CreateTransactionTermAndAgreement() {
   const { stepState, transactionData } = useAppSelector((state) => ({
@@ -30,6 +31,7 @@ export default function CreateTransactionTermAndAgreement() {
   console.log(errors);
   const handleNext = (data: IStage3TicketSchema) => {
     console.log(data);
+    dispatch(setTransactionDetails(data));
     dispatch(setStage(3));
   };
 

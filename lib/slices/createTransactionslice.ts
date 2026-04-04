@@ -34,7 +34,7 @@ const createTransactionSlice = createSlice({
   reducers: {
     setTransactionDetails: (
       state,
-      action: PayloadAction<Partial<ITransaction>>
+      action: PayloadAction<Partial<ITransaction>>,
     ) => {
       // console.log("Setting transaction details:", action.payload);
       return { ...state, ...action.payload };
