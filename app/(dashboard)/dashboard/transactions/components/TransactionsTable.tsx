@@ -16,8 +16,10 @@ interface ITransactionsTableProps {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
-  setOpenDispute: Dispatch<SetStateAction<boolean>>;
-  setSelectedDispute: Dispatch<SetStateAction<Row<ITransaction> | undefined>>;
+  handleOpenForClosure: (transaction: Row<ITransaction>) => void;
+  handleOpenDispute: (transaction: Row<ITransaction>) => void;
+  handleOpenAcceptResolve: (transaction: Row<ITransaction>) => void;
+  handleSetRejectForClosure: (transaction: Row<ITransaction>) => void;
 }
 
 export default function TransactionsTable({
@@ -25,19 +27,21 @@ export default function TransactionsTable({
   isLoading,
   isError,
   error,
-  setOpenDispute,
-  setSelectedDispute,
+  handleOpenForClosure,
+  handleOpenDispute,
+  handleOpenAcceptResolve,
+  handleSetRejectForClosure,
 }: ITransactionsTableProps) {
   const [isView, setIsView] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<Row<ITransaction>>();
 
-  const handleSetSelectedDispute = (row: Row<ITransaction>) => {
-    setOpenDispute(true);
-    setSelectedDispute(row);
-  };
-
-  const transactionColumns = transactionColumnsFn(handleSetSelectedDispute);
+  const transactionColumns = transactionColumnsFn(
+    handleOpenDispute,
+    handleOpenForClosure,
+    handleOpenAcceptResolve,
+    handleSetRejectForClosure,
+  );
 
   const table = useReactTable({
     data: data ?? [],
