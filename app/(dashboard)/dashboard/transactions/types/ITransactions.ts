@@ -10,6 +10,8 @@ export type DisputeStatus = "ongoing" | "resolved" | "closed"; // flexible
 
 export type PaymentStatus = "COMPLETED" | "PENDING" | "FAILED" | string;
 export type PaymentMethod = "USSD" | "CARD" | "TRANSFER" | string;
+export type ROLE = "BUYER" | "SELLER" | "BOTH";
+export type TransactionType = "PHYSICAL_PRODUCT" | "ONLINE_PRODUCT" | "SERVICE";
 
 export type ResolutionOption =
   | "FULL_REFUND"
@@ -57,14 +59,23 @@ export interface ITransaction {
   transaction_description: string;
   files: string | null;
   status: TransactionStatus;
-
+  inspection_duration: number;
   creator_address: string;
   creator_fullname: string;
   currency: string;
-
+  reciever_role: ROLE;
+  terms: string;
+  transactionType: TransactionType;
+  pay_escrow_fee: ROLE;
+  creator_role: "BUYER" | "SELLER";
+  receiver_address: string;
+  receiver_no: string;
+  earnings: any | null;
   // ✅ new nested object
   dispute: IDispute | null;
   payment: Payment | null;
+  link_expires: boolean;
+  expiresAt: string;
 }
 
 export interface TransactionsResponse {
