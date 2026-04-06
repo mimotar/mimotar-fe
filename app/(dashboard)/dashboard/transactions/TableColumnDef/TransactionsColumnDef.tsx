@@ -12,10 +12,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
+import { useSession } from "next-auth/react";
 
 export const transactionColumnsFn = (
   setOpenDispute: (Row: Row<ITransaction>) => void,
+  setOpenMarkedAsResolve?: (Row: Row<ITransaction>) => void,
+  setOpenAcceptToResolve?: (Row: Row<ITransaction>) => void,
+  setOpenRejectToResolve?: (Row: Row<ITransaction>) => void,
 ): ColumnDef<ITransaction>[] => {
+  const session = useSession();
   const transactionColumns: ColumnDef<ITransaction>[] = [
     {
       accessorKey: "created_at",
@@ -82,6 +87,46 @@ export const transactionColumnsFn = (
         </div>
       ),
     },
+
+    {
+      accessorKey: "inspection_duration",
+      header: "Inspection Duration",
+      cell: ({ row }) => (
+        <div className="text-center">{row.original.inspection_duration}</div>
+      ),
+    },
+
+    {
+      accessorKey: "reciever_role",
+      header: "Reciever Role",
+      cell: ({ row }) => (
+        <div className="text-center">{row.original.reciever_role}</div>
+      ),
+    },
+
+    {
+      accessorKey: "creator_role",
+      header: "Creator Role",
+      cell: ({ row }) => (
+        <div className="text-center">{row.original.creator_role}</div>
+      ),
+    },
+
+    {
+      accessorKey: "transactionType",
+      header: "Transaction Type",
+      cell: ({ row }) => (
+        <div className="text-center">{row.original.transactionType}</div>
+      ),
+    },
+
+    {
+      accessorKey: "pay_escrow_fee",
+      header: "Who will pay escrow Fee",
+      cell: ({ row }) => (
+        <div className="text-center">{row.original.pay_escrow_fee}</div>
+      ),
+    },
     {
       accessorKey: "status",
       header: "Status",
@@ -107,7 +152,64 @@ export const transactionColumnsFn = (
         );
       },
     },
+    {
+      header: "Confirmation",
+      cell: ({ row }) => (
+        <>
+          {new Date(row.original.expiresAt) < new Date() ? (
+            <div>
+              {row.original.status === "DISPUTE" ? (
+                <div className="flex justify-center text-center text-red-500">
+                  Check the dispute tab.
+                </div>
+              ) : row.original.status === "REJECTED" ? (
+                <div className="flex justify-center text-center text-red-500">
+                  This transaction was rejected by the other party.
+                </div>
+              ) : row.original.creator_email === session.data?.user.email ? (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenMarkedAsResolve && setOpenMarkedAsResolve(row);
+                  }}
+                  className="p-2 cursor-pointer rounded-md bg-green-400 whitespace-nowrap text-white text-center"
+                >
+                  Initial Closure
+                </div>
+              ) : (
+                <div className="inline-flex gap-2  items-center">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenAcceptToResolve && setOpenAcceptToResolve(row);
+                    }}
+                    type="button"
+                    className="p-2 cursor-pointer rounded-md bg-green-400 whitespace-nowrap text-white"
+                  >
+                    Accept to Resolve
+                  </button>
 
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenRejectToResolve && setOpenRejectToResolve(row);
+                    }}
+                    type="button"
+                    className="p-2 cursor-pointer rounded-md bg-red-400 whitespace-nowrap text-white"
+                  >
+                    Reject to Resolve
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <span className="flex justify-center text-center text-gray-500">
+              Confirmation button will appear here after expires Date
+            </span>
+          )}
+        </>
+      ),
+    },
     {
       header: "Action",
       cell: ({ row }) => {
