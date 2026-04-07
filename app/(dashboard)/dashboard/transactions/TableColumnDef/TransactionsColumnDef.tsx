@@ -13,14 +13,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 import { useSession } from "next-auth/react";
+import { DefaultSession } from "next-auth";
 
 export const transactionColumnsFn = (
+  currentSession: DefaultSession | null,
   setOpenDispute: (Row: Row<ITransaction>) => void,
   setOpenMarkedAsResolve?: (Row: Row<ITransaction>) => void,
   setOpenAcceptToResolve?: (Row: Row<ITransaction>) => void,
   setOpenRejectToResolve?: (Row: Row<ITransaction>) => void,
 ): ColumnDef<ITransaction>[] => {
-  const session = useSession();
   const transactionColumns: ColumnDef<ITransaction>[] = [
     {
       accessorKey: "created_at",
@@ -131,7 +132,7 @@ export const transactionColumnsFn = (
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const status = row.getValue<string>("status");
+        const status = row.original.status;
 
         const statusStyles: Record<string, string> = {
           CREATED: "text-brand-primary bg-brand-primary/10",
@@ -154,64 +155,63 @@ export const transactionColumnsFn = (
     },
     {
       header: "Confirmation",
-      cell: ({ row }) => (
-        <>
-          {new Date(row.original.expiresAt) < new Date() ? (
+      cell: ({ row }) => {
+        const isExpired = new Date(row.original.expiresAt) > new Date();
+        const isDispute = row.original.status === "DISPUTE";
+        const isRejected = row.original.status === "REJECTED";
+        const isPENDING_CLOSURE = row.original.status === "PENDING_CLOSURE";
+
+        const isCreator =
+          row.original.creator_email === currentSession?.user?.email;
+        // console.log(isCreator);
+        return (
+          <>
             <div>
-              {row.original.status === "DISPUTE" ? (
-                <div className="flex justify-center text-center text-red-500">
-                  Check the dispute tab.
-                </div>
-              ) : row.original.status === "REJECTED" ? (
-                <div className="flex justify-center text-center text-red-500">
-                  This transaction was rejected by the other party.
-                </div>
-              ) : row.original.creator_email === session.data?.user.email ? (
-                <div
+              <div className="inline-flex gap-2  items-center">
+                <button
+                  disabled={!isCreator || isRejected}
                   onClick={(e) => {
                     e.stopPropagation();
                     setOpenMarkedAsResolve && setOpenMarkedAsResolve(row);
                   }}
-                  className="p-2 cursor-pointer rounded-md bg-green-400 whitespace-nowrap text-white text-center"
+                  // className="p-2 cursor-pointer rounded-md bg-green-400 whitespace-nowrap text-white text-center"
+                  className={`p-2 ${!isCreator || isRejected ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer  bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
                 >
                   Initial Closure
-                </div>
-              ) : (
-                <div className="inline-flex gap-2  items-center">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setOpenAcceptToResolve && setOpenAcceptToResolve(row);
-                    }}
-                    type="button"
-                    className="p-2 cursor-pointer rounded-md bg-green-400 whitespace-nowrap text-white"
-                  >
-                    Accept to Resolve
-                  </button>
+                </button>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setOpenRejectToResolve && setOpenRejectToResolve(row);
-                    }}
-                    type="button"
-                    className="p-2 cursor-pointer rounded-md bg-red-400 whitespace-nowrap text-white"
-                  >
-                    Reject to Resolve
-                  </button>
-                </div>
-              )}
+                <button
+                  disabled={isCreator || isRejected || !isPENDING_CLOSURE}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenAcceptToResolve && setOpenAcceptToResolve(row);
+                  }}
+                  type="button"
+                  className={`p-2 ${isCreator || isRejected || !isPENDING_CLOSURE ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
+                >
+                  Accept to Resolve
+                </button>
+
+                <button
+                  disabled={isCreator || isRejected || !isPENDING_CLOSURE}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenRejectToResolve && setOpenRejectToResolve(row);
+                  }}
+                  type="button"
+                  className={`p-2 ${isCreator || isRejected || !isPENDING_CLOSURE ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
+                >
+                  Reject to Resolve
+                </button>
+              </div>
             </div>
-          ) : (
-            <span className="flex justify-center text-center text-gray-500">
-              Confirmation button will appear here after expires Date
-            </span>
-          )}
-        </>
-      ),
+          </>
+        );
+      },
     },
+
     {
-      header: "Action",
+      header: "Dispute Action",
       cell: ({ row }) => {
         const status = row.getValue<string>("status");
 
@@ -219,7 +219,10 @@ export const transactionColumnsFn = (
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="default" className="cursor-pointer">
+                <Button
+                  variant="default"
+                  className="cursor-pointer  flex justify-center items-center  w-full"
+                >
                   <TbRefreshAlert className="text-brand-primary/70 w-5 h-5 cursor" />
                 </Button>
               </DropdownMenuTrigger>

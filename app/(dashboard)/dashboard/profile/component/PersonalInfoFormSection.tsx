@@ -13,7 +13,6 @@ export default function PersonalInfoFormSection() {
   const fullname =
     `${session?.user?.firstName ?? ""} ${session?.user?.lastName ?? ""}`.trim();
 
-  const [isFlagDropdown, setIsFlagDropdown] = useState(false);
   return (
     <section className="flex flex-col mt-3 space-y-4">
       <div className="grid sm:grid-cols-2 grid-cols-1 gap-6">
@@ -140,6 +139,13 @@ export default function PersonalInfoFormSection() {
           <small className="text-red-400"></small>
         </div>
       </div>
+
+      <button
+        type="button"
+        className="bg-brand-primary p-2 rounded-md text-white cursor-pointer"
+      >
+        Update
+      </button>
     </section>
   );
 }

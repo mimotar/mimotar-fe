@@ -10,6 +10,7 @@ import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { TransactionsViewTab } from "./TransactionsViewTab";
 import { Images } from "@/app/Images";
+import { useSession } from "next-auth/react";
 
 interface ITransactionsTableProps {
   data: ITransaction[];
@@ -35,8 +36,10 @@ export default function TransactionsTable({
   const [isView, setIsView] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<Row<ITransaction>>();
+  const session = useSession();
 
   const transactionColumns = transactionColumnsFn(
+    session.data,
     handleOpenDispute,
     handleOpenForClosure,
     handleOpenAcceptResolve,

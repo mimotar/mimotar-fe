@@ -4,7 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+
 import PhoneInput from "react-phone-number-input";
+// @ts-ignore: no type declarations for the package's CSS side-effect import
 import "react-phone-number-input/style.css";
 import phoneInputStyle from "../css.module/phoneInputStyle.module.css";
 import { useSession } from "next-auth/react";
@@ -14,13 +16,22 @@ import { Country, City } from "country-state-city";
 import editProfileInfoFormSchema, {
   type IEditProfileInfoFormSchemaType,
 } from "../schema/EditProfileSchema";
+import { useMutateAction } from "@/app/hooks/useMutation";
+import { AxiosError } from "axios";
+import { UpdateProfileResponse } from "../types/IUpdateProfileResponse";
 
 const EditProfileInfoFormSection = () => {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
   const [selectedCountryIso, setSelectedCountryIso] = useState("");
+  console.log(session);
 
   const countries = useMemo(() => Country.getAllCountries(), []);
+
+  const { mutateAsync, isPending } = useMutateAction<
+    UpdateProfileResponse,
+    IEditProfileInfoFormSchemaType
+  >("put", "profile");
 
   const {
     register,
@@ -28,7 +39,7 @@ const EditProfileInfoFormSection = () => {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<IEditProfileInfoFormSchemaType>({
     resolver: zodResolver(editProfileInfoFormSchema),
     defaultValues: {
@@ -38,12 +49,10 @@ const EditProfileInfoFormSection = () => {
       address: "",
       city: "",
       country: "",
-      postalCode: "",
-      idNumber: "",
+      postal_code: "",
+      id_number: "",
     },
   });
-
-  console.log(errors);
 
   const cities = selectedCountryIso
     ? City.getCitiesOfCountry(selectedCountryIso)
@@ -63,8 +72,8 @@ const EditProfileInfoFormSection = () => {
       address: "",
       city: "",
       country: "",
-      postalCode: "",
-      idNumber: "",
+      postal_code: "",
+      id_number: "",
     });
 
     setSelectedCountryIso("");
@@ -92,9 +101,35 @@ const EditProfileInfoFormSection = () => {
 
   const handleSubmitEdit = async (data: IEditProfileInfoFormSchemaType) => {
     try {
+      const result = await mutateAsync(data);
       console.log("submitted data:", data);
+      console.log("result data", result);
+
+      const [firstName, ...rest] = result.data.fullName.split(" ");
+      const lastName = rest.join(" ") || "";
+      await update({
+        firstName,
+        lastName,
+        // userId : result.data.fullName[0],
+        // verified : token.verified;
+        phone_no: result.data.phone_no ?? undefined,
+        address: result.data.address ?? undefined,
+        city: result.data.city ?? undefined,
+        country: result.data.country ?? undefined,
+        postal_code: result.data.postal_code ?? undefined,
+        id_number: result.data.id_number ?? undefined,
+      });
       toast.success("Profile updated successfully");
-    } catch {
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message || "Failed to update profile");
+        return;
+      }
+
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to update profile");
+        return;
+      }
       toast.error("Failed to update profile");
     }
   };
@@ -246,13 +281,13 @@ const EditProfileInfoFormSection = () => {
             <input
               type="text"
               id="postal_code"
-              {...register("postalCode")}
+              {...register("postal_code")}
               placeholder="110222"
               className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
             />
-            {errors.postalCode && (
+            {errors.postal_code && (
               <small className="text-red-400">
-                {errors.postalCode.message}
+                {errors.postal_code.message}
               </small>
             )}
           </div>
@@ -264,12 +299,12 @@ const EditProfileInfoFormSection = () => {
             <input
               type="text"
               id="id_number"
-              {...register("idNumber")}
+              {...register("id_number")}
               placeholder="64484****"
               className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
             />
-            {errors.idNumber && (
-              <small className="text-red-400">{errors.idNumber.message}</small>
+            {errors.id_number && (
+              <small className="text-red-400">{errors.id_number.message}</small>
             )}
           </div>
         </div>
@@ -277,10 +312,10 @@ const EditProfileInfoFormSection = () => {
         <div className="flex justify-center items-center gap-4 mt-6">
           <PrimaryButton
             type="submit"
-            disabled={isSubmitting}
-            className="text-white cursor-pointer w-32 h-14"
+            disabled={isPending}
+            className="text-white cursor-pointer w-32 h-14 "
           >
-            {isSubmitting ? "Saving..." : "Save"}
+            {isPending ? "Saving..." : "Save"}
           </PrimaryButton>
 
           <PrimaryOutline

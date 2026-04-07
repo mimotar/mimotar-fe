@@ -13,9 +13,12 @@ const editProfileInfoFormSchema = z.object({
 
   country: z.string().min(2, "Country must be at least 2 characters").trim(),
 
-  postalCode: z.string().min(3, "Postal code is too short").trim(),
+  postal_code: z.string().min(3, "Postal code is too short").trim(),
 
-  idNumber: z.string().min(4, "ID number must be at least 4 characters").trim(),
+  id_number: z
+    .string()
+    .min(4, "ID number must be at least 4 characters")
+    .trim(),
 });
 
 export type IEditProfileInfoFormSchemaType = z.infer<

@@ -15,6 +15,12 @@ declare module "next-auth" {
       accessToken: string;
       verified: boolean;
       refreshToken?: string;
+      phone_no?: string;
+      address?: string;
+      city?: string;
+      country?: string;
+      postal_code?: string;
+      id_number?: number;
     };
   }
 
@@ -25,6 +31,12 @@ declare module "next-auth" {
     lastName: string;
     verified: boolean;
     accessToken: string;
+    phone_no?: string;
+    address?: string;
+    city?: string;
+    country?: string;
+    postal_code?: string;
+    id_number?: number;
   }
 }
 
@@ -50,10 +62,12 @@ export const authOptions: AuthOptions = {
             password: credentials?.password as string,
           })
           .then(({ data }) => {
-            // console.log(data);
+            console.log("server data", data);
             if (!data) {
               return null;
             }
+
+            console.log("server data", data);
             return {
               id: data.data.user.id,
               firstName: data.data.user.firstName,
@@ -61,6 +75,12 @@ export const authOptions: AuthOptions = {
               accessToken: data.data.token,
               email: data.data.user.email,
               verified: data.data.user.verified,
+              phone_no: data.data.user.phone_no,
+              address: data.data.user.address,
+              city: data.data.user.city,
+              country: data.data.user.country,
+              postal_code: data.data.user.postal_code,
+              id_number: data.data.user.id_number,
             };
           })
           .catch((error) => {
@@ -99,15 +119,34 @@ export const authOptions: AuthOptions = {
 
     //   return false;
     // },
-    jwt: async ({ token, user, account, profile }) => {
-      // console.log("profile", profile);
-      // console.log("account", account);
+    jwt: async ({ token, user, trigger, account, session, profile }) => {
+      console.log("profile", profile);
+      console.log("account", account);
+      console.log("user", user);
+
+      if (trigger === "update" && session) {
+        token.firstName = session.firstName ?? token.firstName;
+        token.lastName = session.lastName ?? token.lastName;
+        token.phone_no = session.phone_no ?? token.phone_no;
+        token.address = session.address ?? token.address;
+        token.city = session.city ?? token.city;
+        token.country = session.country ?? token.country;
+        token.postal_code = session.postalCode ?? token.postal_code;
+        token.id_number = session.idNumber ?? token.id_number;
+      }
+
       if (account?.provider == "credentials") {
         token.accessToken = user.accessToken;
         token.firstName = user.firstName;
         token.lastName = user.lastName;
         token.userId = user.id;
         token.verified = user.verified;
+        token.phone_no = user.phone_no;
+        token.address = user.address;
+        token.city = user.city;
+        token.country = user.country;
+        token.postal_code = user.postal_code;
+        token.id_number = user.id_number;
       }
 
       if (account?.provider == "google") {
@@ -133,6 +172,12 @@ export const authOptions: AuthOptions = {
         session.user.lastName = token.lastName;
         session.user.userId = token.userId;
         session.user.verified = token.verified;
+        session.user.phone_no = token.phone_no;
+        session.user.address = token.address;
+        session.user.city = token.city;
+        session.user.country = token.country;
+        session.user.postal_code = token.postal_code;
+        session.user.id_number = token.id_number;
       }
       return session;
     },
