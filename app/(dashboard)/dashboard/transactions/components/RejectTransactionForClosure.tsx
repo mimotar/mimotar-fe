@@ -9,17 +9,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface IMarkAsPendingClosureProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   onReject: () => void;
+  status: "idle" | "loading" | "error" | "success";
 }
 
 export default function RejectTransactionForClosure({
   open,
   setOpen,
   onReject,
+  status,
 }: IMarkAsPendingClosureProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -41,9 +44,12 @@ export default function RejectTransactionForClosure({
           <Button
             onClick={onReject}
             type="submit"
-            className="bg-green-400 text-white cursor-pointer"
+            className="bg-green-400 text-white cursor-pointer  inline-flex gap-2 items-center"
           >
-            Agree/Accept
+            Agree/Accept{" "}
+            {status === "loading" && (
+              <AiOutlineLoading3Quarters className="animate-spin text-brand-primary" />
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

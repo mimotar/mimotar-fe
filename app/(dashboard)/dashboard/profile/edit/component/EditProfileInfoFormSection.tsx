@@ -4,7 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+
 import PhoneInput from "react-phone-number-input";
+// @ts-ignore: no type declarations for the package's CSS side-effect import
 import "react-phone-number-input/style.css";
 import phoneInputStyle from "../css.module/phoneInputStyle.module.css";
 import { useSession } from "next-auth/react";
@@ -14,43 +16,60 @@ import { Country, City } from "country-state-city";
 import editProfileInfoFormSchema, {
   type IEditProfileInfoFormSchemaType,
 } from "../schema/EditProfileSchema";
+import { useMutateAction } from "@/app/hooks/useMutation";
+import { AxiosError } from "axios";
+import { UpdateProfileResponse } from "../types/IUpdateProfileResponse";
 
 const EditProfileInfoFormSection = () => {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
-  const [selectedCountryIso, setSelectedCountryIso] = useState("");
+  const firstName = session?.user.firstName ?? "";
+  const lastName = session?.user.lastName ?? "";
+  const fullName = [firstName, lastName].filter(Boolean).join(" ");
 
-  const countries = useMemo(() => Country.getAllCountries(), []);
+  console.log(session);
+
+  const formatPhone = (phone?: string) => {
+    if (!phone) return "";
+
+    // already correct
+    if (phone.startsWith("+")) return phone;
+
+    // Nigeria example (adjust if needed)
+    if (phone.startsWith("0")) {
+      return "+234" + phone.slice(1);
+    }
+
+    return "+" + phone;
+  };
+
+  const { mutateAsync, isPending } = useMutateAction<
+    UpdateProfileResponse,
+    IEditProfileInfoFormSchemaType
+  >("put", "profile");
 
   const {
     register,
     control,
     handleSubmit,
     reset,
-    setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<IEditProfileInfoFormSchemaType>({
     resolver: zodResolver(editProfileInfoFormSchema),
     defaultValues: {
-      fullName: "",
-      email: "",
-      phoneNumber: "",
-      address: "",
-      city: "",
-      country: "",
-      postalCode: "",
-      idNumber: "",
+      fullName: fullName ?? "",
+      // email: "",
+      phone_no: formatPhone(session?.user.phone_no) ?? "",
+      address: session?.user.address ?? "",
+      city: session?.user.city ?? "",
+      country: session?.user.country ?? "",
+      postal_code: session?.user.postal_code ?? "",
+      id_number: String(session?.user.id_number) ?? "",
     },
   });
 
-  console.log(errors);
-
-  const cities = selectedCountryIso
-    ? City.getCitiesOfCountry(selectedCountryIso)
-    : [];
-
   useEffect(() => {
-    if (status !== "authenticated" || !session?.user) return;
+    if (!session?.user) return;
 
     const firstName = session.user.firstName ?? "";
     const lastName = session.user.lastName ?? "";
@@ -58,43 +77,42 @@ const EditProfileInfoFormSection = () => {
 
     reset({
       fullName,
-      email: session.user.email ?? "",
-      phoneNumber: "",
-      address: "",
-      city: "",
-      country: "",
-      postalCode: "",
-      idNumber: "",
+      phone_no: formatPhone(session.user.phone_no) ?? "",
+      address: session.user.address ?? "",
+      city: session.user.city ?? "",
+      country: session.user.country ?? "",
+      postal_code: session.user.postal_code ?? "",
+      id_number: String(session.user.id_number ?? ""),
     });
-
-    setSelectedCountryIso("");
-  }, [session, status, reset]);
-
-  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const isoCode = e.target.value;
-
-    const selectedCountry = countries.find(
-      (country) => country.isoCode === isoCode,
-    );
-
-    setSelectedCountryIso(isoCode);
-
-    setValue("country", selectedCountry?.name ?? "", {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-
-    setValue("city", "", {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-  };
+  }, [session, reset]);
 
   const handleSubmitEdit = async (data: IEditProfileInfoFormSchemaType) => {
     try {
-      console.log("submitted data:", data);
+      const result = await mutateAsync(data);
+
+      const [firstName, ...rest] = result.data.fullName.split(" ");
+      const lastName = rest.join(" ") || "";
+      await update({
+        firstName,
+        lastName,
+        phone_no: formatPhone(result.data.phone_no!) ?? undefined,
+        address: result.data.address ?? undefined,
+        city: result.data.city ?? undefined,
+        country: result.data.country ?? undefined,
+        postal_code: result.data.postal_code ?? undefined,
+        id_number: result.data.id_number ?? undefined,
+      });
       toast.success("Profile updated successfully");
-    } catch {
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message || "Failed to update profile");
+        return;
+      }
+
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to update profile");
+        return;
+      }
       toast.error("Failed to update profile");
     }
   };
@@ -112,7 +130,7 @@ const EditProfileInfoFormSection = () => {
               id="full_name"
               {...register("fullName")}
               placeholder="Olawale Ade"
-              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md "
             />
             {errors.fullName && (
               <small className="text-red-400">{errors.fullName.message}</small>
@@ -124,15 +142,18 @@ const EditProfileInfoFormSection = () => {
               Email address
             </label>
             <input
+              disabled
+              readOnly
               type="email"
               id="email"
-              {...register("email")}
+              // {...register("email")}
+              value={session?.user.email}
               placeholder="olawaleade@gmail.com"
-              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md "
             />
-            {errors.email && (
+            {/* {errors.email && (
               <small className="text-red-400">{errors.email.message}</small>
-            )}
+            )} */}
           </div>
         </div>
 
@@ -147,7 +168,7 @@ const EditProfileInfoFormSection = () => {
 
             <div className={phoneInputStyle.wrapperStyle}>
               <Controller
-                name="phoneNumber"
+                name="phone_no"
                 control={control}
                 render={({ field }) => (
                   <PhoneInput
@@ -162,10 +183,8 @@ const EditProfileInfoFormSection = () => {
               />
             </div>
 
-            {errors.phoneNumber && (
-              <small className="text-red-400">
-                {errors.phoneNumber.message}
-              </small>
+            {errors.phone_no && (
+              <small className="text-red-400">{errors.phone_no.message}</small>
             )}
           </div>
 
@@ -178,7 +197,7 @@ const EditProfileInfoFormSection = () => {
               id="address"
               {...register("address")}
               placeholder="13 Washington Square South"
-              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md"
             />
             {errors.address && (
               <small className="text-red-400">{errors.address.message}</small>
@@ -191,23 +210,13 @@ const EditProfileInfoFormSection = () => {
             <label htmlFor="city" className="text-neutral-600">
               City
             </label>
-
-            <select
+            <input
+              type="text"
               id="city"
               {...register("city")}
-              disabled={!selectedCountryIso}
-              className="border border-neutral-400 p-3 rounded-md"
-            >
-              <option value="">
-                {selectedCountryIso ? "Select city" : "Select country first"}
-              </option>
-              {cities?.map((city, i) => (
-                <option key={`${city.name}-${i}`} value={city.name}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
-
+              placeholder=" City"
+              className="border border-neutral-400 p-3 outline-none rounded-md "
+            />
             {errors.city && (
               <small className="text-red-400">{errors.city.message}</small>
             )}
@@ -217,21 +226,13 @@ const EditProfileInfoFormSection = () => {
             <label htmlFor="country" className="text-neutral-600">
               Country
             </label>
-
-            <select
+            <input
+              type="text"
               id="country"
-              onChange={handleCountryChange}
-              defaultValue=""
-              className="border border-neutral-400 p-3 rounded-md"
-            >
-              <option value="">Select country</option>
-              {countries.map((country) => (
-                <option key={country.isoCode} value={country.isoCode}>
-                  {country.name}
-                </option>
-              ))}
-            </select>
-
+              {...register("country")}
+              placeholder="Select country"
+              className="border border-neutral-400 p-3 outline-none rounded-md "
+            />
             {errors.country && (
               <small className="text-red-400">{errors.country.message}</small>
             )}
@@ -246,13 +247,13 @@ const EditProfileInfoFormSection = () => {
             <input
               type="text"
               id="postal_code"
-              {...register("postalCode")}
+              {...register("postal_code")}
               placeholder="110222"
-              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md"
             />
-            {errors.postalCode && (
+            {errors.postal_code && (
               <small className="text-red-400">
-                {errors.postalCode.message}
+                {errors.postal_code.message}
               </small>
             )}
           </div>
@@ -264,12 +265,12 @@ const EditProfileInfoFormSection = () => {
             <input
               type="text"
               id="id_number"
-              {...register("idNumber")}
+              {...register("id_number")}
               placeholder="64484****"
-              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md "
             />
-            {errors.idNumber && (
-              <small className="text-red-400">{errors.idNumber.message}</small>
+            {errors.id_number && (
+              <small className="text-red-400">{errors.id_number.message}</small>
             )}
           </div>
         </div>
@@ -277,10 +278,10 @@ const EditProfileInfoFormSection = () => {
         <div className="flex justify-center items-center gap-4 mt-6">
           <PrimaryButton
             type="submit"
-            disabled={isSubmitting}
-            className="text-white cursor-pointer w-32 h-14"
+            disabled={isPending}
+            className="text-white cursor-pointer w-32 h-14 "
           >
-            {isSubmitting ? "Saving..." : "Save"}
+            {isPending ? "Saving..." : "Save"}
           </PrimaryButton>
 
           <PrimaryOutline
