@@ -70,17 +70,17 @@ const HomeNavbar: React.FC = () => {
         </Link> */}
         <Link
           className={`text-[#0F172A] hover:text-[#86198F]  md:text-base text-sm ${
-            pathname === "/" ? "text-[#86198F] font-bold" : ""
+            pathname === "/how-it-works" ? "text-[#86198F] font-bold" : ""
           }`}
-          href="/#howItWork"
+          href="/how-it-works"
         >
           How it Works
         </Link>
         <Link
           className={`text-[#0F172A] hover:text-[#86198F]  whitespace-nowrap md:text-base text-sm ${
-            pathname === "#" ? "text-[#86198F] font-bold" : ""
+            pathname === "/aboutUs" ? "text-[#86198F] font-bold" : ""
           }`}
-          href="/"
+          href="/aboutUs"
         >
           About us
         </Link>
@@ -230,23 +230,23 @@ const HomeNavbar: React.FC = () => {
 
               <div className="mt-auto pt-6 border-t border-slate-200">
                 <div className="flex flex-col gap-4">
-                  {!isLoggedIn && (
-                    <Button
-                      onClick={() => handleMobileAuthOpen("register")}
-                      className="h-12 w-full bg-[#A21CAF] hover:bg-[#D946EF] text-[#F8FAFC] text-lg font-semibold rounded-xl"
-                    >
-                      Register
-                    </Button>
-                  )}
+                  {/* {!isLoggedIn && ( */}
+                  <Button
+                    onClick={() => handleMobileAuthOpen("register")}
+                    className="h-12 w-full bg-[#A21CAF] hover:bg-[#D946EF] text-[#F8FAFC] text-lg font-semibold rounded-xl"
+                  >
+                    Register
+                  </Button>
+                  {/* )} */}
 
-                  {!isLoggedIn && (
-                    <Button
-                      onClick={() => handleMobileAuthOpen("login")}
-                      className="h-12 w-full border-2 border-[#A21CAF] bg-white text-[#A21CAF] hover:bg-[#FAF5FF] text-lg font-semibold rounded-xl"
-                    >
-                      Login
-                    </Button>
-                  )}
+                  {/* {!isLoggedIn && ( */}
+                  <Button
+                    onClick={() => handleMobileAuthOpen("login")}
+                    className="h-12 w-full border-2 border-[#A21CAF] bg-white text-[#A21CAF] hover:bg-[#FAF5FF] text-lg font-semibold rounded-xl"
+                  >
+                    Login
+                  </Button>
+                  {/* )} */}
 
                   {isLoggedIn && (
                     <Button
