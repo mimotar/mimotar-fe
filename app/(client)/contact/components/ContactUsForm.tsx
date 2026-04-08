@@ -151,7 +151,7 @@ export default function ContactUsForm() {
         )}
       </div>
 
-      <div className="grid grid-cols-2 w-full">
+      <div className="grid sm:grid-cols-2 w-full">
         <div />
         <PrimaryButton
           type="submit"

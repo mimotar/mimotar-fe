@@ -78,9 +78,9 @@ const HomeNavbar: React.FC = () => {
         </Link>
         <Link
           className={`text-[#0F172A] hover:text-[#86198F]  whitespace-nowrap md:text-base text-sm ${
-            pathname === "#" ? "text-[#86198F] font-bold" : ""
+            pathname === "/aboutUs" ? "text-[#86198F] font-bold" : ""
           }`}
-          href="/"
+          href="/aboutUs"
         >
           About us
         </Link>
