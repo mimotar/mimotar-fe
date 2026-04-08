@@ -7,14 +7,18 @@ import LogoIcon from "@/app/svgIconComponent/Logo";
 import AuthForm from "@/app/auth/AuthForm";
 import { AnimatePresence, motion } from "framer-motion";
 import { RxCross2, RxHamburgerMenu } from "react-icons/rx";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 const HomeNavbar: React.FC = () => {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
-  const { data } = useSession();
+  const { data, status } = useSession();
+
+  const isLoading = status === "loading";
+  const isLoggedIn = status === "authenticated";
+  const isVerified = !!data?.user?.verified;
 
   useEffect(() => {
     document.body.style.overflow = isMobileNavOpen ? "hidden" : "";
@@ -50,7 +54,7 @@ const HomeNavbar: React.FC = () => {
   const closeMobileNav = () => setIsMobileNavOpen(false);
 
   return (
-    <section className="flex justify-between items-center">
+    <section className="flex justify-between items-center ">
       <Link href={"/"}>
         <LogoIcon className="text-sm md:w-auto md:h-auto w-28" />
       </Link>
@@ -88,7 +92,7 @@ const HomeNavbar: React.FC = () => {
 
       <div className="flex items-center justify-center min-[932px]:gap-10 gap-5 ">
         <div className="md:flex hidden items-center justify-center min-[932px]:gap-10 gap-5">
-          {data?.user && data.user.verified && (
+          {isLoggedIn && isVerified && (
             <Link
               href="/dashboard"
               className="text-[#A21CAF]  hover:text-[#D946EF]"
@@ -96,19 +100,37 @@ const HomeNavbar: React.FC = () => {
               Dashboard
             </Link>
           )}
-          <Button
-            onClick={() => handleOpen("login")}
-            className="min-[932px]:w-[118px] min-[932px]:h-[48px] cursor-pointer text-[#A21CAF] hover:text-[#F8FAFC] font-bold  hover w-[80px] h-[35px] border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
-          >
-            Login
-          </Button>
 
-          <Button
-            onClick={() => handleOpen("register")}
-            className="min-[932px]:w-[118px] min-[932px]:h-[48px] w-[80px] h-[35px] cursor-pointer text-[#F8FAFC] hover:text-[#F8FAFC]  bg-[#A21CAF] rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
-          >
-            Register
-          </Button>
+          {!isLoggedIn && (
+            <Button
+              onClick={() => handleOpen("login")}
+              className="min-[932px]:w-[118px] min-[932px]:h-[48px] cursor-pointer text-[#A21CAF] hover:text-[#F8FAFC] font-bold  hover w-[80px] h-[35px] border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
+            >
+              Login
+            </Button>
+          )}
+
+          {isLoggedIn && (
+            <Button
+              onClick={() =>
+                signOut({
+                  callbackUrl: process.env.NEXT_PUBLIC_CLIENT_DOMAIN,
+                })
+              }
+              className="min-[932px]:w-[118px] min-[932px]:h-[48px] cursor-pointer text-[#A21CAF] hover:text-[#F8FAFC] font-bold  hover w-[80px] h-[35px] border-[#D946EF] border-2 bg-white rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
+            >
+              Sign out
+            </Button>
+          )}
+
+          {!isLoggedIn && (
+            <Button
+              onClick={() => handleOpen("register")}
+              className="min-[932px]:w-[118px] min-[932px]:h-[48px] w-[80px] h-[35px] cursor-pointer text-[#F8FAFC] hover:text-[#F8FAFC]  bg-[#A21CAF] rounded-lg hover:bg-[#D946EF] active:bg-[#A21CAF] active:font-bold focus:bg-[#A21CAF] focus:font-bold"
+            >
+              Register
+            </Button>
+          )}
         </div>
 
         <button
@@ -183,7 +205,7 @@ const HomeNavbar: React.FC = () => {
                 >
                   Contact us
                 </Link>
-                {data?.user && data.user.verified && (
+                {isLoggedIn && isVerified && (
                   <Link
                     onClick={closeMobileNav}
                     href="/dashboard"
@@ -196,18 +218,36 @@ const HomeNavbar: React.FC = () => {
 
               <div className="mt-auto pt-6 border-t border-slate-200">
                 <div className="flex flex-col gap-4">
-                  <Button
-                    onClick={() => handleMobileAuthOpen("register")}
-                    className="h-12 w-full bg-[#A21CAF] hover:bg-[#D946EF] text-[#F8FAFC] text-lg font-semibold rounded-xl"
-                  >
-                    Register
-                  </Button>
-                  <Button
-                    onClick={() => handleMobileAuthOpen("login")}
-                    className="h-12 w-full border-2 border-[#A21CAF] bg-white text-[#A21CAF] hover:bg-[#FAF5FF] text-lg font-semibold rounded-xl"
-                  >
-                    Login
-                  </Button>
+                  {!isLoggedIn && (
+                    <Button
+                      onClick={() => handleMobileAuthOpen("register")}
+                      className="h-12 w-full bg-[#A21CAF] hover:bg-[#D946EF] text-[#F8FAFC] text-lg font-semibold rounded-xl"
+                    >
+                      Register
+                    </Button>
+                  )}
+
+                  {!isLoggedIn && (
+                    <Button
+                      onClick={() => handleMobileAuthOpen("login")}
+                      className="h-12 w-full border-2 border-[#A21CAF] bg-white text-[#A21CAF] hover:bg-[#FAF5FF] text-lg font-semibold rounded-xl"
+                    >
+                      Login
+                    </Button>
+                  )}
+
+                  {isLoggedIn && (
+                    <Button
+                      onClick={() =>
+                        signOut({
+                          callbackUrl: process.env.NEXT_PUBLIC_CLIENT_DOMAIN,
+                        })
+                      }
+                      className="h-12 w-full border-2 border-[#A21CAF] bg-white text-[#A21CAF] hover:bg-[#FAF5FF] text-lg font-semibold rounded-xl"
+                    >
+                      Sign Out
+                    </Button>
+                  )}
                 </div>
               </div>
             </motion.section>

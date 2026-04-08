@@ -52,7 +52,8 @@ export type IDisputeStatus =
   | "resolved"
   | "cancelled"
   | "review"
-  | "negotiation";
+  | "negotiation"
+  | "pending_closure";
 
 export type ResolutionOption = "FULL_REPAYMENT" | "PARTIAL_REPAYMENT";
 

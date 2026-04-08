@@ -177,7 +177,7 @@ export const transactionColumnsFn = (
                   // className="p-2 cursor-pointer rounded-md bg-green-400 whitespace-nowrap text-white text-center"
                   className={`p-2 ${!isCreator || isRejected ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer  bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
                 >
-                  Initial Closure
+                  Initiate Closure
                 </button>
 
                 <button

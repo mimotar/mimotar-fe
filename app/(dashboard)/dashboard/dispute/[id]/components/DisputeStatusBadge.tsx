@@ -13,6 +13,7 @@ export default function DisputeStatusBadge({
     cancelled: "text-[#EF4444]",
     review: "text-[#F59E0B]",
     negotiation: "text-[#EAB308]",
+    pending_closure: "",
   };
 
   const bgDotColors: Record<IDisputeStatus, string> = {
@@ -21,6 +22,7 @@ export default function DisputeStatusBadge({
     cancelled: "bg-[#EF4444]",
     review: "bg-[#F59E0B]",
     negotiation: "bg-[#EAB308]",
+    pending_closure: "",
   };
   return (
     <div
