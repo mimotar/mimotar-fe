@@ -20,6 +20,7 @@ import {
 import { useMutateAction } from "@/app/hooks/useMutation";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface IDisputeFormProps {
   open: boolean;
@@ -70,6 +71,7 @@ export function DisputeForm({ open, setOpen, transaction }: IDisputeFormProps) {
   const [openReason, setOpenReason] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
 
   const { isPending, mutate } = useMutateAction<
     {
@@ -207,8 +209,9 @@ export function DisputeForm({ open, setOpen, transaction }: IDisputeFormProps) {
           }
         },
 
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
           toast.success(data.message || "Dispute created successfully");
+          await queryClient.invalidateQueries({ queryKey: ["transaction"] });
           setOpen(false);
           reset();
         },
@@ -435,7 +438,7 @@ export function DisputeForm({ open, setOpen, transaction }: IDisputeFormProps) {
               <button
                 onClick={() => setOpen(false)}
                 type="button"
-                className="rounded-md border border-brand-primary px-4 py-2 text-brand-primary"
+                className="rounded-md border border-brand-primary cursor-pointer px-4 py-2 text-brand-primary"
               >
                 Cancel
               </button>

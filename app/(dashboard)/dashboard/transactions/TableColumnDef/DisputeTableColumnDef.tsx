@@ -13,26 +13,54 @@ export const disputeColumnDef: ColumnDef<IDispute>[] = [
         month: "short",
         day: "numeric",
       });
-      return <span>{formattedDate}</span>;
+      return <span className="whitespace-nowrap">{formattedDate}</span>;
     },
   },
 
   {
     header: "Dispute ID",
     accessorKey: "id",
+    cell: ({ row }) => {
+      return (
+        <div className="whitespace-nowrap text-center  w-full">
+          {row.original.id}
+        </div>
+      );
+    },
   },
 
   {
     header: "Transaction ID",
     accessorKey: "transactionId",
+    cell: ({ row }) => {
+      return (
+        <div className="whitespace-nowrap text-center  w-full">
+          {row.original.transactionId}
+        </div>
+      );
+    },
   },
   {
     header: "Recipient",
     accessorKey: "transaction.receiver_fullname",
+    cell: ({ row }) => {
+      return (
+        <div className="whitespace-nowrap min-w-48 w-full">
+          {row.original.transaction.receiver_fullname}
+        </div>
+      );
+    },
   },
   {
     header: "Creator",
     accessorKey: "transaction.creator_fullname",
+    cell: ({ row }) => {
+      return (
+        <div className="whitespace-nowrap min-w-48 w-full">
+          {row.original.transaction.creator_fullname}
+        </div>
+      );
+    },
   },
 
   {

@@ -4,7 +4,8 @@ export type TransactionStatus =
   | "REJECTED"
   | "ONGOING"
   | "COMPLETED"
-  | "DISPUTE"; // ✅ added
+  | "DISPUTE"
+  | "PENDING_CLOSURE"; // ✅ added
 
 export type DisputeStatus = "ongoing" | "resolved" | "closed"; // flexible
 

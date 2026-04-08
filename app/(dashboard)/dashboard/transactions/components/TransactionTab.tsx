@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import FilterSection from "./FilterSection";
 import TransactionsTable from "./TransactionsTable";
@@ -13,6 +12,7 @@ import axiosService from "@/lib/services/axiosService";
 import { AxiosError } from "axios";
 import AcceptTransactionForClosure from "./AcceptTransactionForClosure";
 import RejectTransactionForClosure from "./RejectTransactionForClosure";
+import { useQueryClient } from "@tanstack/react-query";
 
 type ILoading = "idle" | "loading" | "error" | "success";
 
@@ -32,6 +32,8 @@ export default function TransactionTab() {
   const [transaction, setTransaction] = useState<Row<ITransaction> | undefined>(
     undefined,
   );
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useFetch<
     TransactionsResponse,
@@ -66,14 +68,17 @@ export default function TransactionTab() {
       }
       setStatus("loading");
 
-      const res = await axiosService.post(`/ticket/${transaction.id}/resolve`);
+      await axiosService.put(`/ticket/${transaction.id}/resolve`);
       toast.error("Transaction resolution requested");
       setStatus("success");
+      await queryClient.invalidateQueries({ queryKey: ["transaction"] });
     } catch (error) {
       setStatus("error");
       if (error instanceof AxiosError) {
+        console.log(error);
         toast.error(
-          error.response?.data || "Transaction resolution is not ongoing",
+          error.response?.data.message ||
+            "Transaction resolution is not ongoing",
         );
         return;
       }
@@ -88,7 +93,6 @@ export default function TransactionTab() {
   };
 
   const handleAcceptClosure = async () => {
-    toast.success("preparing the ticket for acceptance");
     try {
       if (!transaction?.id) {
         toast.error("No Transaction selected");
@@ -96,13 +100,15 @@ export default function TransactionTab() {
       }
       setAcceptClosureStatus("loading");
 
-      await axiosService.post(`/ticket/${transaction.id}/accept-resolution`);
+      await axiosService.put(`/ticket/${transaction.id}/accept-resolution`);
       toast.error("Transaction closure accepted");
       setAcceptClosureStatus("success");
     } catch (error) {
       setAcceptClosureStatus("error");
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data || "Transaction Closure failed");
+        toast.error(
+          error.response?.data.message || "Transaction Closure failed",
+        );
         return;
       }
 
@@ -116,7 +122,6 @@ export default function TransactionTab() {
   };
 
   const handleRejectClosure = async () => {
-    toast.success("preparing the ticket for rejection");
     try {
       if (!transaction?.id) {
         toast.error("No Transaction selected");
@@ -124,7 +129,7 @@ export default function TransactionTab() {
       }
       setRejectClosureStatus("loading");
 
-      await axiosService.post(`ticket/${transaction.id}/reject-resolution`);
+      await axiosService.put(`ticket/${transaction.id}/reject-resolution`);
       toast.error("Transaction closure Rejected");
       setRejectClosureStatus("success");
     } catch (error) {
@@ -169,18 +174,21 @@ export default function TransactionTab() {
         onMarkAsPendingClosure={handleMarkAsPendingClosure}
         open={openMarkedAsResolve}
         setOpen={setOpenMarkedAsResolve}
+        status={status}
       />
 
       <AcceptTransactionForClosure
         onAccept={handleAcceptClosure}
         open={openAcceptForClosure}
         setOpen={setOpenAcceptForClosure}
+        status={AcceptClosureStatus}
       />
 
       <RejectTransactionForClosure
         onReject={handleRejectClosure}
         open={openRejectForClosure}
         setOpen={setOpenRejectForClosure}
+        status={RejectClosureStatus}
       />
     </section>
   );

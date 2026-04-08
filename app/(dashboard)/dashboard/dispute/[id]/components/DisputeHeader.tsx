@@ -14,6 +14,8 @@ export default function DisputeHeader({
   disputeId,
   dispute,
 }: DisputeHeaderProps) {
+  const isDisputeEnded = new Date() > new Date(dispute.elapsesAt);
+  console.log(isDisputeEnded);
   return (
     <header className="flex flex-col gap-5">
       <Link
@@ -43,21 +45,24 @@ export default function DisputeHeader({
             <BsChatLeftTextFill className="sm:text-xl text-base text-brand-primary cursor-pointer" />
           </button>
 
-          {dispute.status === "negotiation" && (
+          {dispute.status === "negotiation" ||
+            (isDisputeEnded && (
+              <button
+                type="button"
+                className="inline-flex sm:h-[52px] h-[40px] min-w-[178px] items-center justify-center rounded-xl border border-[#D946EF] cursor-pointer px-6 sm:text-base text-sm font-semibold text-brand-primary"
+              >
+                Get assistance
+              </button>
+            ))}
+
+          {!isDisputeEnded && (
             <button
               type="button"
-              className="inline-flex sm:h-[52px] h-[40px] min-w-[178px] items-center justify-center rounded-xl border border-[#D946EF] cursor-pointer px-6 sm:text-base text-sm font-semibold text-brand-primary"
+              className="inline-flex sm:h-[52px] h-[40px] min-w-[190px] items-center justify-center rounded-xl bg-[#A21CAF] px-6 sm:text-base text-sm cursor-pointer font-semibold text-white"
             >
-              Get assistance
+              Resolve dispute
             </button>
           )}
-
-          <button
-            type="button"
-            className="inline-flex sm:h-[52px] h-[40px] min-w-[190px] items-center justify-center rounded-xl bg-[#A21CAF] px-6 sm:text-base text-sm cursor-pointer font-semibold text-white"
-          >
-            Resolve dispute
-          </button>
         </div>
       </div>
     </header>
