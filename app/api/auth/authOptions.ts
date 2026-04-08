@@ -62,7 +62,7 @@ export const authOptions: AuthOptions = {
             password: credentials?.password as string,
           })
           .then(({ data }) => {
-            console.log("server data", data);
+            // console.log("server data", data);
             if (!data) {
               return null;
             }
@@ -120,9 +120,9 @@ export const authOptions: AuthOptions = {
     //   return false;
     // },
     jwt: async ({ token, user, trigger, account, session, profile }) => {
-      console.log("profile", profile);
-      console.log("account", account);
-      console.log("user", user);
+      // console.log("profile", profile);
+      // console.log("account", account);
+      // console.log("user", user);
 
       if (trigger === "update" && session) {
         token.firstName = session.firstName ?? token.firstName;

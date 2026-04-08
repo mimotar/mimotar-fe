@@ -19,7 +19,7 @@ export default function GeneralNavbar() {
   const [isOpenLeftPanel, setIsOpenLeftPanel] = useState(false);
   const pathname = usePathname();
   return (
-    <section className="flex justify-between items-center">
+    <section className="flex justify-between items-center ">
       <Link href={"/"}>
         {" "}
         <LogoIcon className="" />

@@ -4,10 +4,17 @@ import AuthForm from "@/app/auth/AuthForm";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import PrimaryButton from "@/app/commons/PrimaryButtons";
+import { useSession } from "next-auth/react";
 
 const DealBtns = () => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+
+  const { data, status } = useSession();
+
+  const isLoggedIn = status === "authenticated";
+  const isVerified = !!data?.user?.verified;
+
   const handleDialogChange = (isOpen: boolean) => {
     setOpen(isOpen);
   };
@@ -25,11 +32,13 @@ const DealBtns = () => {
         Register
       </Button>
 
-      <Link href={"/generate-link"} className="w-full">
-        <PrimaryButton type="button" className="w-full cursor-pointer">
-          Get paid/Pay someone
-        </PrimaryButton>
-      </Link>
+      {isLoggedIn && isVerified && (
+        <Link href={"/generate-link"} className="w-full">
+          <PrimaryButton type="button" className="w-full cursor-pointer">
+            Get paid/Pay someone
+          </PrimaryButton>
+        </Link>
+      )}
 
       {/* modal */}
       <AuthForm

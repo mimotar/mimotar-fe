@@ -24,15 +24,15 @@ export default function DashboardNavbar() {
     <>
       <section className="flex justify-between items-center sm:p-5 p-3 bg-[#FFFFFF] gap-3">
         <div className="relative">
-          <input
+          {/* <input
             type="search"
             name=""
             id=""
             placeholder="Search"
             className="sm:p-2 p-1 sm:w-[448px] w-full peer border border-neutral-400 outline-none rounded-md placeholder:pl-6"
-          />
+          /> */}
 
-          <CiSearch className="absolute left-3 sm:top-3.5 top-2.5 peer-focus:hidden" />
+          {/* <CiSearch className="absolute left-3 sm:top-3.5 top-2.5 peer-focus:hidden" /> */}
         </div>
         <div className="flex min-[375px]:gap-4 gap-1 items-center ">
           <div
