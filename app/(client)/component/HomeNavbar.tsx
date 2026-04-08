@@ -59,7 +59,7 @@ const HomeNavbar: React.FC = () => {
         <LogoIcon className="text-sm md:w-auto md:h-auto w-28" />
       </Link>
 
-      <span className="min-[1120px]:flex hidden items-center justify-center min-[932px]:gap-10 gap-5">
+      <span className="min-[1120px]:flex hidden  items-center justify-center min-[932px]:gap-10 gap-5">
         {/* <Link
           className={`text-[#0F172A] hover:font-bold md:text-base text-sm ${
             pathname === "/" ? "text-[#86198F] font-bold" : ""
@@ -68,23 +68,35 @@ const HomeNavbar: React.FC = () => {
         >
           Escrow
         </Link> */}
-        <Link className="text-[#0F172A] md:text-base text-sm" href="/">
+        <Link
+          className={`text-[#0F172A] hover:text-[#86198F]  md:text-base text-sm ${
+            pathname === "/" ? "text-[#86198F] font-bold" : ""
+          }`}
+          href="/#howItWork"
+        >
           How it Works
         </Link>
         <Link
-          className={`text-[#0F172A] hover:font-bold md:text-base text-sm ${
+          className={`text-[#0F172A] hover:text-[#86198F]  whitespace-nowrap md:text-base text-sm ${
             pathname === "#" ? "text-[#86198F] font-bold" : ""
           }`}
           href="/"
         >
           About us
         </Link>
-        <Link className="text-[#0F172A] md:text-base text-sm" href="/blog">
+        <Link
+          className={`text-[#0F172A] hover:text-[#86198F] md:text-base text-sm ${
+            pathname === "/blog" ? "text-[#86198F] font-bold" : ""
+          }`}
+          href="/blog"
+        >
           Blog
         </Link>
         <Link
-          className="text-[#0F172A] md:text-base text-sm md:block hidden"
-          href="/"
+          className={`text-[#0F172A] hover:text-[#86198F]  md:text-base text-sm md:block hidden ${
+            pathname === "/contact" ? "text-[#86198F] font-bold" : ""
+          }`}
+          href="/contact"
         >
           Contact us
         </Link>

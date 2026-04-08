@@ -118,7 +118,7 @@ export default async function Home() {
         {/* </div> */}
       </section>
 
-      <section className="flex flex-col items-center">
+      <section id="howItWork" className="flex flex-col items-center">
         <h2 className="sm:text-[32px] text-2xl self-start my-10 font-bold ml-16">
           How it Works
         </h2>

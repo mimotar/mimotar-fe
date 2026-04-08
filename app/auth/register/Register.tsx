@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 
@@ -24,11 +24,13 @@ import { unTokenAxiosInstance } from "@/lib/services/axiosService";
 import { AxiosError } from "axios";
 import { AxiosErrorHandler } from "@/app/utils/axiosErrorHandler";
 import { useRouter } from "next/navigation";
+import { IoEyeOutline } from "react-icons/io5";
 
 interface IRegisterFormProps {
   closeModal: () => void;
 }
 const Register = ({ closeModal }: IRegisterFormProps) => {
+  const [visible, setVisible] = useState(false);
   const navigate = useRouter();
   const { isPending, isError, mutate } = useMutation({
     mutationFn: async (data: AuthTypes) => {
@@ -138,14 +140,21 @@ const Register = ({ closeModal }: IRegisterFormProps) => {
                 <Label className="font-bold">Password</Label>
 
                 <FormControl>
-                  {/* <PasswordInput field={field} /> */}
+                  <div className="relative">
+                    <Input
+                      placeholder="******"
+                      type={visible ? "text" : "password"}
+                      {...field}
+                      className="focus:outline-none focus:border-0"
+                    />
 
-                  <Input
-                    placeholder="email@gmail.com"
-                    {...field}
-                    className="focus:outline-none focus:border-0"
-                  />
+                    <IoEyeOutline
+                      onClick={() => setVisible((prev) => !prev)}
+                      className="absolute top-3 right-3 cursor-pointer"
+                    />
+                  </div>
                 </FormControl>
+
                 <FormMessage className="text-red-500" />
               </FormItem>
             )}
