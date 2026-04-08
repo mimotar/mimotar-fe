@@ -19,6 +19,7 @@ import editProfileInfoFormSchema, {
 import { useMutateAction } from "@/app/hooks/useMutation";
 import { AxiosError } from "axios";
 import { UpdateProfileResponse } from "../types/IUpdateProfileResponse";
+import Avata from "@/app/(dashboard)/commons/Avartar";
 
 const EditProfileInfoFormSection = () => {
   const { data: session, status, update } = useSession();
@@ -119,6 +120,11 @@ const EditProfileInfoFormSection = () => {
 
   return (
     <section className="flex flex-col mt-3">
+      <div className="flex flex-col">
+        {/* <img src="" alt="" className="size-16 rounded-" /> */}
+        <Avata imgUrl="" className="" />
+        <input type="file" name="" id="" className="hidden" />
+      </div>
       <form onSubmit={handleSubmit(handleSubmitEdit)} className="space-y-4">
         <div className="grid sm:grid-cols-2 grid-cols-1 gap-6">
           <div className="flex flex-col">

@@ -3,7 +3,7 @@
 import { AuthTypes } from "@/lib/types/AuthTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import {
@@ -23,11 +23,13 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { signIn, useSession } from "next-auth/react";
 import { AxiosErrorHandler } from "@/app/utils/axiosErrorHandler";
+import { IoEyeOutline } from "react-icons/io5";
 
 interface ILoginFormProps {
   closeModal: () => void;
 }
 const Login = ({ closeModal }: ILoginFormProps) => {
+  const [visible, setVisible] = useState(false);
   const navigate = useRouter();
 
   const form = useForm<Omit<AuthTypes, "firstName" | "lastName">>({
@@ -99,13 +101,22 @@ const Login = ({ closeModal }: ILoginFormProps) => {
                 <Label className="font-bold">Password</Label>
 
                 <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Enter your password"
-                    {...field}
-                    className="focus:outline-none focus:border-0"
-                  />
+                  <div className="relative">
+                    <Input
+                      type={visible ? "text" : "password"}
+                      placeholder="Enter your password"
+                      {...field}
+                      className="focus:outline-none focus:border-0 pr-10"
+                    />
+
+                    <IoEyeOutline
+                      onClick={() => setVisible((prev) => !prev)}
+                      className="absolute top-3 right-3 cursor-pointer"
+                    />
+                  </div>
                 </FormControl>
+
+                <FormMessage />
                 <FormMessage />
                 <Link
                   href={"/auth/forget-password"}
