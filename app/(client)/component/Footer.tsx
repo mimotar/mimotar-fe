@@ -143,24 +143,24 @@ export default function Footer() {
           />
           <ul className="min-[500px]:inline-flex hidden gap-4 text-base">
             <li>
-              <Link href={""} className="hover:text-slate-300">
+              <Link href={"/how-it-works"} className="hover:text-slate-300">
                 How it works
               </Link>
             </li>
 
             <li>
-              <Link href={""} className="hover:text-slate-300">
+              <Link href={"/aboutUs"} className="hover:text-slate-300">
                 About us
               </Link>
             </li>
 
             <li>
-              <Link href={""} className="hover:text-slate-300">
+              <Link href={"/blog"} className="hover:text-slate-300">
                 Blog
               </Link>
             </li>
             <li>
-              <Link href={""} className="hover:text-slate-300">
+              <Link href={"/contact"} className="hover:text-slate-300">
                 Contact us
               </Link>
             </li>
@@ -185,24 +185,25 @@ export default function Footer() {
           <div className="min-[500px]:hidden grid grid-cols-2">
             <ul className="space-y-3 text-left">
               <li>
-                <Link href={""} className="hover:text-slate-300">
+                <Link href={"/how-it-works"} className="hover:text-slate-300">
                   How it works
                 </Link>
               </li>
 
               <li>
-                <Link href={""} className="hover:text-slate-300">
+                <Link href={"/aboutUs"} className="hover:text-slate-300">
                   About us
                 </Link>
               </li>
 
               <li>
-                <Link href={""} className="hover:text-slate-300">
+                <Link href={"/blog"} className="hover:text-slate-300">
                   Blog
                 </Link>
               </li>
+
               <li>
-                <Link href={""} className="hover:text-slate-300">
+                <Link href={"/contact"} className="hover:text-slate-300">
                   Contact us
                 </Link>
               </li>
