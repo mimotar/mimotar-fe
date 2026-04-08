@@ -131,8 +131,8 @@ export const authOptions: AuthOptions = {
         token.address = session.address ?? token.address;
         token.city = session.city ?? token.city;
         token.country = session.country ?? token.country;
-        token.postal_code = session.postalCode ?? token.postal_code;
-        token.id_number = session.idNumber ?? token.id_number;
+        token.postal_code = session.postal_code ?? token.postal_code;
+        token.id_number = session.id_number ?? token.id_number;
       }
 
       if (account?.provider == "credentials") {

@@ -23,10 +23,25 @@ import { UpdateProfileResponse } from "../types/IUpdateProfileResponse";
 const EditProfileInfoFormSection = () => {
   const { data: session, status, update } = useSession();
   const router = useRouter();
-  const [selectedCountryIso, setSelectedCountryIso] = useState("");
+  const firstName = session?.user.firstName ?? "";
+  const lastName = session?.user.lastName ?? "";
+  const fullName = [firstName, lastName].filter(Boolean).join(" ");
+
   console.log(session);
 
-  const countries = useMemo(() => Country.getAllCountries(), []);
+  const formatPhone = (phone?: string) => {
+    if (!phone) return "";
+
+    // already correct
+    if (phone.startsWith("+")) return phone;
+
+    // Nigeria example (adjust if needed)
+    if (phone.startsWith("0")) {
+      return "+234" + phone.slice(1);
+    }
+
+    return "+" + phone;
+  };
 
   const { mutateAsync, isPending } = useMutateAction<
     UpdateProfileResponse,
@@ -38,28 +53,23 @@ const EditProfileInfoFormSection = () => {
     control,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm<IEditProfileInfoFormSchemaType>({
     resolver: zodResolver(editProfileInfoFormSchema),
     defaultValues: {
-      fullName: "",
-      email: "",
-      phoneNumber: "",
-      address: "",
-      city: "",
-      country: "",
-      postal_code: "",
-      id_number: "",
+      fullName: fullName ?? "",
+      // email: "",
+      phone_no: formatPhone(session?.user.phone_no) ?? "",
+      address: session?.user.address ?? "",
+      city: session?.user.city ?? "",
+      country: session?.user.country ?? "",
+      postal_code: session?.user.postal_code ?? "",
+      id_number: String(session?.user.id_number) ?? "",
     },
   });
 
-  const cities = selectedCountryIso
-    ? City.getCitiesOfCountry(selectedCountryIso)
-    : [];
-
   useEffect(() => {
-    if (status !== "authenticated" || !session?.user) return;
+    if (!session?.user) return;
 
     const firstName = session.user.firstName ?? "";
     const lastName = session.user.lastName ?? "";
@@ -67,52 +77,25 @@ const EditProfileInfoFormSection = () => {
 
     reset({
       fullName,
-      email: session.user.email ?? "",
-      phoneNumber: "",
-      address: "",
-      city: "",
-      country: "",
-      postal_code: "",
-      id_number: "",
+      phone_no: formatPhone(session.user.phone_no) ?? "",
+      address: session.user.address ?? "",
+      city: session.user.city ?? "",
+      country: session.user.country ?? "",
+      postal_code: session.user.postal_code ?? "",
+      id_number: String(session.user.id_number ?? ""),
     });
-
-    setSelectedCountryIso("");
-  }, [session, status, reset]);
-
-  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const isoCode = e.target.value;
-
-    const selectedCountry = countries.find(
-      (country) => country.isoCode === isoCode,
-    );
-
-    setSelectedCountryIso(isoCode);
-
-    setValue("country", selectedCountry?.name ?? "", {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-
-    setValue("city", "", {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-  };
+  }, [session, reset]);
 
   const handleSubmitEdit = async (data: IEditProfileInfoFormSchemaType) => {
     try {
       const result = await mutateAsync(data);
-      console.log("submitted data:", data);
-      console.log("result data", result);
 
       const [firstName, ...rest] = result.data.fullName.split(" ");
       const lastName = rest.join(" ") || "";
       await update({
         firstName,
         lastName,
-        // userId : result.data.fullName[0],
-        // verified : token.verified;
-        phone_no: result.data.phone_no ?? undefined,
+        phone_no: formatPhone(result.data.phone_no!) ?? undefined,
         address: result.data.address ?? undefined,
         city: result.data.city ?? undefined,
         country: result.data.country ?? undefined,
@@ -147,7 +130,7 @@ const EditProfileInfoFormSection = () => {
               id="full_name"
               {...register("fullName")}
               placeholder="Olawale Ade"
-              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md "
             />
             {errors.fullName && (
               <small className="text-red-400">{errors.fullName.message}</small>
@@ -159,15 +142,18 @@ const EditProfileInfoFormSection = () => {
               Email address
             </label>
             <input
+              disabled
+              readOnly
               type="email"
               id="email"
-              {...register("email")}
+              // {...register("email")}
+              value={session?.user.email}
               placeholder="olawaleade@gmail.com"
-              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md "
             />
-            {errors.email && (
+            {/* {errors.email && (
               <small className="text-red-400">{errors.email.message}</small>
-            )}
+            )} */}
           </div>
         </div>
 
@@ -182,7 +168,7 @@ const EditProfileInfoFormSection = () => {
 
             <div className={phoneInputStyle.wrapperStyle}>
               <Controller
-                name="phoneNumber"
+                name="phone_no"
                 control={control}
                 render={({ field }) => (
                   <PhoneInput
@@ -197,10 +183,8 @@ const EditProfileInfoFormSection = () => {
               />
             </div>
 
-            {errors.phoneNumber && (
-              <small className="text-red-400">
-                {errors.phoneNumber.message}
-              </small>
+            {errors.phone_no && (
+              <small className="text-red-400">{errors.phone_no.message}</small>
             )}
           </div>
 
@@ -213,7 +197,7 @@ const EditProfileInfoFormSection = () => {
               id="address"
               {...register("address")}
               placeholder="13 Washington Square South"
-              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md"
             />
             {errors.address && (
               <small className="text-red-400">{errors.address.message}</small>
@@ -226,23 +210,13 @@ const EditProfileInfoFormSection = () => {
             <label htmlFor="city" className="text-neutral-600">
               City
             </label>
-
-            <select
+            <input
+              type="text"
               id="city"
               {...register("city")}
-              disabled={!selectedCountryIso}
-              className="border border-neutral-400 p-3 rounded-md"
-            >
-              <option value="">
-                {selectedCountryIso ? "Select city" : "Select country first"}
-              </option>
-              {cities?.map((city, i) => (
-                <option key={`${city.name}-${i}`} value={city.name}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
-
+              placeholder=" City"
+              className="border border-neutral-400 p-3 outline-none rounded-md "
+            />
             {errors.city && (
               <small className="text-red-400">{errors.city.message}</small>
             )}
@@ -252,21 +226,13 @@ const EditProfileInfoFormSection = () => {
             <label htmlFor="country" className="text-neutral-600">
               Country
             </label>
-
-            <select
+            <input
+              type="text"
               id="country"
-              onChange={handleCountryChange}
-              defaultValue=""
-              className="border border-neutral-400 p-3 rounded-md"
-            >
-              <option value="">Select country</option>
-              {countries.map((country) => (
-                <option key={country.isoCode} value={country.isoCode}>
-                  {country.name}
-                </option>
-              ))}
-            </select>
-
+              {...register("country")}
+              placeholder="Select country"
+              className="border border-neutral-400 p-3 outline-none rounded-md "
+            />
             {errors.country && (
               <small className="text-red-400">{errors.country.message}</small>
             )}
@@ -283,7 +249,7 @@ const EditProfileInfoFormSection = () => {
               id="postal_code"
               {...register("postal_code")}
               placeholder="110222"
-              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md"
             />
             {errors.postal_code && (
               <small className="text-red-400">
@@ -301,7 +267,7 @@ const EditProfileInfoFormSection = () => {
               id="id_number"
               {...register("id_number")}
               placeholder="64484****"
-              className="border border-neutral-400 p-3 outline-none rounded-md placeholder:text-neutral-900"
+              className="border border-neutral-400 p-3 outline-none rounded-md "
             />
             {errors.id_number && (
               <small className="text-red-400">{errors.id_number.message}</small>

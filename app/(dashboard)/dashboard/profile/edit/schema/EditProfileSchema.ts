@@ -3,9 +3,9 @@ import { z } from "zod";
 const editProfileInfoFormSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters").trim(),
 
-  email: z.string().email("Enter a valid email address").trim(),
+  // email: z.string().email("Enter a valid email address").trim(),
 
-  phoneNumber: z.string().min(7, "Enter a valid phone number").trim(),
+  phone_no: z.string().min(7, "Enter a valid phone number").trim(),
 
   address: z.string().min(3, "Address must be at least 3 characters").trim(),
 

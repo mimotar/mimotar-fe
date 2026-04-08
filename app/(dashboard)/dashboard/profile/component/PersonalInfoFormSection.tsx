@@ -26,7 +26,7 @@ export default function PersonalInfoFormSection() {
             value={fullname}
             readOnly
             placeholder="first name"
-            className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
+            className="bg-neutral-200 p-3 outline-none rounded-md"
           />
         </div>
 
@@ -40,7 +40,7 @@ export default function PersonalInfoFormSection() {
             value={session?.user.email}
             readOnly
             placeholder="mail"
-            className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
+            className="bg-neutral-200 p-3 outline-none rounded-md "
           />
         </div>
       </div>
@@ -59,7 +59,7 @@ export default function PersonalInfoFormSection() {
               defaultCountry="NG"
               id="phone_number"
               placeholder="Enter phone number"
-              value={""}
+              value={session?.user.phone_no}
               onChange={(e) => ""}
               // className="custom-phone-input bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
             />
@@ -74,8 +74,9 @@ export default function PersonalInfoFormSection() {
             type="text"
             id="address"
             readOnly
+            value={session?.user.address}
             placeholder="address"
-            className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
+            className="bg-neutral-200 p-3 outline-none rounded-md"
           />
           <small className="text-red-400"></small>
         </div>
@@ -91,7 +92,8 @@ export default function PersonalInfoFormSection() {
             id="city"
             readOnly
             placeholder="city"
-            className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
+            value={session?.user.city}
+            className="bg-neutral-200 p-3 outline-none rounded-md "
           />
           <small className="text-red-400"></small>
         </div>
@@ -104,8 +106,9 @@ export default function PersonalInfoFormSection() {
             type="text"
             id="country"
             readOnly
+            value={session?.user.country}
             placeholder="country"
-            className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
+            className="bg-neutral-200 p-3 outline-none rounded-md "
           />
           <small className="text-red-400"></small>
         </div>
@@ -120,7 +123,8 @@ export default function PersonalInfoFormSection() {
             id="postal_code"
             readOnly
             placeholder="postal code"
-            className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
+            value={session?.user.postal_code}
+            className="bg-neutral-200 p-3 outline-none rounded-md "
           />
           <small className="text-red-400"></small>
         </div>
@@ -133,8 +137,9 @@ export default function PersonalInfoFormSection() {
             type="text"
             id="id_number"
             readOnly
+            value={session?.user.id_number}
             placeholder="64484****"
-            className="bg-neutral-200 p-3 outline-none rounded-md placeholder:text-neutral-900"
+            className="bg-neutral-200 p-3 outline-none rounded-md "
           />
           <small className="text-red-400"></small>
         </div>
