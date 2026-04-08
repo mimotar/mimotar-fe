@@ -18,7 +18,7 @@ interface IMarkAsPendingClosureProps {
   status: "idle" | "loading" | "error" | "success";
 }
 
-export default function MarkAsPendingClosure({
+export default function InitiateClosure({
   open,
   setOpen,
   onMarkAsPendingClosure,

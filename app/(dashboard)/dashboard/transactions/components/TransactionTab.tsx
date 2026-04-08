@@ -6,7 +6,7 @@ import { useFetch } from "@/app/hooks/useFetch";
 import { ITransaction, TransactionsResponse } from "../types/ITransactions";
 import { DisputeForm } from "./DisputeForm";
 import { Row } from "@tanstack/react-table";
-import MarkAsPendingClosure from "./MarkAsPendingClosure";
+import InitiateClosure from "./InitiateClosure";
 import toast from "react-hot-toast";
 import axiosService from "@/lib/services/axiosService";
 import { AxiosError } from "axios";
@@ -32,6 +32,8 @@ export default function TransactionTab() {
   const [transaction, setTransaction] = useState<Row<ITransaction> | undefined>(
     undefined,
   );
+
+  console.log("selected transaction", transaction);
 
   const queryClient = useQueryClient();
 
@@ -60,18 +62,20 @@ export default function TransactionTab() {
     setTransaction(row);
   };
 
-  const handleMarkAsPendingClosure = async () => {
+  const initiateClosure = async () => {
     try {
-      if (!transaction?.id) {
+      if (!transaction?.original.id) {
         toast.error("No Transaction selected");
         return;
       }
       setStatus("loading");
 
-      await axiosService.put(`/ticket/${transaction.id}/resolve`);
-      toast.error("Transaction resolution requested");
+      await axiosService.put(`/ticket/${transaction.original.id}/resolve`);
+      toast.success("Transaction resolution requested");
       setStatus("success");
       await queryClient.invalidateQueries({ queryKey: ["transaction"] });
+      setTransaction(undefined);
+      setOpenMarkedAsResolve(true);
     } catch (error) {
       setStatus("error");
       if (error instanceof AxiosError) {
@@ -100,9 +104,14 @@ export default function TransactionTab() {
       }
       setAcceptClosureStatus("loading");
 
-      await axiosService.put(`/ticket/${transaction.id}/accept-resolution`);
-      toast.error("Transaction closure accepted");
+      await axiosService.put(
+        `/ticket/${transaction.original.id}/accept-resolution`,
+      );
+      toast.success("Transaction closure accepted");
+      await queryClient.invalidateQueries({ queryKey: ["transaction"] });
       setAcceptClosureStatus("success");
+      setTransaction(undefined);
+      setOpenAcceptForClosure(true);
     } catch (error) {
       setAcceptClosureStatus("error");
       if (error instanceof AxiosError) {
@@ -123,15 +132,20 @@ export default function TransactionTab() {
 
   const handleRejectClosure = async () => {
     try {
-      if (!transaction?.id) {
+      if (!transaction?.original.id) {
         toast.error("No Transaction selected");
         return;
       }
       setRejectClosureStatus("loading");
 
-      await axiosService.put(`ticket/${transaction.id}/reject-resolution`);
-      toast.error("Transaction closure Rejected");
+      await axiosService.put(
+        `ticket/${transaction.original.id}/reject-resolution`,
+      );
+      await queryClient.invalidateQueries({ queryKey: ["transaction"] });
+      toast.success("Transaction closure Rejected");
       setRejectClosureStatus("success");
+      setTransaction(undefined);
+      setOpenRejectForClosure(true);
     } catch (error) {
       setRejectClosureStatus("error");
       if (error instanceof AxiosError) {
@@ -170,8 +184,8 @@ export default function TransactionTab() {
         transaction={selectedDispute}
       />
 
-      <MarkAsPendingClosure
-        onMarkAsPendingClosure={handleMarkAsPendingClosure}
+      <InitiateClosure
+        onMarkAsPendingClosure={initiateClosure}
         open={openMarkedAsResolve}
         setOpen={setOpenMarkedAsResolve}
         status={status}

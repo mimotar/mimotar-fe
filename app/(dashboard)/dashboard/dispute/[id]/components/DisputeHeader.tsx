@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { Dispute } from "../types/dispute";
 import DisputeStatusBadge from "./DisputeStatusBadge";
 import { BsChatLeftTextFill } from "react-icons/bs";
 import NegotiationCountdown from "./NegotiationCountdown";
+import { useSession } from "next-auth/react";
 
 interface DisputeHeaderProps {
   disputeId: number;
@@ -14,8 +17,17 @@ export default function DisputeHeader({
   disputeId,
   dispute,
 }: DisputeHeaderProps) {
-  const isDisputeEnded = new Date() > new Date(dispute.elapsesAt);
-  console.log(isDisputeEnded);
+  const { data: session } = useSession();
+  const isDisputeTimeEnded = new Date() > new Date(dispute.elapsesAt);
+  const isCreator =
+    dispute?.transaction?.creator_email === session?.user?.email;
+  const isDisputeOnGOing = dispute.status === "ongoing";
+  const isPendingClosure = dispute.status === "pending_closure";
+
+  const canResolveDispute =
+    (isDisputeOnGOing || isPendingClosure) && !isDisputeTimeEnded && isCreator;
+
+  console.log(isDisputeTimeEnded);
   return (
     <header className="flex flex-col gap-5">
       <Link
@@ -45,17 +57,16 @@ export default function DisputeHeader({
             <BsChatLeftTextFill className="sm:text-xl text-base text-brand-primary cursor-pointer" />
           </button>
 
-          {dispute.status === "negotiation" ||
-            (isDisputeEnded && (
-              <button
-                type="button"
-                className="inline-flex sm:h-[52px] h-[40px] min-w-[178px] items-center justify-center rounded-xl border border-[#D946EF] cursor-pointer px-6 sm:text-base text-sm font-semibold text-brand-primary"
-              >
-                Get assistance
-              </button>
-            ))}
+          {(dispute.status === "negotiation" || isDisputeTimeEnded) && (
+            <button
+              type="button"
+              className="inline-flex sm:h-[52px] h-[40px] min-w-[178px] items-center justify-center rounded-xl border border-[#D946EF] cursor-pointer px-6 sm:text-base text-sm font-semibold text-brand-primary"
+            >
+              Get assistance
+            </button>
+          )}
 
-          {!isDisputeEnded && (
+          {canResolveDispute && (
             <button
               type="button"
               className="inline-flex sm:h-[52px] h-[40px] min-w-[190px] items-center justify-center rounded-xl bg-[#A21CAF] px-6 sm:text-base text-sm cursor-pointer font-semibold text-white"
