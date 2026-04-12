@@ -1,6 +1,5 @@
 "use client";
 
-import { CiSearch } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
 import { IoIosNotifications } from "react-icons/io";
 import { RxHamburgerMenu } from "react-icons/rx";
@@ -14,11 +13,18 @@ import ProfileDropDown from "../dashboard/profile/component/ProfileDropDown";
 import LeftPanel from "./leftpanel";
 import { AnimatePresence, motion } from "framer-motion";
 import LogoIcon from "@/app/svgIconComponent/Logo";
+import { useSession } from "next-auth/react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function DashboardNavbar() {
   const [isNotificationDropDown, setIsNotificationDropDown] = useState(false);
   const [isProfileDropdown, setIsProfileDropdown] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+
+  const { data: session, status, update } = useSession();
+  const firstName = session?.user.firstName ?? "";
+  const lastName = session?.user.lastName ?? "";
+  const profileAcronyms = `${firstName[0] ?? ""}${lastName[0] ?? ""}`;
 
   return (
     <>
@@ -69,7 +75,16 @@ export default function DashboardNavbar() {
           </div>
 
           <div className="relative flex items-center justify-center gap-1">
-            <Avata className="sm:w-10 sm:h-10 h-6 w-6" />
+            {status === "loading" || !session ? (
+              <AiOutlineLoading3Quarters className="animate-spin text-brand-primary" />
+            ) : (
+              <Avata
+                imgUrl={session?.user.avatar}
+                className="border sm:w-10 sm:h-10 h-6 w-6"
+                nameAcronyms={profileAcronyms}
+              />
+            )}
+
             <RiArrowDropDownLine
               className={`cursor-pointer text-2xl ${
                 isProfileDropdown && "rotate-180"
