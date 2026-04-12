@@ -6,15 +6,33 @@ import { useState } from "react";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import phoneInputStyle from "../css.module/phoneNumberStyle.module.css";
+import Avata from "@/app/(dashboard)/commons/Avartar";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function PersonalInfoFormSection() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  console.log("readonly profile", session);
+  const firstName = session?.user.firstName ?? "";
+  const lastName = session?.user.lastName ?? "";
+  const fullName = [firstName, lastName].filter(Boolean).join(" ");
+  const profileAcronyms = `${firstName[0] ?? ""}${lastName[0] ?? ""}`;
 
-  const fullname =
-    `${session?.user?.firstName ?? ""} ${session?.user?.lastName ?? ""}`.trim();
+  // const fullname =
+  //   `${session?.user?.firstName ?? ""} ${session?.user?.lastName ?? ""}`.trim();
 
   return (
     <section className="flex flex-col mt-3 space-y-4">
+      <div className="flex justify-center items-center ">
+        {status === "loading" || !session ? (
+          <AiOutlineLoading3Quarters className="animate-spin size-12 text-brand-primary" />
+        ) : (
+          <Avata
+            imgUrl={session?.user.avatar}
+            className="border size-16 mb-2"
+            nameAcronyms={profileAcronyms}
+          />
+        )}
+      </div>
       <div className="grid sm:grid-cols-2 grid-cols-1 gap-6">
         <div className="flex flex-col ">
           <label htmlFor="first_name" className="text-neutral-600">
@@ -23,7 +41,7 @@ export default function PersonalInfoFormSection() {
           <input
             type="text"
             id="first_name"
-            value={fullname}
+            value={fullName}
             readOnly
             placeholder="first name"
             className="bg-neutral-200 p-3 outline-none rounded-md"
@@ -145,12 +163,12 @@ export default function PersonalInfoFormSection() {
         </div>
       </div>
 
-      <button
+      {/* <button
         type="button"
         className="bg-brand-primary p-2 rounded-md text-white cursor-pointer"
       >
         Update
-      </button>
+      </button> */}
     </section>
   );
 }

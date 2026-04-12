@@ -39,6 +39,7 @@ const Login = ({ closeModal }: ILoginFormProps) => {
       password: "",
     },
   });
+
   const onSubmit: SubmitHandler<
     Omit<AuthTypes, "firstName" | "lastName">
   > = async (data) => {

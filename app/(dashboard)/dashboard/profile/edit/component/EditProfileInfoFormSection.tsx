@@ -1,10 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import PhoneInput from "react-phone-number-input";
 // @ts-ignore: no type declarations for the package's CSS side-effect import
 import "react-phone-number-input/style.css";
@@ -20,15 +20,39 @@ import { useMutateAction } from "@/app/hooks/useMutation";
 import { AxiosError } from "axios";
 import { UpdateProfileResponse } from "../types/IUpdateProfileResponse";
 import Avata from "@/app/(dashboard)/commons/Avartar";
+import { UploadProfilePic } from "../actions/uploadProfile";
+import { Button } from "@/components/ui/button";
 
+export type InitialStateType = {
+  error: boolean;
+  msg: string;
+  avatarUrl: string;
+};
 const EditProfileInfoFormSection = () => {
   const { data: session, status, update } = useSession();
+  console.log("edit profile", session);
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [initialState, _] = useState<InitialStateType>({
+    error: false,
+    msg: "",
+    avatarUrl: "",
+  });
+
   const router = useRouter();
   const firstName = session?.user.firstName ?? "";
   const lastName = session?.user.lastName ?? "";
   const fullName = [firstName, lastName].filter(Boolean).join(" ");
 
-  console.log(session);
+  const profileAcronyms = `${firstName[0] ?? ""}${lastName[0] ?? ""}`;
+
+  const FileRef = useRef<HTMLInputElement | null>(null);
+
+  const [state, dispatchAction, ispending] = useActionState(
+    UploadProfilePic,
+    initialState,
+  );
 
   const formatPhone = (phone?: string) => {
     if (!phone) return "";
@@ -69,31 +93,15 @@ const EditProfileInfoFormSection = () => {
     },
   });
 
-  useEffect(() => {
-    if (!session?.user) return;
-
-    const firstName = session.user.firstName ?? "";
-    const lastName = session.user.lastName ?? "";
-    const fullName = [firstName, lastName].filter(Boolean).join(" ");
-
-    reset({
-      fullName,
-      phone_no: formatPhone(session.user.phone_no) ?? "",
-      address: session.user.address ?? "",
-      city: session.user.city ?? "",
-      country: session.user.country ?? "",
-      postal_code: session.user.postal_code ?? "",
-      id_number: String(session.user.id_number ?? ""),
-    });
-  }, [session, reset]);
-
   const handleSubmitEdit = async (data: IEditProfileInfoFormSchemaType) => {
     try {
       const result = await mutateAsync(data);
+      console.log("update", result.data);
 
       const [firstName, ...rest] = result.data.fullName.split(" ");
       const lastName = rest.join(" ") || "";
       await update({
+        ...session,
         firstName,
         lastName,
         phone_no: formatPhone(result.data.phone_no!) ?? undefined,
@@ -118,13 +126,74 @@ const EditProfileInfoFormSection = () => {
     }
   };
 
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const firstName = session.user.firstName ?? "";
+    const lastName = session.user.lastName ?? "";
+    const fullName = [firstName, lastName].filter(Boolean).join(" ");
+
+    reset({
+      fullName,
+      phone_no: formatPhone(session.user.phone_no) ?? "",
+      address: session.user.address ?? "",
+      city: session.user.city ?? "",
+      country: session.user.country ?? "",
+      postal_code: session.user.postal_code ?? "",
+      id_number: String(session.user.id_number ?? ""),
+    });
+  }, [session?.user, reset]);
+
+  useEffect(() => {
+    if (state?.msg) {
+      setMessage(state.msg);
+      setIsError(state.error);
+      setAvatarUrl(state.avatarUrl);
+
+      const id = setTimeout(() => {
+        setMessage("");
+      }, 3000);
+
+      return () => clearTimeout(id);
+    }
+  }, [state]);
   return (
     <section className="flex flex-col mt-3">
-      <div className="flex flex-col">
-        {/* <img src="" alt="" className="size-16 rounded-" /> */}
-        <Avata imgUrl="" className="" />
-        <input type="file" name="" id="" className="hidden" />
-      </div>
+      <form
+        action={dispatchAction}
+        className="flex flex-col justify-center items-center mb-2"
+      >
+        {status === "loading" || !session ? (
+          <AiOutlineLoading3Quarters className="animate-spin size-12 mb-2 text-brand-primary" />
+        ) : (
+          <Avata
+            imgUrl={avatarUrl || session?.user.avatar}
+            className="border size-16 mb-2"
+            nameAcronyms={profileAcronyms}
+            onClick={() => FileRef.current?.click()}
+          />
+        )}
+        <input
+          ref={FileRef}
+          type="file"
+          name="profilePic"
+          // id="profilePic"
+          className="hidden"
+        />
+        <Button variant={"outline"} type="submit" className="cursor-pointer">
+          Update Profile
+        </Button>
+        {message && (
+          <small
+            className={`mt-2 ${isError ? "text-red-400" : "text-green-400"}`}
+          >
+            {message}
+          </small>
+        )}
+        {ispending && (
+          <AiOutlineLoading3Quarters className="animate-spin text-brand-primary" />
+        )}
+      </form>
       <form onSubmit={handleSubmit(handleSubmitEdit)} className="space-y-4">
         <div className="grid sm:grid-cols-2 grid-cols-1 gap-6">
           <div className="flex flex-col">

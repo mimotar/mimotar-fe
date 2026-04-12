@@ -7,6 +7,7 @@ export type UserProfile = {
   country: string | null;
   postal_code: string | null;
   id_number: number | null;
+  avatar: string;
 };
 
 type ApiResponse<T> = {
