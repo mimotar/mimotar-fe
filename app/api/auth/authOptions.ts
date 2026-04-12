@@ -1,6 +1,4 @@
-import axiosService, {
-  unTokenAxiosInstance,
-} from "@/lib/services/axiosService";
+import { unTokenAxiosInstance } from "@/lib/services/axiosService";
 import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
@@ -21,6 +19,7 @@ declare module "next-auth" {
       country?: string;
       postal_code?: string;
       id_number?: number;
+      avatar?: string;
     };
   }
 
@@ -37,6 +36,7 @@ declare module "next-auth" {
     country?: string;
     postal_code?: string;
     id_number?: number;
+    avatar?: string;
   }
 }
 
@@ -56,18 +56,19 @@ export const authOptions: AuthOptions = {
         },
       },
       async authorize(credentials, req) {
+        // console.log("input", req);
         return unTokenAxiosInstance
           .post("user/login-with-email", {
             email: credentials?.email as string,
             password: credentials?.password as string,
           })
           .then(({ data }) => {
-            // console.log("server data", data);
+            console.log("server login data", data);
             if (!data) {
               return null;
             }
 
-            console.log("server data", data);
+            console.log("server data", JSON.stringify(data));
             return {
               id: data.data.user.id,
               firstName: data.data.user.firstName,
@@ -75,17 +76,19 @@ export const authOptions: AuthOptions = {
               accessToken: data.data.token,
               email: data.data.user.email,
               verified: data.data.user.verified,
-              phone_no: data.data.user.phone_no,
-              address: data.data.user.address,
-              city: data.data.user.city,
-              country: data.data.user.country,
-              postal_code: data.data.user.postal_code,
-              id_number: data.data.user.id_number,
+              phone_no: data.data.user.profile.phone_no,
+              address: data.data.user.profile.address,
+              city: data.data.user.profile.city,
+              country: data.data.user.profile.country,
+              postal_code: data.data.user.profile.postal_code,
+              id_number: data.data.user.profile.id_number,
+              avatar: data.data.user.profile.avatar,
             };
           })
           .catch((error) => {
-            console.log(error);
+            // console.log("login error", JSON.stringify(error));
             // throw new Error(error?.response?.data?.response?.message);
+            console.log("login error", error);
             return null;
           });
       },
@@ -133,6 +136,7 @@ export const authOptions: AuthOptions = {
         token.country = session.country ?? token.country;
         token.postal_code = session.postal_code ?? token.postal_code;
         token.id_number = session.id_number ?? token.id_number;
+        token.avatar = session.avatar ?? token.avatar;
       }
 
       if (account?.provider == "credentials") {
@@ -147,6 +151,7 @@ export const authOptions: AuthOptions = {
         token.country = user.country;
         token.postal_code = user.postal_code;
         token.id_number = user.id_number;
+        token.avatar = user.avatar;
       }
 
       if (account?.provider == "google") {
@@ -178,6 +183,7 @@ export const authOptions: AuthOptions = {
         session.user.country = token.country;
         session.user.postal_code = token.postal_code;
         session.user.id_number = token.id_number;
+        session.user.avatar = token.avatar;
       }
       return session;
     },

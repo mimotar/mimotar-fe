@@ -1,7 +1,7 @@
 import Avata from "@/app/(dashboard)/commons/Avartar";
 import { signOut, useSession } from "next-auth/react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface ProfileDropDownProps {
   className?: string;
@@ -13,7 +13,7 @@ export default function ProfileDropDown({
   closeDropdown,
 }: ProfileDropDownProps) {
   const navigate = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const fullName = [session?.user?.firstName, session?.user?.lastName]
     .filter(Boolean)
@@ -29,11 +29,20 @@ export default function ProfileDropDown({
       className={`flex flex-col  bg-white shadow-lg border rounded-md space-y-2 ${className}`}
     >
       <div className=" flex items-center gap-2 p-2 w-full">
-        <Avata
+        {status === "loading" || !session ? (
+          <AiOutlineLoading3Quarters className="animate-spin text-brand-primary" />
+        ) : (
+          <Avata
+            imgUrl={session?.user.avatar}
+            className="border sm:w-10 sm:h-10 h-6 w-6"
+            nameAcronyms={acronym}
+          />
+        )}
+        {/* <Avata
           imgUrl={""}
           nameAcronyms={acronym}
           className="sm:w-10 sm:h-10 h-6 w-6"
-        />
+        /> */}
         <h1 className="text-neutral-700 text-sm text-nowrap">{fullName}</h1>
       </div>
       <hr />
