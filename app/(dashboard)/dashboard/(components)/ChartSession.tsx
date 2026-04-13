@@ -23,6 +23,8 @@ import {
 } from "chart.js";
 import ModalOverlay from "../../commons/ModalOverlay";
 import FromToDateSection from "./FromToDateSection";
+import { type ITransactionCount } from "../types/IGetDashboard";
+
 ChartJS.register(
   ArcElement,
   Tooltip,
@@ -32,10 +34,18 @@ ChartJS.register(
   PointElement,
   CategoryScale,
   LinearScale,
-  BarElement
+  BarElement,
 );
 
-export default function ChartSession() {
+interface ChartSessionProps {
+  TransactionCount: ITransactionCount;
+  amountPerPeriod: Record<string, number>;
+}
+
+export default function ChartSession({
+  TransactionCount,
+  amountPerPeriod,
+}: ChartSessionProps) {
   const [period, setPeriod] = useState("Last month");
   const [isPeriod, setIsPeriod] = useState(false);
   const [toDate, setToDate] = useState<Date | undefined>();
@@ -65,10 +75,14 @@ export default function ChartSession() {
     },
   };
 
-  const dataArr = [20000, 10000, 10000];
-  const labelsArr = ["Completed", "Ongoing", "Cancelled"];
+  // [20000, 10000, 10000];
+  const dataArr = [...Object.values(TransactionCount)];
+  console.log(dataArr);
+
+  //  ["Completed", "Ongoing", "Cancelled"]
+  const labelsArr = [...Object.keys(TransactionCount)];
   const formattedLabels = labelsArr.map(
-    (label, index) => `${label} (${dataArr[index]})`
+    (label, index) => `${label} (${dataArr[index]})`,
   );
   const data: ChartData<"doughnut"> = {
     labels: formattedLabels,
@@ -83,18 +97,11 @@ export default function ChartSession() {
   };
 
   // session for Bar configuration
-  const barChartData = [7000, 9500, 5000, 8000, 6500, 9000, 8500, 8300, 8200];
-  const barLabels = [
-    "02 Aug",
-    "04 Aug",
-    "08 Aug",
-    "16 Aug",
-    "19 Aug",
-    "25 Aug",
-    "27 Aug",
-    "28 Aug",
-    "31 Aug",
-  ];
+  const barChartData = [...Object.values(amountPerPeriod)];
+  const barLabels = [...Object.keys(amountPerPeriod)];
+
+  console.log("bar", barChartData, barLabels);
+
   const barData: ChartData<"bar"> = {
     labels: barLabels,
     datasets: [
@@ -132,6 +139,7 @@ export default function ChartSession() {
       },
     },
   };
+
   return (
     <div className="grid sm:grid-cols-3 grid-cols-1 sm:gap-4  space-y-4 mt-6">
       {/* first section */}
@@ -145,6 +153,7 @@ export default function ChartSession() {
           </div>
         </ChartWrapper>
       </div>
+
       {/* second section */}
       <div className="col-span-2 h-full w-full">
         <ChartWrapper

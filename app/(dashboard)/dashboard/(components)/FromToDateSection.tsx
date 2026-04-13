@@ -30,7 +30,7 @@ export default function FromToDateSection({
             variant={"outline"}
             className={cn(
               " justify-start gap-2 text-left font-normal",
-              !fromDate && "text-muted-foreground"
+              !fromDate && "text-muted-foreground",
             )}
           >
             {fromDate ? (
@@ -41,7 +41,7 @@ export default function FromToDateSection({
             <MdOutlineDateRange className="" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
+        <PopoverContent className="w-auto p-0  bg-white">
           <Calendar
             mode="single"
             selected={fromDate}
@@ -58,14 +58,14 @@ export default function FromToDateSection({
             // onClick={(e) => e.stopPropagation()}
             className={cn(
               " justify-start gap-2 text-left font-normal",
-              !toDate && "text-muted-foreground"
+              !toDate && "text-muted-foreground",
             )}
           >
             {toDate ? moment(toDate).format("DD MMM, YYYY") : <span>To</span>}
             <MdOutlineDateRange className="" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
+        <PopoverContent className="w-auto p-0 bg-white">
           <Calendar
             mode="single"
             selected={toDate}

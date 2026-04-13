@@ -4,7 +4,7 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 interface CardProps {
   title: string;
-  amount: number;
+  amount: number | string;
   button?: ReactNode;
   children?: ReactNode;
   className: string;
