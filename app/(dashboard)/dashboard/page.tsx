@@ -19,7 +19,7 @@ export default async function page({ searchParams }: pageProps) {
   // const navigate = useRouter();
   console.log(dashboard);
   return (
-    <section className="bg-white flex flex-col h-full w-full 2xl:p-10 sm:p-8 p-3 overflow-y-auto ">
+    <section className="bg-white flex flex-col h-screen w-full 2xl:p-10 sm:p-8 p-3 overflow-y-auto ">
       <HeaderSection />
 
       <div className="grid min-[700px]:grid-cols-3 min-[500px]:grid-cols-2 grid-cols-1 gap-4 mt-6">

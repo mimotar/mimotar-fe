@@ -1,23 +1,19 @@
 "use client";
 
 import { IoMdClose } from "react-icons/io";
-import { IoIosNotifications } from "react-icons/io";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Avata from "./Avartar";
-import { Fragment, useState } from "react";
-import NotificationDropDown from "./NotificationDropDown";
-import AvatarAndContentCard from "./AvartarAndContentCard";
-import { notificationData } from "@/app/data/notificationData";
+import { useState } from "react";
 import ProfileDropDown from "../dashboard/profile/component/ProfileDropDown";
 import LeftPanel from "./leftpanel";
 import { AnimatePresence, motion } from "framer-motion";
 import LogoIcon from "@/app/svgIconComponent/Logo";
 import { useSession } from "next-auth/react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import NotificationContainer from "./NotificationContainer";
 
 export default function DashboardNavbar() {
-  const [isNotificationDropDown, setIsNotificationDropDown] = useState(false);
   const [isProfileDropdown, setIsProfileDropdown] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
@@ -41,7 +37,7 @@ export default function DashboardNavbar() {
           {/* <CiSearch className="absolute left-3 sm:top-3.5 top-2.5 peer-focus:hidden" /> */}
         </div>
         <div className="flex min-[375px]:gap-4 gap-1 items-center ">
-          <div
+          {/* <div
             onClick={() => setIsNotificationDropDown((prev) => !prev)}
             className="relative bg-gray-100 rounded-full p-1 hover:bg-gray-200 cursor-pointer"
           >
@@ -52,27 +48,52 @@ export default function DashboardNavbar() {
             />
             <NotificationDropDown
               isActive={isNotificationDropDown}
-              className="fixed sm:absolute top-16 sm:top-12 right-2 sm:right-0 left-auto sm:left-auto"
-              // absolute sm:-right-2 -right-28 top-12
+              className="fixed sm:absolute top-16 z-30 sm:top-12 border border-brand-primary right-2 sm:right-0 left-auto sm:left-auto"
               closeDropdown={() => setIsNotificationDropDown(false)}
-              dataLength={notificationData.length}
+              dataLength={Notification?.data.length || 0}
             >
-              {notificationData.map((notification, i) => (
-                <Fragment key={i}>
-                  <AvatarAndContentCard
-                    // key={i}
-                    content={notification.content}
-                    date={notification.createdAt}
-                    imgUrl={notification.imgUrl}
-                    names={notification.name}
-                    isRead={notification.isRead}
-                  />
+              {isLoading ? (
+                <div className="flex justify-center items-center mt-5">
+                  <AiOutlineLoading3Quarters className="animate-spin text-4xl text-brand-primary" />
+                </div>
+              ) : isError ? (
+                <small className="text-red-400 text-center">
+                  {error.message || "Something went wrong"}
+                </small>
+              ) : Notification?.data.length! < 1 ? (
+                <div className="flex flex-col w-full justify-center items-center space-y-4">
+                  <NotifyBellIcon className="w-[152px] h-[152px]" />
+                  <p>No notifications yet</p>
+                  <PrimaryButton
+                    className="py-2"
+                    onClick={() => navigate.push("/dashboard")}
+                  >
+                    Return to Dashboard
+                  </PrimaryButton>
+                </div>
+              ) : (
+                <>
+                  {Notification?.data.map((notification, i) => (
+                    <Fragment key={notification.id}>
+                      <AvatarAndContentCard
+                        link={notification.link}
+                        content={notification.content}
+                        date={new Date(notification.timestamp)}
+                        imgUrl={notification.avatar}
+                        names={"John Doe"}
+                        isRead={notification.read === "read" ? true : false}
+                        onRead={OnRead}
+                        isReading={isPending}
+                      />
 
-                  <hr />
-                </Fragment>
-              ))}
+                      <hr />
+                    </Fragment>
+                  ))}
+                </>
+              )}
             </NotificationDropDown>
-          </div>
+          </div> */}
+          <NotificationContainer />
 
           <div className="relative flex items-center justify-center gap-1">
             {status === "loading" || !session ? (

@@ -77,7 +77,6 @@ export default function ChartSession({
 
   // [20000, 10000, 10000];
   const dataArr = [...Object.values(TransactionCount)];
-  console.log(dataArr);
 
   //  ["Completed", "Ongoing", "Cancelled"]
   const labelsArr = [...Object.keys(TransactionCount)];
@@ -100,7 +99,7 @@ export default function ChartSession({
   const barChartData = [...Object.values(amountPerPeriod)];
   const barLabels = [...Object.keys(amountPerPeriod)];
 
-  console.log("bar", barChartData, barLabels);
+  // console.log("bar", barChartData, barLabels);
 
   const barData: ChartData<"bar"> = {
     labels: barLabels,
@@ -141,21 +140,21 @@ export default function ChartSession({
   };
 
   return (
-    <div className="grid sm:grid-cols-3 grid-cols-1 sm:gap-4  space-y-4 mt-6">
+    <div className="grid sm:grid-cols-3 grid-cols-1 sm:gap-4 h-[600px] overflow-y-auto items-stretch space-y-4 mt-6">
       {/* first section */}
-      <div className="col-span-1">
+      <div className="col-span-1 h-full ">
         <ChartWrapper
           exclaimTitle="Transaction summary"
           heading="Transaction overview"
         >
-          <div className="w-full">
+          <div className="w-full flex flex-1   ">
             <Doughnut data={data} options={option} />
           </div>
         </ChartWrapper>
       </div>
 
       {/* second section */}
-      <div className="col-span-2 h-full w-full">
+      <div className="col-span-2 h-full w-full ">
         <ChartWrapper
           exclaimTitle="Transaction distribution summary"
           heading="Transaction distribution"
@@ -202,9 +201,9 @@ export default function ChartSession({
               )}
             </div>
           </div>
-          <div className="w-full flex items-center h-[250px] overflow-auto py-3">
+          <div className="w-full flex items-center  overflow-auto py-3">
             <h1 className="font-medium -rotate-90">Amount</h1>
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full flex-1  items-center overflow-auto ">
               <Bar data={barData} options={BarOption} />
               <h1 className="font-medium text-center">Period</h1>
             </div>
