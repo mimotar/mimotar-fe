@@ -35,15 +35,18 @@ export default function NotificationDropDown({
         />
       </div>
       <div className="flex flex-col w-full space-y-4">
-        {dataLength < 1 && (
+        {/* {dataLength < 1 && (
           <div className="flex flex-col w-full justify-center items-center space-y-4">
             <NotifyBellIcon className="w-[152px] h-[152px]" />
             <p>No notifications yet</p>
-            <PrimaryButton onClick={() => navigate.push("/dashboard")}>
+            <PrimaryButton
+              className="py-2"
+              onClick={() => navigate.push("/dashboard")}
+            >
               Return to Dashboard
             </PrimaryButton>
           </div>
-        )}
+        )} */}
         {children}
       </div>
     </section>
