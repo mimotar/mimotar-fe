@@ -22,6 +22,7 @@ import { UpdateProfileResponse } from "../types/IUpdateProfileResponse";
 import Avata from "@/app/(dashboard)/commons/Avartar";
 import { UploadProfilePic } from "../actions/uploadProfile";
 import { Button } from "@/components/ui/button";
+import { TbEdit } from "react-icons/tb";
 
 export type InitialStateType = {
   error: boolean;
@@ -161,17 +162,20 @@ const EditProfileInfoFormSection = () => {
     <section className="flex flex-col mt-3">
       <form
         action={dispatchAction}
-        className="flex flex-col justify-center items-center mb-2"
+        className="flex flex-col justify-center items-center mb-2 rela"
       >
         {status === "loading" || !session ? (
           <AiOutlineLoading3Quarters className="animate-spin size-12 mb-2 text-brand-primary" />
         ) : (
-          <Avata
-            imgUrl={avatarUrl || session?.user.avatar}
-            className="border size-16 mb-2"
-            nameAcronyms={profileAcronyms}
-            onClick={() => FileRef.current?.click()}
-          />
+          <div className="relative bg-red-200">
+            <Avata
+              imgUrl={avatarUrl || session?.user.avatar}
+              className="border size-16 mb-2 cursor-pointer"
+              nameAcronyms={profileAcronyms}
+              onClick={() => FileRef.current?.click()}
+            />
+            <TbEdit className="text-xl absolute bottom-4 right-0" />
+          </div>
         )}
         <input
           ref={FileRef}
@@ -194,6 +198,7 @@ const EditProfileInfoFormSection = () => {
           <AiOutlineLoading3Quarters className="animate-spin text-brand-primary" />
         )}
       </form>
+
       <form onSubmit={handleSubmit(handleSubmitEdit)} className="space-y-4">
         <div className="grid sm:grid-cols-2 grid-cols-1 gap-6">
           <div className="flex flex-col">
