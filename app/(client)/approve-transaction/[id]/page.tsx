@@ -7,6 +7,7 @@ import ExpireBoxContainer from "./components/ExpireBoxContainer";
 import { notFound } from "next/navigation";
 import { verifyTicketToken } from "./actions/VerifyToken";
 import { IVerifyTokenResponse } from "./types/IVerifyToken";
+import { InvalidTransactionState } from "./components/InvalidTransactionState";
 
 export default async function ApproveTransaction({
   params,
@@ -25,17 +26,12 @@ export default async function ApproveTransaction({
   )) as IVerifyTokenResponse;
   console.log("data", verifyUrlToken);
 
-  if (!verifyUrlToken) {
+  if (!verifyUrlToken || !verifyUrlToken.data?.transaction_id) {
     return (
-      <main className="px-5 lg:px-10 2xl:px-16 py-3 text-center">
-        <h3 className="text-black font-semibold text-2xl">
-          Invalid or Expired Link
-        </h3>
-        <p className="text-[#64748B] mt-2">
-          The link you are trying to access is either invalid or has expired.
-          Please check the link and try again.
-        </p>
-      </main>
+      <InvalidTransactionState
+        title="Invalid or Expired Link"
+        message="This transaction link is either invalid, expired, or no longer available. Please request a new link or contact support."
+      />
     );
   }
 
