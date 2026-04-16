@@ -14,6 +14,7 @@ import {
 import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 import { DefaultSession } from "next-auth";
+import toast from "react-hot-toast";
 
 export const transactionColumnsFn = (
   currentSession: DefaultSession | null,
@@ -215,35 +216,41 @@ export const transactionColumnsFn = (
       cell: ({ row }) => {
         const status = row.getValue<string>("status");
 
-        if (status === "ONGOING") {
-          return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="default"
-                  className="cursor-pointer  flex justify-center items-center  w-full"
-                >
-                  <TbRefreshAlert className="text-brand-primary/70 w-5 h-5 cursor" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel
-                    className="cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setOpenDispute(
-                        row.original as unknown as Row<ITransaction>,
+        // if (status === "ONGOING") {
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="default"
+                className="cursor-pointer  flex justify-center items-center  w-full"
+              >
+                <TbRefreshAlert className="text-brand-primary/70 w-5 h-5 cursor" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (status !== "ONGOING") {
+                      toast.error(
+                        "Dispute is  only opened for Ongoing Ticket/Transaction",
                       );
-                    }}
-                  >
-                    Open dispute
-                  </DropdownMenuLabel>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          );
-        }
+                      return;
+                    }
+                    setOpenDispute(
+                      row.original as unknown as Row<ITransaction>,
+                    );
+                  }}
+                >
+                  Create dispute
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+        // }
 
         // return null;
       },
