@@ -68,7 +68,7 @@ export const authOptions: AuthOptions = {
               return null;
             }
 
-            console.log("server data", JSON.stringify(data));
+            console.log("server data", data);
             return {
               id: data.data.user.id,
               firstName: data.data.user.firstName,
@@ -76,13 +76,13 @@ export const authOptions: AuthOptions = {
               accessToken: data.data.token,
               email: data.data.user.email,
               verified: data.data.user.verified,
-              phone_no: data.data.user.profile.phone_no,
-              address: data.data.user.profile.address,
-              city: data.data.user.profile.city,
-              country: data.data.user.profile.country,
-              postal_code: data.data.user.profile.postal_code,
-              id_number: data.data.user.profile.id_number,
-              avatar: data.data.user.profile.avatar,
+              phone_no: data.data.user.profile?.phone_no || "",
+              address: data.data.user.profile?.address || "",
+              city: data.data.user.profile?.city || "",
+              country: data.data.user.profile?.country || "",
+              postal_code: data.data.user.profile?.postal_code || "",
+              id_number: data.data.user.profile?.id_number,
+              avatar: data.data.user.profile?.avatar || "",
             };
           })
           .catch((error) => {

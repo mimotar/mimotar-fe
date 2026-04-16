@@ -40,17 +40,16 @@ export default async function Home() {
             <DealBtns />
           </div>
 
-          <div className="  w-full h-full relative block">
+          <div className="w-full h-[400px] relative block">
             <Image
               src={Images.banner}
               alt="banner"
-              width={100}
-              height={100}
-              className="object-cover rounded-bl-lg rounded-tr-lg"
-              style={{
-                width: "100%",
-                height: "100%",
-              }}
+              fill
+              className="object-cover h-full rounded-bl-lg rounded-tr-lg"
+              // style={{
+              //   width: "100%",
+              //   height: "100%",
+              // }}
             />
           </div>
         </div>
