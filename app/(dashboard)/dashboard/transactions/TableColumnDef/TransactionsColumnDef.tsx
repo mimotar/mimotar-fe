@@ -170,25 +170,25 @@ export const transactionColumnsFn = (
             <div>
               <div className="inline-flex gap-2  items-center">
                 <button
-                  disabled={!isCreator || isRejected}
+                  disabled={isRejected}
                   onClick={(e) => {
                     e.stopPropagation();
                     setOpenMarkedAsResolve && setOpenMarkedAsResolve(row);
                   }}
                   // className="p-2 cursor-pointer rounded-md bg-green-400 whitespace-nowrap text-white text-center"
-                  className={`p-2 ${!isCreator || isRejected ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer  bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
+                  className={`p-2 ${isRejected ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer  bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
                 >
                   Initiate Closure
                 </button>
 
                 <button
-                  disabled={isCreator || isRejected || !isPENDING_CLOSURE}
+                  disabled={isRejected || !isPENDING_CLOSURE}
                   onClick={(e) => {
                     e.stopPropagation();
                     setOpenAcceptToResolve && setOpenAcceptToResolve(row);
                   }}
                   type="button"
-                  className={`p-2 ${isCreator || isRejected || !isPENDING_CLOSURE ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
+                  className={`p-2 ${isRejected || !isPENDING_CLOSURE ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
                 >
                   Accept to Resolve
                 </button>
