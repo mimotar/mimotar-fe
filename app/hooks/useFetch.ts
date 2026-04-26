@@ -20,8 +20,8 @@ export function useFetch<TQueryFnData, TError, TData = TQueryFnData>(
 ): UseQueryResult<TData, TError> & { refresh: () => void } {
   const query = useQuery<TQueryFnData, TError, TData>({
     queryKey,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    // refetchOnWindowFocus: false,
+    // refetchOnMount: false,
     queryFn: async () => {
       try {
         const response = await axiosService.get(url);
