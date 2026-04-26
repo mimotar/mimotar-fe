@@ -159,8 +159,10 @@ export const transactionColumnsFn = (
       cell: ({ row }) => {
         const isExpired = new Date(row.original.expiresAt) > new Date();
         const isDispute = row.original.status === "DISPUTE";
+        const isGoing = row.original.status === "ONGOING";
         const isRejected = row.original.status === "REJECTED";
         const isPENDING_CLOSURE = row.original.status === "PENDING_CLOSURE";
+        const isCompleted = row.original.status === "COMPLETED";
 
         const isCreator =
           row.original.creator_email === currentSession?.user?.email;
@@ -170,37 +172,44 @@ export const transactionColumnsFn = (
             <div>
               <div className="inline-flex gap-2  items-center">
                 <button
-                  disabled={isRejected}
+                  disabled={isRejected || isCompleted || !isGoing}
                   onClick={(e) => {
                     e.stopPropagation();
                     setOpenMarkedAsResolve && setOpenMarkedAsResolve(row);
                   }}
-                  // className="p-2 cursor-pointer rounded-md bg-green-400 whitespace-nowrap text-white text-center"
-                  className={`p-2 ${isRejected ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer  bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
+                  className={`p-2 ${isRejected || isCompleted || !isGoing ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer  bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
                 >
                   Initiate Closure
                 </button>
 
                 <button
-                  disabled={isRejected || !isPENDING_CLOSURE}
+                  disabled={
+                    isRejected || isCompleted || isGoing || !isPENDING_CLOSURE
+                  }
                   onClick={(e) => {
                     e.stopPropagation();
                     setOpenAcceptToResolve && setOpenAcceptToResolve(row);
                   }}
                   type="button"
-                  className={`p-2 ${isRejected || !isPENDING_CLOSURE ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
+                  className={`p-2 ${isRejected || isCompleted || isGoing || !isPENDING_CLOSURE ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
                 >
                   Accept to Resolve
                 </button>
 
                 <button
-                  disabled={isCreator || isRejected || !isPENDING_CLOSURE}
+                  disabled={
+                    isCreator ||
+                    isRejected ||
+                    isCompleted ||
+                    isGoing ||
+                    !isPENDING_CLOSURE
+                  }
                   onClick={(e) => {
                     e.stopPropagation();
                     setOpenRejectToResolve && setOpenRejectToResolve(row);
                   }}
                   type="button"
-                  className={`p-2 ${isCreator || isRejected || !isPENDING_CLOSURE ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
+                  className={`p-2 ${isCreator || isRejected || isCompleted || isGoing || !isPENDING_CLOSURE ? "cursor-not-allowed bg-gray-300 text-gray-500" : "cursor-pointer bg-green-500 hover:bg-green-600"} rounded-md  whitespace-nowrap text-white`}
                 >
                   Reject to Resolve
                 </button>
