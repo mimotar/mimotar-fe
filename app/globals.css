@@ -390,8 +390,8 @@ main {
 }
 
 @media (max-width: 425px) {
-  .site-header__inner {
+  .site-actions__primary {
     gap: 6px;
-    font-size: 1rem;
+    font-size: 0.8rem;
   }
 }

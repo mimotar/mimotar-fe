@@ -20,6 +20,8 @@ import {
   type Role,
   type TxnSample,
 } from "./homePage.data";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export function Pill({ children }: { children: ReactNode }) {
   return (
@@ -242,6 +244,9 @@ export function HeroSection({
   txnIdx: number;
   onSelectTxn: (index: number) => void;
 }) {
+  const { data, status } = useSession();
+  const isLoggedIn = status === "authenticated";
+  const isVerified = !!data?.user?.verified;
   return (
     <section className="hero">
       <div className="hero-bg">
@@ -265,9 +270,12 @@ export function HeroSection({
             Pay in NGN, USD, EUR or GBP. Buyer protected. Seller guaranteed.
           </p>
           <div className="hero-ctas">
-            <button type="button" className="btn btn-primary btn-lg">
-              Start a Safe Transaction
-            </button>
+            {isLoggedIn && isVerified && (
+              <button type="button" className="btn btn-primary btn-lg">
+                <Link href={"/generate-link"}>Start a Safe Transaction</Link>
+              </button>
+            )}
+
             <a href="#how" className="btn btn-outline btn-lg">
               How it works ▷
             </a>
@@ -449,6 +457,9 @@ export function HowItWorksSection({
   steps: { name: string; desc: string; callout?: string }[];
   onRoleChange: (role: Role) => void;
 }) {
+  const { data, status } = useSession();
+  const isLoggedIn = status === "authenticated";
+  const isVerified = !!data?.user?.verified;
   return (
     <section className="hiw" id="how">
       <div style={{ textAlign: "center" }}>
@@ -500,9 +511,11 @@ export function HowItWorksSection({
       </div>
 
       <div className="hiw-cta">
-        <button className="btn btn-primary btn-lg">
-          Create My First Transaction →
-        </button>
+        {isLoggedIn && isVerified && (
+          <button className="btn btn-primary btn-lg">
+            <Link href={"/generate-link"}> Create My First Transaction →</Link>
+          </button>
+        )}
         <p className="hiw-sub">
           Takes less than 2 minutes. No card required to start.
         </p>
@@ -798,6 +811,9 @@ export function FaqSection({
 }
 
 export function FinalCtaSection() {
+  const { data, status } = useSession();
+  const isLoggedIn = status === "authenticated";
+  const isVerified = !!data?.user?.verified;
   return (
     <section className="cta-sec">
       <div className="cta-blob cb-1" />
@@ -812,10 +828,19 @@ export function FinalCtaSection() {
         borders.
       </p>
       <div className="cta-btns">
-        <button type="button" className="btn btn-primary btn-lg">
-          Create My First Safe Transaction
-        </button>
-        <a href="#" className="btn btn-ghost-white btn-lg">
+        {isLoggedIn && isVerified && (
+          <button type="button" className="btn btn-primary btn-lg">
+            <Link href={"/generate-link"}>
+              Create My First Safe Transaction
+            </Link>
+          </button>
+        )}
+        <a
+          href="https://wa.me/2348130197306"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn-ghost-white btn-lg"
+        >
           <WhatsappLogoIcon size={18} weight="duotone" /> Chat on WhatsApp
         </a>
       </div>
@@ -849,7 +874,11 @@ export function FooterSection() {
             <a href="#" className="soc-btn" aria-label="X (Twitter)">
               <SocialX />
             </a>
-            <a href="#" className="soc-btn" aria-label="LinkedIn">
+            <a
+              href="https://www.linkedin.com/in/mimotar-inc-306294346/?skipRedirect=true"
+              className="soc-btn"
+              aria-label="LinkedIn"
+            >
               <SocialLinkedIn />
             </a>
             <a href="#" className="soc-btn" aria-label="Instagram">
@@ -866,9 +895,9 @@ export function FooterSection() {
       </div>
       <div className="footer-bottom">
         <span className="footer-copy">
-          © 2026 Mimotar. Registered in Nigeria (CAC RC-1234567). Payments
-          powered by Flutterwave & Stripe. All funds held in Mimotar Escrow
-          Holdings.
+          © {new Date().getFullYear()} Mimotar. Registered in Nigeria (CAC
+          RC-1234567). Payments powered by Flutterwave & Stripe. All funds held
+          in Mimotar Escrow Holdings.
         </span>
         <div className="fl-legal">
           <a href="#" className="fl-link" style={{ fontSize: 11 }}>

@@ -95,7 +95,12 @@ export function SiteFooter() {
             <a href="#" className="site-footer__social" aria-label="X">
               <SocialX />
             </a>
-            <a href="#" className="site-footer__social" aria-label="LinkedIn">
+            <a
+              target="_blank"
+              href="https://www.linkedin.com/in/mimotar-inc-306294346/?skipRedirect=true"
+              className="site-footer__social"
+              aria-label="LinkedIn"
+            >
               <SocialLinkedIn />
             </a>
             <a href="#" className="site-footer__social" aria-label="Instagram">
