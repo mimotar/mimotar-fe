@@ -1,19 +1,27 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Montserrat } from "next/font/google";
 import { StoreProvider } from "../lib/providers/StoreProvider";
 import SessionProvider from "../lib/providers/SessionProvider";
 import { getServerSession } from "next-auth";
 import QueryClientProviderWrapper from "@/lib/providers/QueryClientProvider";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+});
 
 export const metadata: Metadata = {
-  title: {
-    default: "Mimotar",
-    template: "%s - Mimotar",
+  title: "Mimotar - Safe Escrow for Nigerian & Global Trade",
+  description:
+    "Buy and sell anything in Nigeria or across borders without fear. Mimotar locks payment in a secure vault until everyone is satisfied. Buyer protected. Seller guaranteed.",
+  openGraph: {
+    title: "Mimotar - Safe Escrow for Nigerian & Global Trade",
+    description:
+      "Escrow built for Nigerians and international buyers and sellers. Pay in NGN, USD, EUR, GBP. Funds held safely until delivery is confirmed.",
+    type: "website",
   },
-  description: "Escrow service",
 };
 
 export default async function RootLayout({
@@ -23,7 +31,8 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession();
   return (
-    <html lang="en" className={inter.className}>
+    //inter.className
+    <html lang="en" className={montserrat.variable}>
       <body>
         <QueryClientProviderWrapper>
           <SessionProvider session={session}>
