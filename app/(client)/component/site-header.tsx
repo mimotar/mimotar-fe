@@ -5,6 +5,7 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const NAV_ITEMS = [
   { href: "#how", label: "How it works" },
@@ -50,58 +51,55 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="site-actions">
-          {isLoggedIn && isVerified && (
-            // <Link
-            //   href="/dashboard"
-            //   className="text-[#A21CAF]  hover:text-[#D946EF]"
-            // >
-            //   Dashboard
-            // </Link>
+        {isLoading ? (
+          <AiOutlineLoading3Quarters className="animate-spin text-brand-primary size-14" />
+        ) : (
+          <div className="site-actions">
+            {isLoggedIn && isVerified && (
+              <button
+                type="button"
+                onClick={() => navigate.push("/dashboard")}
+                className="site-actions__ghost"
+              >
+                Dashboard
+              </button>
+            )}
 
-            <button
-              type="button"
-              onClick={() => navigate.push("/dashboard")}
-              className="site-actions__ghost"
-            >
-              Dashboard
-            </button>
-          )}
+            {!isLoggedIn && (
+              <button
+                type="button"
+                onClick={() => handleOpen("login")}
+                className="site-actions__ghost"
+              >
+                Log in
+              </button>
+            )}
 
-          {!isLoggedIn && (
-            <button
-              type="button"
-              onClick={() => handleOpen("login")}
-              className="site-actions__ghost"
-            >
-              Log in
-            </button>
-          )}
+            {isLoggedIn && isVerified && (
+              <button
+                type="button"
+                onClick={() =>
+                  signOut({
+                    callbackUrl: process.env.NEXT_PUBLIC_CLIENT_DOMAIN,
+                  })
+                }
+                className="site-actions__ghost"
+              >
+                Log Out
+              </button>
+            )}
 
-          {isLoggedIn && isVerified && (
-            <button
-              type="button"
-              onClick={() =>
-                signOut({
-                  callbackUrl: process.env.NEXT_PUBLIC_CLIENT_DOMAIN,
-                })
-              }
-              className="site-actions__ghost"
-            >
-              Log
-            </button>
-          )}
-
-          {isLoggedIn && isVerified && (
-            <button
-              onClick={() => navigate.push("/generate-link")}
-              type="button"
-              className="site-actions__primary"
-            >
-              Get Started Free
-            </button>
-          )}
-        </div>
+            {!isLoggedIn && (
+              <button
+                onClick={() => handleOpen("register")}
+                type="button"
+                className="site-actions__primary"
+              >
+                Get Started Free
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <AuthForm
