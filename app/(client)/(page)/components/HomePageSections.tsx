@@ -276,7 +276,7 @@ export function HeroSection({
               </button>
             )}
 
-            <a href="#how" className="btn btn-outline btn-lg">
+            <a href="#how" className="btn btn-outline btn-lg sm:w-auto w-full">
               How it works ▷
             </a>
           </div>
