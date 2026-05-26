@@ -37,6 +37,7 @@ export default function TransactionsTable({
   const [selectedTransaction, setSelectedTransaction] =
     useState<Row<ITransaction>>();
   const session = useSession();
+  console.log(data);
 
   const transactionColumns = transactionColumnsFn(
     session.data,

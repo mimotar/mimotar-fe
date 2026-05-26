@@ -93,13 +93,13 @@ export default function StepFour() {
       }
     }
 
-    const attachments = transactionData?.attachment as string[] | undefined;
+    const attachments = Array.from(transactionData?.attachment ?? []);
 
-    if (attachments?.length) {
-      attachments.forEach((file) => {
-        formData.append("files", file);
-      });
-    }
+    console.log("Attachments to upload:", attachments);
+
+    attachments.forEach((file) => {
+      formData.append("files", file);
+    });
 
     // if (attachments && Array.isArray(attachments)) {
     //   for (let i = 0; i < attachments.length; i++) {

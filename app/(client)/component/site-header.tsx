@@ -15,10 +15,10 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { RxHamburgerMenu } from "react-icons/rx";
 
 const NAV_ITEMS = [
-  { href: "#how", label: "How it works" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#trust", label: "Trust & Safety" },
-  { href: "#faq", label: "Support" },
+  { href: "/#how", label: "How it works" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/#trust", label: "Trust & Safety" },
+  { href: "/#faq", label: "Support" },
 ];
 
 export function SiteHeader() {
@@ -64,7 +64,7 @@ export function SiteHeader() {
         {isLoading ? (
           <AiOutlineLoading3Quarters className="animate-spin text-brand-primary size-14" />
         ) : (
-          <div className="site-actions">
+          <div className="site-actions text-sm">
             {isLoggedIn && isVerified && (
               <button
                 type="button"

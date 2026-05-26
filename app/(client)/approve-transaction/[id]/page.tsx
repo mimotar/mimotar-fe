@@ -8,18 +8,28 @@ import { notFound } from "next/navigation";
 import { verifyTicketToken } from "./actions/VerifyToken";
 import { IVerifyTokenResponse } from "./types/IVerifyToken";
 import { InvalidTransactionState } from "./components/InvalidTransactionState";
+// import { authOptions } from "@/app/api/auth/authOptions";
+// import { getServerSession } from "next-auth";
 
 export default async function ApproveTransaction({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  // const session = await getServerSession(authOptions);
   const token = (await params).id;
 
   if (!token) {
     return notFound();
   }
+
+  // const session = await getServerSession(authOptions);
+
+  // if (
+  //   session?.user?.verified === false ||
+  //   session?.user?.verified === undefined
+  // ) {
+  //   return redirect("/");
+  // }
 
   const verifyUrlToken = (await verifyTicketToken(
     token,
