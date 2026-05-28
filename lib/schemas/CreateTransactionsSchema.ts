@@ -42,23 +42,22 @@ export type IStage1TicketSchema = z.infer<typeof stage1TicketSchema>;
 export const stage2TicketSchema = z.object({
   amount: z.number().min(1),
   transaction_description: z.string().min(1),
-  attachment: z.array(z.any()).optional(),
-  // .any()
-  // .refine((files) => files instanceof FileList, {
-  //   message: "Attachment must be a FileList or an array of files.",
-  // })
-  // .refine((files) => files instanceof FileList && files.length > 0, {
-  //   message: "Please upload at least one file.",
-  // })
-  // .refine(
-  //   (files) =>
-  //     Array.from(files as FileList).every(
-  //       (file) => (file as File).size < 5 * 1024 * 1024
-  //     ),
-  //   {
-  //     message: "Each file must be less than 5MB.",
-  //   }
-  // ),
+  // attachment: z.array(z.any()).optional(),
+  attachment: z
+    .array(z.instanceof(File))
+    .min(1, "Please upload at least one file.")
+    .refine((files) => files.every((file) => file.size < 5 * 1024 * 1024), {
+      message: "Each file must be less than 5MB.",
+    })
+    .refine(
+      (files) =>
+        files.every((file) =>
+          ["image/png", "image/jpeg", "application/pdf"].includes(file.type),
+        ),
+      {
+        message: "Only PNG, JPEG, and PDF files are allowed.",
+      },
+    ),
   transactionType: z.enum(["PHYSICAL_PRODUCT", "ONLINE_PRODUCT", "SERVICE"]),
 });
 

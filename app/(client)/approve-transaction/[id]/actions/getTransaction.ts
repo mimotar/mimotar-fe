@@ -4,13 +4,13 @@ import { authOptions } from "@/app/api/auth/authOptions";
 import { getServerSession } from "next-auth";
 
 export async function getTransaction(id: number) {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/ticket/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
+        // Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     });
     // ticket/transactions

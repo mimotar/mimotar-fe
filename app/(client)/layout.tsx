@@ -19,7 +19,8 @@ export default function RootLayout({
       <SiteHeader />
       {/* </div> */}
       <ScrollArea data-state="hidden" className="">
-        <section className=" h-[calc(100vh-100px)] ">{children}</section>
+        {/* h-[calc(100vh-100px)] */}
+        <section className=" ">{children}</section>
         <ScrollAreaScrollbar hidden={false} />
       </ScrollArea>
     </main>

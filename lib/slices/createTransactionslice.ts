@@ -11,7 +11,7 @@ const initialState: ITransaction = {
 
   amount: 0,
   transaction_description: "",
-  attachment: [],
+  attachment: null as unknown as File[],
   transactionType: "",
 
   pay_escrow_fee: "",

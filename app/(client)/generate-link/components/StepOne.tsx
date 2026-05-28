@@ -48,6 +48,7 @@ export default function StepOne() {
       setValue("creator_role", role);
     }
   }, [transactionData, setValue]);
+
   return (
     <section className="flex flex-col  w-full">
       <h1 className="font-bold text-lg">Personal information</h1>

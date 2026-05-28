@@ -8,7 +8,7 @@ import TextAreaInput from "@/app/commons/TextAreaInput";
 import { IoMdArrowBack } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   stage2TicketSchema,
   IStage2TicketSchema,
@@ -26,12 +26,23 @@ export default function StepTwo() {
   const dispatch = useAppDispatch();
   const transactionData = useAppSelector((state) => state.createTransaction);
   const nextBtnRef = useRef<HTMLFormElement>(null);
-  const filePreview = transactionData.attachment ?? [];
-  // console.log("Transaction Data:", transactionData);
+
+  const filePreview = useMemo(() => {
+    if (transactionData && transactionData?.attachment instanceof File) {
+      const objUrl = Object.entries(transactionData?.attachment).map((obj) =>
+        URL.createObjectURL(obj as unknown as Blob),
+      );
+      return objUrl;
+    }
+  }, [transactionData?.attachment]);
+
+  console.log("filePreview Data:", filePreview);
+
   const {
     handleSubmit,
     register,
     setValue,
+
     formState: { errors },
   } = useForm<IStage2TicketSchema>({
     resolver: zodResolver(stage2TicketSchema),
@@ -58,18 +69,25 @@ export default function StepTwo() {
       const fileArray = Array.from(files);
 
       try {
-        const base64Arr = await Promise.all(
-          fileArray.map((file) => fileToBase64(file)),
-        );
-        console.log("Base64 Array:", base64Arr);
+        // const base64Arr = await Promise.all(
+        //   fileArray.map((file) => fileToBase64(file)),
+        // );
+        // console.log("Base64 Array:", base64Arr);
         // Continue processing: e.g., save to Redux, form state, etc.
-        setValue("attachment", [
-          ...(transactionData.attachment ?? []),
-          ...base64Arr,
-        ]);
+        // setValue("attachment", [
+        //   ...(transactionData.attachment ?? []),
+        //   ...base64Arr,
+        // ]);
+
+        setValue("attachment", fileArray);
+        // dispatch(
+        //   setTransactionDetails({
+        //     attachment: [...(transactionData.attachment ?? []), ...base64Arr],
+        //   }),
+        // );
         dispatch(
           setTransactionDetails({
-            attachment: [...(transactionData.attachment ?? []), ...base64Arr],
+            attachment: fileArray,
           }),
         );
       } catch (err) {
@@ -101,7 +119,12 @@ export default function StepTwo() {
   }, [setValue, transactionData]);
 
   const handleClearFile = () => {
-    dispatch(setTransactionDetails({ ...transactionData, attachment: [] }));
+    dispatch(
+      setTransactionDetails({
+        ...transactionData,
+        attachment: null as unknown as File[],
+      }),
+    );
   };
   return (
     <section className="flex flex-col h-full w-full">
@@ -144,7 +167,7 @@ export default function StepTwo() {
               isShowLabel={true}
             />
             <small className="inline-flex gap-2 mt-2">
-              {filePreview.map((base64, key) => (
+              {filePreview?.map((base64, key) => (
                 <Image
                   key={key}
                   src={base64}
