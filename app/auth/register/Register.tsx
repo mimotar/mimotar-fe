@@ -28,8 +28,9 @@ import { IoEyeOutline } from "react-icons/io5";
 
 interface IRegisterFormProps {
   closeModal: () => void;
+  redirectUrl?: string;
 }
-const Register = ({ closeModal }: IRegisterFormProps) => {
+const Register = ({ closeModal, redirectUrl }: IRegisterFormProps) => {
   const [visible, setVisible] = useState(false);
   const navigate = useRouter();
   const { isPending, isError, mutate } = useMutation({
@@ -59,7 +60,7 @@ const Register = ({ closeModal }: IRegisterFormProps) => {
     mutate(dataPayload, {
       onSuccess: (data) => {
         console.log(data);
-        navigate.push("/otp");
+        navigate.push(redirectUrl ? redirectUrl : "/otp");
         toast.success("Registration successful, please check your email");
         closeModal();
       },

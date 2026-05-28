@@ -7,7 +7,8 @@ export interface ITransaction {
 
   amount: number;
   transaction_description: string;
-  attachment: any[] | null;
+  // attachment: any[] | null;
+  attachment: File[];
   transactionType:
     | "PHYSICAL_PRODUCT"
     | "ONLINE_PRODUCT"
