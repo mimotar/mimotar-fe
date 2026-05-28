@@ -27,8 +27,9 @@ import { IoEyeOutline } from "react-icons/io5";
 
 interface ILoginFormProps {
   closeModal: () => void;
+  redirectUrl?: string;
 }
-const Login = ({ closeModal }: ILoginFormProps) => {
+const Login = ({ closeModal, redirectUrl }: ILoginFormProps) => {
   const [visible, setVisible] = useState(false);
   const navigate = useRouter();
 
@@ -50,7 +51,7 @@ const Login = ({ closeModal }: ILoginFormProps) => {
         redirect: false,
         email: data.email,
         password: data.password,
-        callbackUrl: "/",
+        callbackUrl: redirectUrl || "/",
       });
       console.log(result);
       if (result?.ok && result.status == 200) {

@@ -4,15 +4,38 @@ import PrimaryButton from "@/app/commons/PrimaryButtons";
 import SecondaryButton from "@/app/commons/SecondaryButton";
 import { useMutateAction } from "@/app/hooks/useMutation";
 import Loader from "@/components/Loader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 import { ApproveTransactionResponse } from "../types/IApproveResponse";
+import { useSession } from "next-auth/react";
+import AuthForm from "@/app/auth/AuthForm";
 
-export default function AcceptRejectForm({ id }: { id: string }) {
-  const [token, setToken] = useState("");
+export default function AcceptRejectForm({
+  id,
+  token,
+}: {
+  id: string;
+  token: string;
+}) {
+  const [approveToken, setApproveToken] = useState("");
+  const [rejectionReason, setRejectionReason] = useState("");
+  const [debouncedRejectionReason, setDebouncedRejectionReason] = useState("");
+  const [openAuth, setOpenAuth] = useState(false);
+  const [ActiveTab, setActiveTab] = useState<"login" | "register">("login");
   const router = useRouter();
+  const session = useSession();
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedRejectionReason(rejectionReason);
+    }, 5000);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [rejectionReason]);
 
   //request token
   const { mutate, isPending, isError } = useMutateAction(
@@ -21,24 +44,36 @@ export default function AcceptRejectForm({ id }: { id: string }) {
   );
 
   const handleRequestToken = () => {
+    if (session.status !== "authenticated") {
+      toast.error("You must be logged in/Registered to request token");
+      setOpenAuth(true);
+      setActiveTab("login");
+      return;
+    }
     mutate(
       {},
       {
         onSuccess: (data: any) => {
           console.log(data);
           toast.success(
-            "Token requested successfully. Check your email for the token.",
+            "Token requested successfully. Check your email for the token if it has not auto-filled already.",
           );
-          setToken(data?.data.otp);
+          setApproveToken(data?.data.otp);
           return;
         },
         onError: (error: unknown) => {
+          if (error instanceof AxiosError) {
+            toast.error(
+              error.response?.data?.message || "Error requesting token",
+            );
+            return;
+          }
           if (error instanceof Error) {
             toast.error(error.message || "Error requesting token");
             return;
-          } else {
-            toast.error("Error requesting token");
           }
+
+          toast.error("Error requesting token");
         },
       },
     );
@@ -52,13 +87,20 @@ export default function AcceptRejectForm({ id }: { id: string }) {
     );
 
   const handleAcceptTicket = () => {
-    console.log(token);
-    if (!token) {
-      toast.error("Require Token to approve the Ticket");
+    console.log(approveToken);
+    if (!approveToken) {
+      toast.error("Requires Token to approve the Ticket");
+      return;
+    }
+
+    if (session.status !== "authenticated") {
+      toast.error("You must be logged in/Registered to approve the Ticket");
+      setOpenAuth(true);
+      setActiveTab("login");
       return;
     }
     AcceptTicketMutate(
-      { otp: token },
+      { otp: approveToken },
       {
         onSuccess: (data) => {
           console.log(data);
@@ -84,20 +126,27 @@ export default function AcceptRejectForm({ id }: { id: string }) {
     );
   };
 
-  //cancel ticket
-  const { mutate: CancelTicketMutate, isPending: isCancelTicketPending } =
+  //reject ticket
+  const { mutate: RejectTicketMutate, isPending: isRejectTicketPending } =
     useMutateAction<ApproveTransactionResponse, { otp: string }>(
       "put",
       `/ticket/reject/${id}`,
     );
 
-  const handleCancelTicket = () => {
-    if (!token) {
-      toast.error("Require Token to approve the Ticket");
+  const handleRejectTicket = () => {
+    if (!approveToken || !debouncedRejectionReason) {
+      toast.error("Requires Token and Reason to reject the Ticket");
       return;
     }
-    CancelTicketMutate(
-      { otp: token },
+
+    if (session.status !== "authenticated") {
+      toast.error("You must be logged in/Registered to reject the Ticket");
+      setOpenAuth(true);
+      setActiveTab("login");
+      return;
+    }
+    RejectTicketMutate(
+      { otp: approveToken },
       {
         onSuccess: (data) => {
           console.log(data.data);
@@ -136,11 +185,11 @@ export default function AcceptRejectForm({ id }: { id: string }) {
         <input
           type="text"
           name=""
-          onChange={(e) => setToken(e.target.value)}
-          defaultValue={token}
+          onChange={(e) => setApproveToken(e.target.value)}
+          defaultValue={approveToken}
           //   readOnly
           className="rounded-md border focus:outline-none p-2"
-          placeholder="Request approval token"
+          placeholder="Enter token for approval or rejection"
         />
         <button
           title="Request Token for Ticket approval"
@@ -176,17 +225,35 @@ export default function AcceptRejectForm({ id }: { id: string }) {
         </p>
       </label>
       <hr className="w-full" />
-      <SecondaryButton
-        onClick={handleCancelTicket}
-        className="h-14 md:h-auto p-2 inline-flex items-center justify-center cursor-pointer"
-      >
-        Reject Agreement{" "}
-        {isCancelTicketPending && (
-          <div className="w-6 h-6">
-            <Loader />
-          </div>
-        )}
-      </SecondaryButton>
+
+      <div className="w-full flex flex-col">
+        <textarea
+          rows={2}
+          maxLength={100}
+          onChange={(e) => setRejectionReason(e.target.value)}
+          className="rounded-md border focus:outline-none p-2 mb-4 resize-none"
+          placeholder="Reason for rejection..."
+        />
+        <SecondaryButton
+          onClick={handleRejectTicket}
+          className="h-14 md:h-auto p-2 inline-flex items-center justify-center cursor-pointer"
+        >
+          Reject Agreement{" "}
+          {isRejectTicketPending && (
+            <div className="w-6 h-6">
+              <Loader />
+            </div>
+          )}
+        </SecondaryButton>
+      </div>
+
+      <AuthForm
+        activeTab={ActiveTab}
+        open={openAuth}
+        setActiveTab={setActiveTab}
+        setOpen={setOpenAuth}
+        redirectUrl={`/approve-transaction/${token}`}
+      />
     </section>
   );
 }

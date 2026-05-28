@@ -1,4 +1,5 @@
 import { unTokenAxiosInstance } from "@/lib/services/axiosService";
+import { AxiosError, isAxiosError } from "axios";
 import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
@@ -86,9 +87,16 @@ export const authOptions: AuthOptions = {
             };
           })
           .catch((error) => {
-            // console.log("login error", JSON.stringify(error));
+            // console.log(
+            //   "login error 1",
+            //   JSON.stringify((error as AxiosError).response),
+            // );
+
+            // if (error instanceof AxiosError) {
+            //   console.log(error.response?.data.message);
+            // }
             // throw new Error(error?.response?.data?.response?.message);
-            console.log("login error", error);
+            // console.log("login error", error);
             return null;
           });
       },

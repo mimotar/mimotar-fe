@@ -213,12 +213,12 @@ export default async function ApproveTransaction({
         </div>
 
         <div className="p-4 px-6 w-full md:w-2/6 bg-[#F8FAFC] gap-4 grid rounded-lg h-full lg:max-h-[500px]">
-          <p className="font-normal text-black text-lg">
+          <p className="font-normal text-black text-base">
             Please check that the information provided for the transaction are
             correct and that you accept the transaction agreement
           </p>
 
-          <AcceptRejectForm id={TicketResult.id} />
+          <AcceptRejectForm id={TicketResult.id} token={token} />
         </div>
       </section>
     </main>

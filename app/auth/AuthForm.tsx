@@ -10,6 +10,7 @@ interface AuthFormProps {
   setOpen: (open: boolean) => void;
   activeTab: "login" | "register";
   setActiveTab: (tab: "login" | "register") => void;
+  redirectUrl?: string;
 }
 
 const navLinks = [
@@ -22,6 +23,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   setOpen,
   activeTab,
   setActiveTab,
+  redirectUrl,
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -51,12 +53,18 @@ const AuthForm: React.FC<AuthFormProps> = ({
         <div className="h-full flex flex-col items-center justify-center  w-full overflow-y-auto p-2">
           {activeTab === "login" && (
             <div className="w-full">
-              <Login closeModal={() => setOpen(false)} />
+              <Login
+                closeModal={() => setOpen(false)}
+                redirectUrl={redirectUrl}
+              />
             </div>
           )}
           {activeTab === "register" && (
             <div className="w-full h-full">
-              <Register closeModal={() => setOpen(false)} />
+              <Register
+                closeModal={() => setOpen(false)}
+                redirectUrl={redirectUrl}
+              />
             </div>
           )}
         </div>
