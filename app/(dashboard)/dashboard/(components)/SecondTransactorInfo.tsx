@@ -11,12 +11,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { IoMdArrowBack } from "react-icons/io";
-import { AiOutlineExclamationCircle } from "react-icons/ai";
+// import { AiOutlineExclamationCircle } from "react-icons/ai";
 import Image from "next/image";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { Suspense, useEffect, useState } from "react";
 import { countriesCode } from "@/app/data/CountryCode";
-import { useMutateAction } from "@/app/hooks/useMutation";
+// import { useMutateAction } from "@/app/hooks/useMutation";
 import toast from "react-hot-toast";
 import { AxiosErrorHandler } from "@/app/utils/axiosErrorHandler";
 import {
@@ -51,10 +51,6 @@ export default function SecondTransactorInfo() {
 
   const session = useSession();
   const dispatch = useAppDispatch();
-  // const { isPending, mutate } = useMutateAction<
-  //   { data: ITicketSuccessPayload },
-  //   FormData
-  // >("post", "ticket");
 
   const { isPending, mutate } = useMutation({
     mutationFn: async (formData: FormData) => {
