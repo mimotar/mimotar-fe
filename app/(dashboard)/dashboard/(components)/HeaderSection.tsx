@@ -54,6 +54,7 @@ export default function HeaderSection() {
           {getCreateTransactionStateModal.stage == 3 && (
             <SecondTransactorInfo />
           )}
+
           {getCreateTransactionStateModal.stage == 4 && (
             <CreateTransactionGenerateLink />
           )}

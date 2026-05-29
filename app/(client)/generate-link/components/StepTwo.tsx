@@ -8,55 +8,78 @@ import TextAreaInput from "@/app/commons/TextAreaInput";
 import { IoMdArrowBack } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, type ChangeEvent } from "react";
 import {
   stage2TicketSchema,
   IStage2TicketSchema,
 } from "@/lib/schemas/CreateTransactionsSchema";
+import { ITransaction } from "@/app/types.ts/ICreateTransaction";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
-import { fileToBase64 } from "@/app/utils/FileToBase64";
 import toast from "react-hot-toast";
 import { isFileAcceptedSize } from "@/app/utils/FileAcceptedSize";
 import Image from "next/image";
+import { FiX } from "react-icons/fi";
+import {
+  attachmentsToFiles,
+  isSameAttachment,
+  normalizeAttachments,
+  serializeFilesToAttachments,
+} from "@/app/utils/attachmentStorage";
 
 export default function StepTwo() {
   const navigate = useRouter();
   const dispatch = useAppDispatch();
-  const transactionData = useAppSelector((state) => state.createTransaction);
+  const transactionData = useAppSelector(
+    (state) => state.createTransaction,
+  ) as ITransaction;
   const nextBtnRef = useRef<HTMLFormElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const filePreview = useMemo(() => {
-    if (transactionData && transactionData?.attachment instanceof File) {
-      const objUrl = Object.entries(transactionData?.attachment).map((obj) =>
-        URL.createObjectURL(obj as unknown as Blob),
-      );
-      return objUrl;
-    }
-  }, [transactionData?.attachment]);
-
-  console.log("filePreview Data:", filePreview);
+  const attachmentFiles = useMemo(
+    () => normalizeAttachments(transactionData?.attachment),
+    [transactionData?.attachment],
+  );
 
   const {
     handleSubmit,
     register,
     setValue,
-
     formState: { errors },
   } = useForm<IStage2TicketSchema>({
     resolver: zodResolver(stage2TicketSchema),
   });
 
-  const onSubmit = (data: IStage2TicketSchema) => {
-    console.log(data);
-    dispatch(setTransactionDetails(data));
+  const syncAttachments = (nextAttachments: typeof attachmentFiles) => {
+    dispatch(
+      setTransactionDetails({
+        attachment: nextAttachments,
+      }),
+    );
+
+    setValue("attachment", attachmentsToFiles(nextAttachments), {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
+  const onSubmit = async (data: IStage2TicketSchema) => {
+    const serializedAttachments = await serializeFilesToAttachments(
+      data.attachment,
+    );
+
+    dispatch(
+      setTransactionDetails({
+        ...data,
+        attachment: serializedAttachments,
+      }),
+    );
+
     navigate.push("generate-link?step=3");
   };
 
-  const handleAttachment = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleAttachment = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
 
     const fileCheckResult = isFileAcceptedSize(files);
@@ -67,42 +90,31 @@ export default function StepTwo() {
 
     if (files instanceof FileList) {
       const fileArray = Array.from(files);
+      const existingAttachments = attachmentFiles;
+      const incomingAttachments = await serializeFilesToAttachments(fileArray);
+      const mergedAttachments = [...existingAttachments];
+
+      incomingAttachments.forEach((attachment) => {
+        const isDuplicate = mergedAttachments.some((existingAttachment) =>
+          isSameAttachment(existingAttachment, attachment),
+        );
+
+        if (!isDuplicate) {
+          mergedAttachments.push(attachment);
+        }
+      });
 
       try {
-        // const base64Arr = await Promise.all(
-        //   fileArray.map((file) => fileToBase64(file)),
-        // );
-        // console.log("Base64 Array:", base64Arr);
-        // Continue processing: e.g., save to Redux, form state, etc.
-        // setValue("attachment", [
-        //   ...(transactionData.attachment ?? []),
-        //   ...base64Arr,
-        // ]);
-
-        setValue("attachment", fileArray);
-        // dispatch(
-        //   setTransactionDetails({
-        //     attachment: [...(transactionData.attachment ?? []), ...base64Arr],
-        //   }),
-        // );
-        dispatch(
-          setTransactionDetails({
-            attachment: fileArray,
-          }),
-        );
+        syncAttachments(mergedAttachments);
+        event.target.value = "";
       } catch (err) {
         toast.error("Error converting files");
       }
     }
   };
 
-  console.log("Form Errors:", errors);
-
   useEffect(() => {
     setValue("amount", transactionData.amount);
-    if (transactionData.attachment instanceof FileList) {
-      setValue("attachment", transactionData.attachment);
-    }
 
     if (
       transactionData.transactionType === "PHYSICAL_PRODUCT" ||
@@ -115,19 +127,35 @@ export default function StepTwo() {
       "transaction_description",
       transactionData.transaction_description,
     );
-    setValue("attachment", transactionData.attachment ?? []);
-  }, [setValue, transactionData]);
+    setValue("attachment", attachmentsToFiles(attachmentFiles));
+  }, [
+    attachmentFiles,
+    setValue,
+    transactionData.amount,
+    transactionData.transactionType,
+    transactionData.transaction_description,
+  ]);
 
   const handleClearFile = () => {
-    dispatch(
-      setTransactionDetails({
-        ...transactionData,
-        attachment: null as unknown as File[],
-      }),
+    syncAttachments([]);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveAttachment = (indexToRemove: number) => {
+    const nextAttachments = attachmentFiles.filter(
+      (_file, index) => index !== indexToRemove,
     );
+
+    syncAttachments(nextAttachments);
+
+    if (nextAttachments.length === 0 && fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
   return (
-    <section className="flex flex-col h-full w-full">
+    <section className="flex flex-col h-full w-full overflow-y-auto py-6 scroll-smooth">
       <h1 className="font-bold text-lg">Transaction Details</h1>
       <h3>All information about the transaction.</h3>
       <form
@@ -157,26 +185,48 @@ export default function StepTwo() {
         <div className="flex justify-between ">
           <div className="flex flex-col">
             <Input
+              ref={fileInputRef}
               onChange={handleAttachment}
               type="file"
               multiple
-              accept=".png, .jpg, .jpeg,"
-              // {...register("attachment")}
+              accept=".png,.jpg,.jpeg,.pdf"
               error={errors?.attachment && errors.attachment.message}
               labelName="Attachment"
               isShowLabel={true}
             />
-            <small className="inline-flex gap-2 mt-2">
-              {filePreview?.map((base64, key) => (
-                <Image
-                  key={key}
-                  src={base64}
-                  alt=""
-                  height={50}
-                  width={50}
-                  className="rounded-md object-contain "
-                />
-              ))}
+            <small className="flex gap-2 mt-2">
+              {attachmentFiles &&
+                attachmentFiles.map((attachment, key) => {
+                  const isImage = attachment.type.startsWith("image/");
+
+                  return (
+                    <div
+                      key={`${attachment.name}-${attachment.size}-${attachment.lastModified}-${key}`}
+                      className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border bg-slate-50"
+                    >
+                      {isImage ? (
+                        <Image
+                          src={attachment.dataUrl}
+                          alt={attachment.name}
+                          fill
+                          className="rounded-md object-cover"
+                        />
+                      ) : (
+                        <span className="px-1 text-[8px] leading-tight text-center text-slate-700">
+                          {attachment.name}
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAttachment(key)}
+                        className="absolute right-0 top-0 grid h-4 w-4 place-items-center rounded-bl bg-black/70 text-white"
+                        aria-label={`Remove attachment ${key + 1}`}
+                      >
+                        <FiX className="h-3 w-3" />
+                      </button>
+                    </div>
+                  );
+                })}
             </small>
           </div>
 

@@ -5,6 +5,7 @@ export type TransactionStatus =
   | "ONGOING"
   | "COMPLETED"
   | "DISPUTE"
+  | "EXPIRED"
   | "PENDING_CLOSURE"; // ✅ added
 
 export type DisputeStatus = "ongoing" | "resolved" | "closed"; // flexible
@@ -13,6 +14,30 @@ export type PaymentStatus = "COMPLETED" | "PENDING" | "FAILED" | string;
 export type PaymentMethod = "USSD" | "CARD" | "TRANSFER" | string;
 export type ROLE = "BUYER" | "SELLER" | "BOTH";
 export type TransactionType = "PHYSICAL_PRODUCT" | "ONLINE_PRODUCT" | "SERVICE";
+
+export type IHISTORYKEY =
+  | "transaction_created_at"
+  | "agreement_accepted_at"
+  | "payment_sent_to_escrow_at"
+  | "inspection_started_at"
+  | "inspection_completed_at"
+  | "transaction_completed_at";
+
+type TransactionTimelineHistory = {
+  transaction_created_at: string;
+  agreement_accepted_at: string | null;
+  payment_sent_to_escrow_at: string | null;
+  inspection_started_at: string | null;
+  inspection_completed_at: string | null;
+  transaction_completed_at: string | null;
+};
+
+export type AttachmentFile = {
+  fileName: string;
+  fileType: string;
+  fileUrl: string;
+  fileId: string;
+};
 
 export type ResolutionOption =
   | "FULL_REFUND"
@@ -58,7 +83,7 @@ export interface ITransaction {
   txn_link: string;
   amount: number;
   transaction_description: string;
-  files: string | null;
+  files: AttachmentFile[] | null;
   status: TransactionStatus;
   inspection_duration: number;
   creator_address: string;
@@ -77,6 +102,7 @@ export interface ITransaction {
   payment: Payment | null;
   link_expires: boolean;
   expiresAt: string;
+  history: TransactionTimelineHistory | null;
 }
 
 export interface TransactionsResponse {

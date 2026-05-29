@@ -1,5 +1,5 @@
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { ITransaction } from "../types/ITransactions";
+import { ITransaction, TransactionStatus } from "../types/ITransactions";
 import { TbRefreshAlert } from "react-icons/tb";
 import { Button } from "@/components/ui/button";
 import {
@@ -135,12 +135,15 @@ export const transactionColumnsFn = (
       cell: ({ row }) => {
         const status = row.original.status;
 
-        const statusStyles: Record<string, string> = {
+        const statusStyles: Record<TransactionStatus, string> = {
           CREATED: "text-brand-primary bg-brand-primary/10",
           REJECTED: "text-red-600 bg-red-100",
           APPROVED: "text-green-600 bg-green-100",
           ONGOING: "text-amber-600 bg-amber-100",
           COMPLETED: "text-blue-600 bg-blue-100",
+          DISPUTE: "text-rose-700 bg-rose-100",
+          PENDING_CLOSURE: "text-violet-700 bg-violet-100",
+          EXPIRED: "text-gray-600 bg-gray-100",
         };
 
         return (

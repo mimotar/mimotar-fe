@@ -1,4 +1,8 @@
-export function base64ToFile(base64: string, filename: string): File {
+export function base64ToFile(
+  base64: string,
+  filename: string,
+  options?: { lastModified?: number },
+): File {
   const arr = base64.split(",");
   const mimeMatch = arr[0].match(/:(.*?);/);
 
@@ -15,5 +19,8 @@ export function base64ToFile(base64: string, filename: string): File {
     u8arr[n] = bstr.charCodeAt(n);
   }
 
-  return new File([u8arr], filename, { type: mime });
+  return new File([u8arr], filename, {
+    type: mime,
+    lastModified: options?.lastModified,
+  });
 }

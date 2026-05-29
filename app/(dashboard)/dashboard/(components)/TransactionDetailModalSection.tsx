@@ -11,15 +11,30 @@ import {
   IStage2TicketSchema,
   stage2TicketSchema,
 } from "@/lib/schemas/CreateTransactionsSchema";
-import { useEffect } from "react";
 import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
+import { useEffect, useMemo, useRef, type ChangeEvent } from "react";
+import toast from "react-hot-toast";
+import { isFileAcceptedSize } from "@/app/utils/FileAcceptedSize";
+import Image from "next/image";
+import { FiX } from "react-icons/fi";
+import {
+  attachmentsToFiles,
+  isSameAttachment,
+  normalizeAttachments,
+  serializeFilesToAttachments,
+} from "@/app/utils/attachmentStorage";
+import { ITransaction } from "@/app/types.ts/ICreateTransaction";
 
 export default function TransactionDetailModalSection() {
-  const { stepState, transactionData } = useAppSelector((state) => ({
-    stepState: state.createTransactionStateModal,
-    transactionData: state.createTransaction,
-  }));
+  const transactionData = useAppSelector(
+    (state) => state.createTransaction,
+  ) as ITransaction;
   const dispatch = useAppDispatch();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const attachmentFiles = useMemo(
+    () => normalizeAttachments(transactionData?.attachment),
+    [transactionData?.attachment],
+  );
   const {
     register,
     handleSubmit,
@@ -29,19 +44,64 @@ export default function TransactionDetailModalSection() {
     resolver: zodResolver(stage2TicketSchema),
   });
 
-  const handleAttachment = () => {};
+  const syncAttachments = (nextAttachments: typeof attachmentFiles) => {
+    dispatch(
+      setTransactionDetails({
+        attachment: nextAttachments,
+      }),
+    );
 
-  const handleNext = (data: IStage2TicketSchema) => {
-    console.log(data);
-    dispatch(setTransactionDetails(data));
+    setValue("attachment", attachmentsToFiles(nextAttachments), {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
+  const handleAttachment = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+
+    const fileCheckResult = isFileAcceptedSize(files);
+    if (fileCheckResult && fileCheckResult.error) {
+      toast.error(fileCheckResult.msg);
+      return;
+    }
+
+    if (files instanceof FileList) {
+      const fileArray = Array.from(files);
+      const incomingAttachments = await serializeFilesToAttachments(fileArray);
+      const mergedAttachments = [...attachmentFiles];
+
+      incomingAttachments.forEach((attachment) => {
+        const isDuplicate = mergedAttachments.some((existingAttachment) =>
+          isSameAttachment(existingAttachment, attachment),
+        );
+
+        if (!isDuplicate) {
+          mergedAttachments.push(attachment);
+        }
+      });
+
+      syncAttachments(mergedAttachments);
+      event.target.value = "";
+    }
+  };
+
+  const handleNext = async (data: IStage2TicketSchema) => {
+    const serializedAttachments = await serializeFilesToAttachments(
+      data.attachment,
+    );
+
+    dispatch(
+      setTransactionDetails({
+        ...data,
+        attachment: serializedAttachments,
+      }),
+    );
     dispatch(setStage(2));
   };
 
   useEffect(() => {
     setValue("amount", transactionData.amount);
-    if (transactionData.attachment instanceof FileList) {
-      setValue("attachment", transactionData.attachment);
-    }
 
     if (
       transactionData.transactionType === "PHYSICAL_PRODUCT" ||
@@ -54,8 +114,33 @@ export default function TransactionDetailModalSection() {
       "transaction_description",
       transactionData.transaction_description,
     );
-    setValue("attachment", transactionData.attachment ?? []);
-  }, [setValue, transactionData]);
+    setValue("attachment", attachmentsToFiles(attachmentFiles));
+  }, [
+    attachmentFiles,
+    setValue,
+    transactionData.amount,
+    transactionData.transactionType,
+    transactionData.transaction_description,
+  ]);
+
+  const handleClearFile = () => {
+    syncAttachments([]);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveAttachment = (indexToRemove: number) => {
+    const nextAttachments = attachmentFiles.filter(
+      (_file, index) => index !== indexToRemove,
+    );
+
+    syncAttachments(nextAttachments);
+
+    if (nextAttachments.length === 0 && fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   return (
     <section className="flex flex-col mx-auto sm:w-[580px] w-[95%]">
@@ -105,17 +190,50 @@ export default function TransactionDetailModalSection() {
           <div className="flex justify-between ">
             <div className="flex flex-col">
               <input
+                ref={fileInputRef}
                 onChange={handleAttachment}
                 type="file"
                 multiple
-                accept=".png, .jpg, .jpeg,"
-                // {...register("attachment")}
+                accept=".png,.jpg,.jpeg,.pdf"
+                className="border rounded-md p-2 border-brand-primary"
               />
-              <small className="inline-flex gap-2 mt-2"></small>
+              <small className="inline-flex gap-2 mt-2 flex-wrap">
+                {attachmentFiles.map((attachment, key) => {
+                  const isImage = attachment.type.startsWith("image/");
+
+                  return (
+                    <div
+                      key={`${attachment.name}-${attachment.size}-${attachment.lastModified}-${key}`}
+                      className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border bg-slate-50"
+                    >
+                      {isImage ? (
+                        <Image
+                          src={attachment.dataUrl}
+                          alt={attachment.name}
+                          fill
+                          className="rounded-md object-cover"
+                        />
+                      ) : (
+                        <span className="px-1 text-[8px] leading-tight text-center text-slate-700">
+                          {attachment.name}
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAttachment(key)}
+                        className="absolute right-0 top-0 grid h-4 w-4 place-items-center rounded-bl bg-black/70 text-white"
+                        aria-label={`Remove attachment ${key + 1}`}
+                      >
+                        <FiX className="h-3 w-3" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </small>
             </div>
 
             <button
-              onClick={() => ""}
+              onClick={handleClearFile}
               type="button"
               className="rounded-md text-white self-start bg-brand-secondary hover:bg-brand-secondary/80 cursor-pointer p-2"
             >
