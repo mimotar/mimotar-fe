@@ -11,11 +11,12 @@ import {
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { Dispatch, SetStateAction } from "react";
-import { ITransaction } from "../types/ITransactions";
+import { ITransaction, TransactionStatus } from "../types/ITransactions";
 import { Row } from "@tanstack/react-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BiSolidDownload } from "react-icons/bi";
 import { GoDotFill } from "react-icons/go";
+import Image from "next/image";
 
 interface ITransactionsTableProps {
   open: boolean;
@@ -28,18 +29,23 @@ export function TransactionsViewTab({
   setOpen,
   data,
 }: ITransactionsTableProps) {
-  const color =
-    data?.original.status === "CREATED"
-      ? "text-brand-primary"
-      : data?.original.status === "REJECTED"
-        ? "text-red-400"
-        : data?.original.status === "APPROVED"
-          ? "text-green-400"
-          : data?.original.status === "COMPLETED"
-            ? "text-blue-400"
-            : data?.original.status === "DISPUTE"
-              ? "text-red-400"
-              : "";
+  const color: Record<TransactionStatus, string> = {
+    CREATED: "text-brand-primary bg-brand-primary/10",
+    REJECTED: "text-red-600 bg-red-100",
+    APPROVED: "text-green-600 bg-green-100",
+    ONGOING: "text-amber-600 bg-amber-100",
+    COMPLETED: "text-blue-600 bg-blue-100",
+    DISPUTE: "text-rose-700 bg-rose-100",
+
+    PENDING_CLOSURE: "text-violet-700 bg-violet-100",
+
+    EXPIRED: "text-gray-600 bg-gray-100",
+  };
+
+  const attachment =
+    data && data.original.files && data.original.files.length > 0
+      ? data.original.files
+      : [];
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-md bg-white">
@@ -47,7 +53,9 @@ export function TransactionsViewTab({
           <DialogTitle className="flex justify-between gap-2 items-center mt-3">
             <h1 className=" font-black">Transaction info</h1>
 
-            <span className={`text-sm ${color}`}>
+            <span
+              className={`text-sm ${color[data?.original.status!]} rounded-md p-1 px-3`}
+            >
               {data?.original.status || "N/A"}
             </span>
           </DialogTitle>
@@ -120,6 +128,31 @@ export function TransactionsViewTab({
                   <h1 className="text-neutral-500">Total Amount</h1>{" "}
                   <span className="text-neutral-900 font-semibold">
                     {data?.original.amount}
+                  </span>
+                </div>
+
+                <div className="flex justify-between gap-2 flex-wrap">
+                  <h1 className="text-neutral-500">Attachment</h1>{" "}
+                  <span className="text-neutral-900 inline-flex gap-2 font-semibold">
+                    {attachment.length > 0 ? (
+                      attachment.map((file, index) => (
+                        <Image
+                          key={index}
+                          src={file.fileUrl}
+                          alt={file.fileName}
+                          width={30}
+                          height={30}
+                          loading="lazy"
+                          className="rounded-md border cursor-pointer"
+                          onClick={() =>
+                            window.open(file.fileUrl, "_blank", "")
+                          }
+                        />
+                      ))
+                    ) : (
+                      <span className="text-sm">No File Attached</span>
+                    )}
+                    {/* {attachment.map((file, index)=> <Image key={index} src={file.fileUrl} alt={file.fileName} />)} */}
                   </span>
                 </div>
 

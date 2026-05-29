@@ -30,6 +30,13 @@ import { useSession } from "next-auth/react";
 import { ITicketSuccessPayload } from "@/app/types.ts/ITicketSuccessPayload";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { createTicketSuccessPayload } from "@/lib/slices/TicketSuccessSlice";
+import {
+  attachmentsToFiles,
+  normalizeAttachments,
+} from "@/app/utils/attachmentStorage";
+import { ITransaction } from "@/app/types.ts/ICreateTransaction";
+import { useMutation } from "@tanstack/react-query";
+import axiosService from "@/lib/services/axiosService";
 
 export default function SecondTransactorInfo() {
   const [countryCode, setCountryCode] = useState<{
@@ -38,17 +45,34 @@ export default function SecondTransactorInfo() {
   }>({ flag: "https://flagcdn.com/16x12/ng.png" });
 
   const [isFlagDropdown, setIsFlagDropdown] = useState(false);
-  const { stepState, transactionData } = useAppSelector((state) => ({
-    stepState: state.createTransactionStateModal,
-    transactionData: state.createTransaction,
-  }));
+  const transactionData = useAppSelector(
+    (state) => state.createTransaction,
+  ) as ITransaction;
 
   const session = useSession();
   const dispatch = useAppDispatch();
-  const { isPending, mutate } = useMutateAction<
-    { data: ITicketSuccessPayload },
-    FormData
-  >("post", "ticket");
+  // const { isPending, mutate } = useMutateAction<
+  //   { data: ITicketSuccessPayload },
+  //   FormData
+  // >("post", "ticket");
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: async (formData: FormData) => {
+      try {
+        const response = await axiosService.post<{
+          data: ITicketSuccessPayload;
+        }>("ticket", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log("response", response);
+        return response.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+  });
 
   const {
     register,
@@ -68,11 +92,21 @@ export default function SecondTransactorInfo() {
         " " +
         (session.data?.user?.lastName ?? ""),
       creator_email: session.data?.user?.email as string,
-      creator_no: "082728237",
-      creator_role: "BUYER" as "SELLER" | "BUYER",
+      creator_no: session.data?.user?.phone_no || "SELLER",
+      creator_role:
+        (transactionData.creator_role as "SELLER" | "BUYER") || "BUYER",
       creator_address: "",
     };
-    const mergedData = { ...transactionData, ...data, ...creatorDetail };
+
+    const attachments = attachmentsToFiles(
+      normalizeAttachments(transactionData?.attachment),
+    );
+    const mergedData = {
+      ...transactionData,
+      ...data,
+      ...creatorDetail,
+      attachment: attachments,
+    };
     const dashboardCreateTicket = mergedTicketSchema.safeParse(mergedData);
 
     if (!dashboardCreateTicket.success) {
@@ -97,15 +131,8 @@ export default function SecondTransactorInfo() {
       }
     }
 
-    // const attachments = transactionData?.attachment as string[] | undefined;
-
-    // if (attachments?.length) {
-    //   attachments.forEach((file) => {
-    //     formData.append("files", file);
-    //   });
-    // }
-    Array.from(formData.entries()).forEach(([key, value]) => {
-      console.log(`${key}:`, value);
+    attachments.forEach((file) => {
+      formData.append("files", file);
     });
 
     // Submit to the server
@@ -118,8 +145,9 @@ export default function SecondTransactorInfo() {
         console.log("Transaction created successfully:", data);
         dispatch(createTicketSuccessPayload(data.data));
         dispatch(resetTransactionDetails());
-        toast.success("Transaction created successfully!");
-
+        toast.success(
+          "Transaction created successfully! The other party has been notified to review and approve or reject the transaction.",
+        );
         dispatch(setStage(4));
       },
     });
@@ -179,7 +207,6 @@ export default function SecondTransactorInfo() {
               className="text-neutral-600 inline-flex gap-2"
             >
               Email
-              <span className="px-2 bg-neutral-100 rounded-full">Optional</span>
             </label>
             <input
               {...register("reciever_email")}
