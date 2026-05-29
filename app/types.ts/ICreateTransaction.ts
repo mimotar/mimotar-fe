@@ -1,3 +1,11 @@
+export interface IPersistedAttachment {
+  name: string;
+  type: string;
+  size: number;
+  lastModified: number;
+  dataUrl: string;
+}
+
 export interface ITransaction {
   creator_fullname: string;
   creator_email: string;
@@ -7,8 +15,7 @@ export interface ITransaction {
 
   amount: number;
   transaction_description: string;
-  // attachment: any[] | null;
-  attachment: File[];
+  attachment: IPersistedAttachment[];
   transactionType:
     | "PHYSICAL_PRODUCT"
     | "ONLINE_PRODUCT"

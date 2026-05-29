@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import {
+  createTransform,
   persistStore,
   persistReducer,
   FLUSH,
@@ -16,10 +17,24 @@ import createTransactionStateSlice from "../slices/createTransactionStateSlice";
 // import createTransactionProcessDataSlice from "../slices/createTransactionProcessDataSlice";
 import createTransactionSlice from "../slices/createTransactionslice";
 import TicketSuccessSlice from "../slices/TicketSuccessSlice";
+import { normalizeAttachments } from "@/app/utils/attachmentStorage";
+
+const createTransactionTransform = createTransform(
+  (inboundState: any) => ({
+    ...inboundState,
+    attachment: normalizeAttachments(inboundState?.attachment),
+  }),
+  (outboundState: any) => ({
+    ...outboundState,
+    attachment: normalizeAttachments(outboundState?.attachment),
+  }),
+  { whitelist: ["createTransaction"] },
+);
 
 const persistConfig = {
   key: "root",
   storage: storageService,
+  transforms: [createTransactionTransform],
   whitelist: [
     "leftPanelVisibility",
     "customerCount",
@@ -38,23 +53,17 @@ const rootReducer = combineReducers({
   TicketSuccessPayload: TicketSuccessSlice,
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(
+  persistConfig as any,
+  rootReducer as any,
+) as unknown as typeof rootReducer;
 
 const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredPaths: ["createTransactionStateModal.attachment"],
-        ignoredActions: [
-          FLUSH,
-          REHYDRATE,
-          PAUSE,
-          PERSIST,
-          PURGE,
-          REGISTER,
-          "transaction/setTransactionDetails",
-        ],
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
 });

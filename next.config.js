@@ -15,6 +15,11 @@ module.exports = {
         // port: '',
         // pathname: '/my-bucket/**',
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/djlzl6mzf/**",
+      },
     ],
   },
 };

@@ -17,10 +17,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
   setTransactionDetails,
-  resetTransactionDetails,
+  // resetTransactionDetails,
 } from "@/lib/slices/createTransactionslice";
-import TextAreaInput from "@/app/commons/TextAreaInput";
-import { useMutateAction } from "@/app/hooks/useMutation";
+// import TextAreaInput from "@/app/commons/TextAreaInput";
+// import { useMutateAction } from "@/app/hooks/useMutation";
 import Loader from "@/components/Loader";
 import { ITransaction } from "@/app/types.ts/ICreateTransaction";
 import { AxiosErrorHandler } from "@/app/utils/axiosErrorHandler";
@@ -29,6 +29,12 @@ import { ITicketSuccessPayload } from "@/app/types.ts/ITicketSuccessPayload";
 import { createTicketSuccessPayload } from "@/lib/slices/TicketSuccessSlice";
 import { z } from "zod";
 import { base64ToFile } from "@/app/utils/base64ToFile";
+import { useMutation } from "@tanstack/react-query";
+import axiosService from "@/lib/services/axiosService";
+import {
+  attachmentsToFiles,
+  normalizeAttachments,
+} from "@/app/utils/attachmentStorage";
 
 export default function StepFour() {
   const navigate = useRouter();
@@ -38,10 +44,28 @@ export default function StepFour() {
   const nextBtnRef = useRef<HTMLFormElement>(null);
   // console.log("Transaction Data:", transactionData);
 
-  const { isError, isPending, mutate } = useMutateAction<
-    { data: ITicketSuccessPayload },
-    FormData
-  >("post", "ticket");
+  // const { isError, isPending, mutate } = useMutateAction<
+  //   { data: ITicketSuccessPayload },
+  //   FormData
+  // >("post", "ticket");
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: async (formData: FormData) => {
+      try {
+        const response = await axiosService.post<{
+          data: ITicketSuccessPayload;
+        }>("ticket", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log("response", response);
+        return response.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+  });
 
   const {
     handleSubmit,
@@ -68,7 +92,14 @@ export default function StepFour() {
   const onSubmit = async (data: IStage4TicketSchema) => {
     dispatch(setTransactionDetails(data));
 
-    const mergedData = { ...transactionData, ...data };
+    const attachmentFiles = attachmentsToFiles(
+      normalizeAttachments(transactionData?.attachment),
+    );
+    const mergedData = {
+      ...transactionData,
+      ...data,
+      attachment: attachmentFiles,
+    };
     const parseResult = mergedTicketSchema.safeParse(mergedData);
 
     if (!parseResult.success) {
@@ -93,33 +124,8 @@ export default function StepFour() {
       }
     }
 
-    const attachments = Array.from(transactionData?.attachment ?? []);
-
-    console.log("Attachments to upload:", attachments);
-
-    attachments.forEach((file) => {
+    attachmentFiles.forEach((file) => {
       formData.append("files", file);
-    });
-
-    // if (attachments && Array.isArray(attachments)) {
-    //   for (let i = 0; i < attachments.length; i++) {
-    //     const base64 = attachments[i];
-
-    //     try {
-    //       const file = base64ToFile(base64, `attachment_${i}`); // optional: extract MIME to get extension
-    //       // console.log(file);
-    //       formData.append("files", file);
-    //     } catch (err) {
-    //       console.error("Error converting base64 to file:", err);
-    //       toast.error("Failed to process attachment.");
-    //       return;
-    //     }
-    //   }
-    // }
-
-    // Debug: log all FormData entries
-    Array.from(formData.entries()).forEach(([key, value]) => {
-      console.log(`${key}:`, value);
     });
 
     // Submit to the server
@@ -131,7 +137,9 @@ export default function StepFour() {
       onSuccess: (data) => {
         console.log("Transaction created successfully:", data);
         dispatch(createTicketSuccessPayload(data.data));
-        toast.success("Transaction created successfully!");
+        toast.success(
+          "Transaction created successfully! The other party has been notified to review and approve or reject the transaction.",
+        );
         navigate.push("generate-link?step=5");
       },
     });
@@ -139,7 +147,7 @@ export default function StepFour() {
 
   console.log(errors);
   return (
-    <section className="flex flex-col w-full h-full">
+    <section className="flex flex-col w-full h-full  py-6">
       <h1 className="font-bold text-lg">Second Transactor&apos;s Info</h1>
       <h3>
         Input the personal details of the other party (whether buyer or seller).

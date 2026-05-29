@@ -84,7 +84,7 @@ export default async function page({
         </div>
         {/* </div> */}
 
-        <div className="flex flex-col  mt-2 h-full items-center justify-center w-full p-2 sm:rounded-none rounded-t-2xl -translate-y-4 bg-white ">
+        <div className="flex flex-col scroll-smooth mt-2 h-full items-center justify-center w-full p-2 sm:rounded-none rounded-t-2xl -translate-y-4 bg-white ">
           {params == 0 && <StepOne />}
           {params == 2 && <StepTwo />}
           {params == 3 && <StepThree />}
