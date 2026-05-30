@@ -128,10 +128,10 @@ export default function AcceptRejectForm({
 
   //reject ticket
   const { mutate: RejectTicketMutate, isPending: isRejectTicketPending } =
-    useMutateAction<ApproveTransactionResponse, { otp: string }>(
-      "put",
-      `/ticket/reject/${id}`,
-    );
+    useMutateAction<
+      ApproveTransactionResponse,
+      { otp: string; rejection_reason: string }
+    >("put", `/ticket/reject/${id}`);
 
   const handleRejectTicket = () => {
     if (!approveToken || !debouncedRejectionReason) {
@@ -146,7 +146,7 @@ export default function AcceptRejectForm({
       return;
     }
     RejectTicketMutate(
-      { otp: approveToken },
+      { otp: approveToken, rejection_reason: debouncedRejectionReason },
       {
         onSuccess: (data) => {
           console.log(data.data);
