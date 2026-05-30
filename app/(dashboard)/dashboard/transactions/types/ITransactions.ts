@@ -102,6 +102,7 @@ export interface ITransaction {
   payment: Payment | null;
   link_expires: boolean;
   expiresAt: string;
+  rejection_reason: string;
   history: TransactionTimelineHistory | null;
 }
 
