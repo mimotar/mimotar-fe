@@ -1,11 +1,10 @@
-import React from "react";
 import Privacy from "./components/Privacy";
 
 const page = () => {
   return (
-    <div>
+    <main className="pt-24 px-4 pb-16">
       <Privacy />
-    </div>
+    </main>
   );
 };
 
