@@ -57,7 +57,9 @@ export default function SignIn() {
     mutate(dataPayload, {
       onSuccess: (data) => {
         console.log(data);
-        navigate.push("auth?auth=login");
+        navigate.push(
+          `auth?auth=otp&mail=${encodeURIComponent(dataPayload.email)}`,
+        );
         toast.success("Registration successful, please check your email");
         // closeModal();
       },
