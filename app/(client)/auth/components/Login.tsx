@@ -99,17 +99,13 @@ export default function Login() {
             >
               Security Password
             </label>
-            <button
+            <Link
+              href={"/auth/forget-password"}
               type="button"
-              //   onClick={() => {
-              //     setErrorText(
-              //       "Simulation notification: Password recovery instructions have been mocked to your contact inbox.",
-              //     );
-              //   }}
               className="text-[10px] font-semibold text-brand-primary hover:underline"
             >
               Forgot Password?
-            </button>
+            </Link>
           </div>
           <div className="relative font-sans">
             <input
