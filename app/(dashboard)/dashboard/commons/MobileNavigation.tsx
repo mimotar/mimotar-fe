@@ -1,7 +1,7 @@
 "use client";
 import { FolderKanban, LayoutDashboard, UserIcon } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export const MobileNavigation: React.FC = () => {
   const activePage = usePathname();
@@ -17,12 +17,10 @@ export const MobileNavigation: React.FC = () => {
       {items.map((item) => {
         const Icon = item.icon;
         const isActive = activePage === item.page;
-        //   (item.id === "projects" && activePage === "project-workspace");
         return (
           <Link
             href={item.page}
             key={item.page}
-            // onClick={() => navigateTo(item.id)}
             className={`flex flex-col items-center justify-center py-2 h-full w-16 transition-all relative ${
               isActive
                 ? "text-brand-primary"

@@ -1,5 +1,6 @@
 "use client";
 
+import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 import {
   FolderKanban,
   LayoutDashboard,
@@ -7,22 +8,17 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export const Sidebar = () => {
-  //   const { activePage, setActivePage, setSelectedProjectId, wallet } =
-  //     useAppState();
   const activePage = usePathname();
+  const navigate = useRouter();
 
   const menuItems = [
-    { page: "dashboard", name: "Dashboard", icon: LayoutDashboard },
-    { page: "projects", name: "Projects", icon: FolderKanban },
-    { page: "settings", name: "Settings", icon: Settings },
+    { page: "/dashboard", name: "Dashboard", icon: LayoutDashboard },
+    { page: "/projects", name: "Projects", icon: FolderKanban },
+    { page: "/settings", name: "Settings", icon: Settings },
   ];
-
-  const formatMoney = (val: number) => {
-    return `₦${val.toLocaleString()}`;
-  };
 
   return (
     <aside className="w-64 bg-white border-r border-gray-100 flex flex-col justify-between hidden lg:flex h-full pt-8 pb-6 px-4 shrink-0">
@@ -30,12 +26,10 @@ export const Sidebar = () => {
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = activePage === item.page;
-          //    || (item.id === 'projects' && activePage === 'project-workspace');
           return (
             <Link
               href={item.page}
               key={item.page}
-              //   onClick={() => navigateTo(item.id)}
               className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all group ${
                 isActive
                   ? "bg-magenta-50 text-brand-primary"
@@ -61,24 +55,29 @@ export const Sidebar = () => {
             <div className="flex justify-between items-center text-xs">
               <span className="text-gray-500 font-medium">Naira (NGN):</span>
               <span className="font-bold text-gray-900 font-display">
-                {formatMoney(450000)}
+                {formatNumberToCurrency(450000, {
+                  style: "currency",
+                  currency: "NGN",
+                })}
               </span>
             </div>
             <div className="flex justify-between items-center text-xs border-t border-gray-200/40 pt-1.5">
               <span className="text-gray-500 font-medium">Dollars (USD):</span>
               <span className="font-bold text-brand-primary font-mono">
-                ${350}
+                {formatNumberToCurrency(350, {
+                  style: "currency",
+                  currency: "USD",
+                })}
               </span>
             </div>
           </div>
-          <Link
-            href={"/wallet"}
+          <button
             type="button"
-            // onClick={() => setActivePage("wallet")}
+            onClick={() => navigate.push("/wallet")}
             className="mt-3.5 w-full py-2 bg-white border border-[#c026d3]/30 text-brand-primary hover:bg-brand-primary hover:text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
           >
             Withdraw Funds
-          </Link>
+          </button>
         </div>
 
         <div className="border-t border-gray-100 pt-4 px-1.5">
