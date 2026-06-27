@@ -7,34 +7,47 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IPersistedAttachment } from "../types/ITicket";
 import { StepOneForm, stepOneSchema } from "../schema/projectSchema";
+import { useAppSelector, useAppDispatch } from "@/lib/hooks";
+import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
+
+export const fileToPersistedAttachment = (
+  file: File,
+): Promise<IPersistedAttachment> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      resolve({
+        id: crypto.randomUUID(),
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        lastModified: file.lastModified,
+        base64Url: reader.result as string,
+      });
+    };
+
+    reader.onerror = reject;
+
+    reader.readAsDataURL(file);
+  });
+};
 
 export default function ProjectStepOne() {
   const [amount, setAmount] = useState<number>(0);
   const [hasMilestones, setHasMilestones] = useState(false);
-  const [attachedFiles, setAttachedFiles] = useState<string[]>([]);
+  // const [attachedFiles, setAttachedFiles] = useState<IPersistedAttachment[]>([
+  //   ...persistAttachment,
+  // ]);
+
   const [currency, setCurrency] = useState<"NGN" | "USD">("NGN");
 
-  const fileToPersistedAttachment = (
-    file: File,
-  ): Promise<IPersistedAttachment> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
+  const persistAttachment = useAppSelector(
+    (state) => state.createTransaction.attachment,
+  );
+  const dispatch = useAppDispatch();
 
-      reader.onload = () => {
-        resolve({
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          lastModified: file.lastModified,
-          dataUrl: reader.result as string,
-        });
-      };
-
-      reader.onerror = reject;
-
-      reader.readAsDataURL(file);
-    });
-  };
+  console.log(persistAttachment);
 
   const {
     register,
@@ -136,8 +149,13 @@ export default function ProjectStepOne() {
           </div>
           <InteractiveMultiUploader
             id="creation-attachments-uploader"
-            files={attachedFiles}
-            onChange={setAttachedFiles}
+            files={persistAttachment}
+            onChange={(persistAttachmentObj) => {
+              dispatch(
+                setTransactionDetails({ attachment: persistAttachmentObj }),
+              );
+              // setAttachedFiles;
+            }}
             placeholder="Drag & drop contract files, templates, or images here to attach"
           />
         </div>

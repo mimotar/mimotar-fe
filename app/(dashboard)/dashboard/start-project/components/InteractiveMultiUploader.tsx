@@ -10,6 +10,8 @@ import {
   X,
   Upload,
 } from "lucide-react";
+import { IPersistedAttachment } from "../types/ITicket";
+import { fileToPersistedAttachment } from "./ProjectStepOne";
 
 interface SimulatedFile {
   id: string;
@@ -20,8 +22,10 @@ interface SimulatedFile {
 }
 
 interface InteractiveMultiUploaderProps {
-  files: string[];
-  onChange: (files: string[]) => void;
+  // files: string[];
+  files: IPersistedAttachment[];
+  // onChange: (files: string[]) => void;
+  onChange: (files: IPersistedAttachment[]) => void;
   id: string;
   label?: string;
   placeholder?: string;
@@ -45,77 +49,137 @@ export const InteractiveMultiUploader = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Synchronize initial state: if parent has files that are not in simUploads, pre-populate them as completed
+  // useEffect(() => {
+  //   setSimUploads((prev) => {
+  //     const existingNames = new Set(prev.map((f) => f.name));
+  //     const newSims = [...prev];
+  //     let updated = false;
+
+  //     files.forEach((fileName, index) => {
+  //       if (!existingNames.has(fileName)) {
+  //         // Generate realistic size
+  //         const sizeKb = Math.floor(Math.random() * 800) + 120;
+  //         const sizeStr =
+  //           sizeKb > 1024 ? `${(sizeKb / 1024).toFixed(1)} MB` : `${sizeKb} KB`;
+
+  //         newSims.push({
+  //           id: `init-${index}-${fileName}`,
+  //           name: fileName,
+  //           size: sizeStr,
+  //           progress: 100,
+  //           status: "completed",
+  //         });
+  //         updated = true;
+  //       }
+  //     });
+
+  //     // Filter out files that were removed from parent
+  //     const parentNames = new Set(files);
+  //     const filtered = newSims.filter((s) => {
+  //       if (s.status === "completed" && !parentNames.has(s.name)) {
+  //         updated = true;
+  //         return false;
+  //       }
+  //       return true;
+  //     });
+
+  //     return updated ? filtered : prev;
+  //   });
+  // }, [files]);
+
   useEffect(() => {
     setSimUploads((prev) => {
-      const existingNames = new Set(prev.map((f) => f.name));
-      const newSims = [...prev];
-      let updated = false;
+      const existingIds = new Set(prev.map((f) => f.id));
 
-      files.forEach((fileName, index) => {
-        if (!existingNames.has(fileName)) {
-          // Generate realistic size
-          const sizeKb = Math.floor(Math.random() * 800) + 120;
-          const sizeStr =
-            sizeKb > 1024 ? `${(sizeKb / 1024).toFixed(1)} MB` : `${sizeKb} KB`;
+      const next = [...prev];
 
-          newSims.push({
-            id: `init-${index}-${fileName}`,
-            name: fileName,
-            size: sizeStr,
+      files.forEach((file) => {
+        if (!existingIds.has(file.id)) {
+          const sizeKb = Math.round(file.size / 1024);
+
+          next.push({
+            id: file.id,
+            name: file.name,
+            size:
+              sizeKb > 1024
+                ? `${(sizeKb / 1024).toFixed(1)} MB`
+                : `${sizeKb} KB`,
             progress: 100,
             status: "completed",
           });
-          updated = true;
         }
       });
 
-      // Filter out files that were removed from parent
-      const parentNames = new Set(files);
-      const filtered = newSims.filter((s) => {
-        if (s.status === "completed" && !parentNames.has(s.name)) {
-          updated = true;
-          return false;
-        }
-        return true;
-      });
-
-      return updated ? filtered : prev;
+      return next.filter((item) => files.some((f) => f.id === item.id));
     });
   }, [files]);
 
-  const handleFilesAdded = (selectedFiles: FileList | null) => {
+  // const handleFilesAdded = (selectedFiles: FileList | null) => {
+  //   if (!selectedFiles || selectedFiles.length === 0) return;
+
+  //   const remainingSlots = maxFiles - files.length;
+  //   if (remainingSlots <= 0) {
+  //     alert(`Maximum of ${maxFiles} files reached.`);
+  //     return;
+  //   }
+
+  //   const filesArray = Array.from(selectedFiles).slice(0, remainingSlots);
+  //   const newFileNames: string[] = [];
+  //   const newSimList: SimulatedFile[] = [];
+
+  //   filesArray.forEach((file) => {
+  //     const fileId = `upload-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  //     const sizeKb = Math.round(file.size / 1024);
+  //     const sizeStr =
+  //       sizeKb > 1024 ? `${(sizeKb / 1024).toFixed(1)} MB` : `${sizeKb} KB`;
+
+  //     newFileNames.push(file.name);
+  //     newSimList.push({
+  //       id: fileId,
+  //       name: file.name,
+  //       size: sizeStr,
+  //       progress: 100,
+  //       status: "completed",
+  //     });
+  //   });
+
+  //   setSimUploads((prev) => [...prev, ...newSimList]);
+  //   onChange([...files, ...newFileNames]);
+  // };
+
+  const handleFilesAdded = async (selectedFiles: FileList | null) => {
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     const remainingSlots = maxFiles - files.length;
+
     if (remainingSlots <= 0) {
       alert(`Maximum of ${maxFiles} files reached.`);
       return;
     }
 
     const filesArray = Array.from(selectedFiles).slice(0, remainingSlots);
-    const newFileNames: string[] = [];
-    const newSimList: SimulatedFile[] = [];
 
-    filesArray.forEach((file) => {
-      const fileId = `upload-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const persistedFiles = await Promise.all(
+      filesArray.map(fileToPersistedAttachment),
+    );
+
+    const newSimList: SimulatedFile[] = persistedFiles.map((file) => {
       const sizeKb = Math.round(file.size / 1024);
-      const sizeStr =
-        sizeKb > 1024 ? `${(sizeKb / 1024).toFixed(1)} MB` : `${sizeKb} KB`;
 
-      newFileNames.push(file.name);
-      newSimList.push({
-        id: fileId,
+      return {
+        id: file.id,
         name: file.name,
-        size: sizeStr,
+        size:
+          sizeKb > 1024 ? `${(sizeKb / 1024).toFixed(1)} MB` : `${sizeKb} KB`,
         progress: 100,
         status: "completed",
-      });
+      };
     });
 
     setSimUploads((prev) => [...prev, ...newSimList]);
-    onChange([...files, ...newFileNames]);
-  };
 
+    onChange([...files, ...persistedFiles]);
+  };
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(true);
@@ -131,9 +195,15 @@ export const InteractiveMultiUploader = ({
     handleFilesAdded(e.dataTransfer.files);
   };
 
-  const removeFile = (fileId: string, fileName: string) => {
-    setSimUploads((prev) => prev.filter((f) => f.id !== fileId));
-    onChange(files.filter((f) => f !== fileName));
+  // const removeFile = (fileId: string, fileName: string) => {
+  //   setSimUploads((prev) => prev.filter((f) => f.id !== fileId));
+  //   onChange(files.filter((f) => f !== fileName));
+  // };
+
+  const removeFile = (id: string) => {
+    setSimUploads((prev) => prev.filter((f) => f.id !== id));
+
+    onChange(files.filter((f) => f.id !== id));
   };
 
   const triggerFileInput = () => {
@@ -252,7 +322,8 @@ export const InteractiveMultiUploader = ({
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      removeFile(file.id, file.name);
+                      // removeFile(file.id, file.name);
+                      removeFile(file.id);
                     }}
                     className="p-1 hover:bg-slate-100 hover:text-red-500 rounded transition text-gray-400"
                     title="Remove attachment"

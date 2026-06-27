@@ -1,9 +1,10 @@
 export interface IPersistedAttachment {
+  id: string;
   name: string;
   type: string;
   size: number;
   lastModified: number;
-  dataUrl: string;
+  base64Url: string;
 }
 
 export interface ITicket {
