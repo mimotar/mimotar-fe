@@ -2,10 +2,10 @@ import { AlertCircle, ArrowRight, FileText } from "lucide-react";
 import { InteractiveMultiUploader } from "./InteractiveMultiUploader";
 import { useState } from "react";
 import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
-import { navigateProjectStep } from "../utils/navigateProjectStep";
+import { useNavigateProjectStep } from "../hooks/usenavigateProjectStep";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IPersistedAttachment } from "../types/ITicket";
+import { IPersistedAttachment, ITicket } from "../types/ITicket";
 import { StepOneForm, stepOneSchema } from "../schema/projectSchema";
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
@@ -32,22 +32,27 @@ export const fileToPersistedAttachment = (
     reader.readAsDataURL(file);
   });
 };
+// const mapDefaultValues = (ticket: ITicket) => ({
+//   currency: ticket.currency || "",
+//   title: ticket.title || "",
+//   attachment: ticket.attachment || [],
+//   pay_escrow_fee: ticket.pay_escrow_fee || null,
+//   transaction_description: ticket.transaction_description || "",
+//   amount: ticket.amount || "",
+//   close_deadline: ticket.close_deadline || "",
+// });
 
 export default function ProjectStepOne() {
   const [amount, setAmount] = useState<number>(0);
   const [hasMilestones, setHasMilestones] = useState(false);
-  // const [attachedFiles, setAttachedFiles] = useState<IPersistedAttachment[]>([
-  //   ...persistAttachment,
-  // ]);
-
   const [currency, setCurrency] = useState<"NGN" | "USD">("NGN");
 
-  const persistAttachment = useAppSelector(
-    (state) => state.createTransaction.attachment,
-  );
+  const ticket = useAppSelector((state) => state.createTransaction);
+  const { nextStep } = useNavigateProjectStep();
+
   const dispatch = useAppDispatch();
 
-  console.log(persistAttachment);
+  const persistAttachment = ticket.attachment;
 
   const {
     register,
@@ -56,10 +61,21 @@ export default function ProjectStepOne() {
     formState: { errors },
   } = useForm<StepOneForm>({
     resolver: zodResolver(stepOneSchema),
+    defaultValues: {
+      currency: ticket.currency || "NGN",
+      title: ticket.title || "",
+      attachment: ticket.attachment || [],
+      pay_escrow_fee: ticket.pay_escrow_fee || undefined,
+      transaction_description: ticket.transaction_description || "",
+      amount: ticket.amount || 0,
+      close_deadline: new Date(ticket.close_deadline) || new Date(),
+    },
   });
 
+  console.log(errors);
+
   const onSubmitStepOne = () => {
-    navigateProjectStep(2);
+    nextStep(2);
   };
   return (
     <div className="space-y-6 animate-fade-in text-left">
@@ -72,7 +88,11 @@ export default function ProjectStepOne() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmitStepOne)} className="space-y-4">
+      <form
+        id="project-step-1"
+        onSubmit={handleSubmit(onSubmitStepOne)}
+        className="space-y-4"
+      >
         <div>
           <label
             htmlFor="create-project-title"
@@ -153,11 +173,19 @@ export default function ProjectStepOne() {
             onChange={(persistAttachmentObj) => {
               dispatch(
                 setTransactionDetails({ attachment: persistAttachmentObj }),
+                setValue("attachment", persistAttachmentObj),
               );
               // setAttachedFiles;
             }}
             placeholder="Drag & drop contract files, templates, or images here to attach"
           />
+
+          {errors?.attachment && (
+            <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in font-sans">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{errors.attachment?.message}</span>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -170,7 +198,7 @@ export default function ProjectStepOne() {
                 type="button"
                 onClick={() => {
                   setValue("currency", "NGN");
-                  // setCurrency("NGN")
+                  setCurrency("NGN");
                 }}
                 className={`flex-1 py-3 text-xs font-bold rounded-xl border transition cursor-pointer ${currency === "NGN" ? "bg-purple-50 text-brand-primary border-brand-primary/50" : "bg-white text-gray-500 border-gray-100"}`}
               >
@@ -180,13 +208,19 @@ export default function ProjectStepOne() {
                 type="button"
                 onClick={() => {
                   setValue("currency", "USD");
-                  // setCurrency("USD")
+                  setCurrency("USD");
                 }}
                 className={`flex-1 py-3 text-xs font-bold rounded-xl border transition cursor-pointer ${currency === "USD" ? "bg-purple-50 text-brand-primary border-brand-primary/50" : "bg-white text-gray-500 border-gray-100"}`}
               >
                 US Dollar ($)
               </button>
             </div>
+            {errors?.currency && (
+              <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in font-sans">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors?.currency?.message}</span>
+              </div>
+            )}
           </div>
 
           <div>
@@ -197,6 +231,7 @@ export default function ProjectStepOne() {
               <div className="relative">
                 <input
                   type="text"
+                  // {...register("amount")}
                   //   value={formatCurrency(amount)}
                   value={formatNumberToCurrency(
                     amount,
@@ -212,6 +247,13 @@ export default function ProjectStepOne() {
                     🔗 Calculated automatically from milstones in Step 2.
                   </span>
                 </div>
+
+                {errors?.amount && (
+                  <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in font-sans">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    <span>{errors.amount?.message}</span>
+                  </div>
+                )}
               </div>
             ) : (
               <>
@@ -278,6 +320,7 @@ export default function ProjectStepOne() {
       <div className="pt-4 flex justify-end">
         <button
           type="submit"
+          form="project-step-1"
           //   onClick={() => {
           //     // if (validateStep1()) {
           //     // navigateProjectStep(2);

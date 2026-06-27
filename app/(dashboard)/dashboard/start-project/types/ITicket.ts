@@ -8,6 +8,7 @@ export interface IPersistedAttachment {
 }
 
 export interface ITicket {
+  //step one
   currency: string;
   title: string;
   attachment: IPersistedAttachment[];

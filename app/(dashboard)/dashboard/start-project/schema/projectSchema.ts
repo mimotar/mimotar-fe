@@ -1,14 +1,16 @@
 import { z } from "zod";
 
 export interface IPersistedAttachment {
+  id: string;
   name: string;
   type: string;
   size: number;
   lastModified: number;
-  dataUrl: string;
+  base64Url: string;
 }
 
 export const persistedAttachmentSchema = z.object({
+  id: z.string().min(1, "id is required"),
   name: z.string().min(1, "File name is required"),
 
   type: z.string().min(1, "File type is required"),
@@ -17,7 +19,7 @@ export const persistedAttachmentSchema = z.object({
 
   lastModified: z.number(),
 
-  dataUrl: z.string().min(1, "Invalid file"),
+  base64Url: z.string().min(1, "Invalid file"),
 });
 
 export const uploadAttachmentSchema = z
@@ -73,7 +75,7 @@ export const stepOneSchema = z.object({
     })
     .positive("Amount must be greater than 0"),
 
-  close_deadline: z.string().min(1, "Close deadline is required"),
+  close_deadline: z.date(),
 });
 
 export type StepOneForm = z.infer<typeof stepOneSchema>;
