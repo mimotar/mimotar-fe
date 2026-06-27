@@ -16,17 +16,36 @@ import {
   AlertCircle,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InteractiveMultiUploader } from "./InteractiveMultiUploader";
 import { Milestone } from "../types/milestones";
 import { useAuth } from "@/app/(client)/(page)/hooks/useAuth";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { renderTooltip } from "./RenderTooltip";
+import { navigateProjectStep } from "../utils/navigateProjectStep";
+import ProjectStepOne from "./ProjectStepOne";
 
 export default function StartProjectFlow() {
-  //   const { addNewProject, currentUser, setActivePage } = useAppState();
+  // const [step, setStep] = useState<number>(1);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const step = Number(useSearchParams().get("step")) || 1;
+  // const step = Number(searchParam) || 1;
   const { session } = useAuth();
 
-  const [step, setStep] = useState<number>(1); // 1: Project Terms, 2: Milestones, 3: Invite Counterparty, 4: Agreement Summary, 5: Link Generated
+  // useEffect(() => {
+  //   setStep(stepParam);
+  // }, [stepParam]);
+
+  //  const navigateStep = (step: number) => {
+  //   const params = new URLSearchParams(searchParams.toString());
+  //   params.set("step", String(step));
+
+  //   router.push(`?${params.toString()}`);
+  // };
+
+  // const [step, setStep] = useState<number>(1); // 1: Project Terms, 2: Milestones, 3: Invite Counterparty, 4: Agreement Summary, 5: Link Generated
 
   // ONBOARDING TOUR STATES
   const [showTour, setShowTour] = useState(() => {
@@ -34,108 +53,108 @@ export default function StartProjectFlow() {
   });
   const [activeTourIndex, setActiveTourIndex] = useState(0); // 0: Title, 1: Deliverables, 2: Milestone toggle
 
-  const renderTooltip = (index: number) => {
-    if (!showTour || activeTourIndex !== index) return null;
+  // const renderTooltip = (index: number) => {
+  //   if (!showTour || activeTourIndex !== index) return null;
 
-    const tips = [
-      {
-        title: "Project Title",
-        text: "Make your contract easily outline the scope from a glance. Keep it brief and friendly—for example, 'Figma Landing Page Redesign' or 'React Dashboard Development'. This title will appear on secure escrow receipts for both parties.",
-      },
-      {
-        title: "Deliverables Scope Details",
-        text: "Use this space to list exactly what you expect to receive or deliver (e.g. source files, PDF guidelines, social media assets, or preview URLs). Laying out clear, granular terms prevents unneeded confusion and payment friction later.",
-      },
-      {
-        title: "Divide Work Into Milestones",
-        text: "For mid-to-high budget projects, we highly recommend dividing the work into milestone phases. Each phase is funded, completed, and released step-by-step. This secures progress and ensures everyone is on the same page.",
-      },
-    ];
+  //   const tips = [
+  //     {
+  //       title: "Project Title",
+  //       text: "Make your contract easily outline the scope from a glance. Keep it brief and friendly—for example, 'Figma Landing Page Redesign' or 'React Dashboard Development'. This title will appear on secure escrow receipts for both parties.",
+  //     },
+  //     {
+  //       title: "Deliverables Scope Details",
+  //       text: "Use this space to list exactly what you expect to receive or deliver (e.g. source files, PDF guidelines, social media assets, or preview URLs). Laying out clear, granular terms prevents unneeded confusion and payment friction later.",
+  //     },
+  //     {
+  //       title: "Divide Work Into Milestones",
+  //       text: "For mid-to-high budget projects, we highly recommend dividing the work into milestone phases. Each phase is funded, completed, and released step-by-step. This secures progress and ensures everyone is on the same page.",
+  //     },
+  //   ];
 
-    const currentTip = tips[index];
-    if (!currentTip) return null;
+  //   const currentTip = tips[index];
+  //   if (!currentTip) return null;
 
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: -4 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: -4 }}
-        transition={{ duration: 0.2 }}
-        className="mt-2.5 p-4 bg-purple-50/95 border border-purple-200/80 rounded-2xl text-left relative shadow-xs"
-      >
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="flex items-center gap-1.5 font-bold text-purple-900 text-[11px] uppercase tracking-wide">
-            <Sparkles className="w-3.5 h-3.5 text-brand-primary shrink-0" />
-            <span>
-              Guide ({index + 1} of 3): {currentTip.title}
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setShowTour(false);
-              localStorage.setItem("mimotar_tour_dismissed", "true");
-            }}
-            className="text-purple-400 hover:text-purple-600 font-bold p-1 transition cursor-pointer"
-            title="Dismiss guide tips"
-            aria-label="Dismiss guide tips"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-        <p className="text-xs text-purple-950 font-medium leading-relaxed mb-3">
-          {currentTip.text}
-        </p>
+  //   return (
+  //     <motion.div
+  //       initial={{ opacity: 0, scale: 0.95, y: -4 }}
+  //       animate={{ opacity: 1, scale: 1, y: 0 }}
+  //       exit={{ opacity: 0, scale: 0.95, y: -4 }}
+  //       transition={{ duration: 0.2 }}
+  //       className="mt-2.5 p-4 bg-purple-50/95 border border-purple-200/80 rounded-2xl text-left relative shadow-xs"
+  //     >
+  //       <div className="flex items-center justify-between mb-1.5">
+  //         <div className="flex items-center gap-1.5 font-bold text-purple-900 text-[11px] uppercase tracking-wide">
+  //           <Sparkles className="w-3.5 h-3.5 text-brand-primary shrink-0" />
+  //           <span>
+  //             Guide ({index + 1} of 3): {currentTip.title}
+  //           </span>
+  //         </div>
+  //         <button
+  //           type="button"
+  //           onClick={() => {
+  //             setShowTour(false);
+  //             localStorage.setItem("mimotar_tour_dismissed", "true");
+  //           }}
+  //           className="text-purple-400 hover:text-purple-600 font-bold p-1 transition cursor-pointer"
+  //           title="Dismiss guide tips"
+  //           aria-label="Dismiss guide tips"
+  //         >
+  //           <X className="w-4 h-4" />
+  //         </button>
+  //       </div>
+  //       <p className="text-xs text-purple-950 font-medium leading-relaxed mb-3">
+  //         {currentTip.text}
+  //       </p>
 
-        <div className="flex justify-between items-center z-10">
-          <button
-            type="button"
-            onClick={() => {
-              setShowTour(false);
-              localStorage.setItem("mimotar_tour_dismissed", "true");
-            }}
-            className="text-[10px] font-bold text-purple-500 hover:text-purple-700 transition cursor-pointer"
-          >
-            Dismiss Tutorial
-          </button>
+  //       <div className="flex justify-between items-center z-10">
+  //         <button
+  //           type="button"
+  //           onClick={() => {
+  //             setShowTour(false);
+  //             localStorage.setItem("mimotar_tour_dismissed", "true");
+  //           }}
+  //           className="text-[10px] font-bold text-purple-500 hover:text-purple-700 transition cursor-pointer"
+  //         >
+  //           Dismiss Tutorial
+  //         </button>
 
-          <div className="flex gap-1.5">
-            {index > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (index === 2) {
-                    setStep(1);
-                  }
-                  setActiveTourIndex(index - 1);
-                }}
-                className="px-2.5 py-1 text-[10px] bg-white border border-purple-200 text-purple-700 rounded-lg font-bold hover:bg-purple-100/50 transition cursor-pointer"
-              >
-                Back
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                if (index < 2) {
-                  if (index === 1) {
-                    setStep(2); // Automatically advance step to make sure they see the milestone toggle
-                  }
-                  setActiveTourIndex(index + 1);
-                } else {
-                  setShowTour(false);
-                  localStorage.setItem("mimotar_tour_dismissed", "true");
-                }
-              }}
-              className="px-3 py-1 text-[10px] bg-brand-primary text-white rounded-lg font-bold hover:bg-brand-primary/95 transition cursor-pointer"
-            >
-              {index === 2 ? "Complete Guide" : "Next Tip"}
-            </button>
-          </div>
-        </div>
-      </motion.div>
-    );
-  };
+  //         <div className="flex gap-1.5">
+  //           {index > 0 && (
+  //             <button
+  //               type="button"
+  //               onClick={() => {
+  //                 if (index === 2) {
+  //                   setStep(1);
+  //                 }
+  //                 setActiveTourIndex(index - 1);
+  //               }}
+  //               className="px-2.5 py-1 text-[10px] bg-white border border-purple-200 text-purple-700 rounded-lg font-bold hover:bg-purple-100/50 transition cursor-pointer"
+  //             >
+  //               Back
+  //             </button>
+  //           )}
+  //           <button
+  //             type="button"
+  //             onClick={() => {
+  //               if (index < 2) {
+  //                 if (index === 1) {
+  //                   setStep(2); // Automatically advance step to make sure they see the milestone toggle
+  //                 }
+  //                 setActiveTourIndex(index + 1);
+  //               } else {
+  //                 setShowTour(false);
+  //                 localStorage.setItem("mimotar_tour_dismissed", "true");
+  //               }
+  //             }}
+  //             className="px-3 py-1 text-[10px] bg-brand-primary text-white rounded-lg font-bold hover:bg-brand-primary/95 transition cursor-pointer"
+  //           >
+  //             {index === 2 ? "Complete Guide" : "Next Tip"}
+  //           </button>
+  //         </div>
+  //       </div>
+  //     </motion.div>
+  //   );
+  // };
 
   // FIELDS
   const [title, setTitle] = useState("");
@@ -330,7 +349,8 @@ export default function StartProjectFlow() {
       const sum = milestones.reduce((s, m) => s + m.amount, 0);
       setAmount(sum);
     }
-    setStep(4);
+    // setStep(4);
+    navigateProjectStep(4);
   };
 
   const handleFinalSubmit = () => {
@@ -354,7 +374,8 @@ export default function StartProjectFlow() {
     // });
 
     // setGeneratedId(projId);
-    setStep(5);
+    // setStep(5);
+    navigateProjectStep(5);
   };
 
   const copyAgreementLink = () => {
@@ -387,7 +408,8 @@ export default function StartProjectFlow() {
             } else {
               setShowTour(true);
               setActiveTourIndex(0);
-              setStep(1);
+              // setStep(1);
+              navigateProjectStep(1);
               localStorage.setItem("mimotar_tour_dismissed", "false");
             }
           }}
@@ -451,214 +473,7 @@ export default function StartProjectFlow() {
       </div>
 
       {/* STEP 1: Basic Terms */}
-      {step === 1 && (
-        <div className="space-y-6 animate-fade-in text-left">
-          <div>
-            <h2 className="text-h3 text-gray-900">
-              Describe the core project terms
-            </h2>
-            <p className="text-body-sm text-gray-400 mt-1">
-              Establish the budget, deadline, and basic parameters.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="create-project-title"
-                className="text-label text-gray-400 mb-1 block"
-              >
-                Contract Title
-              </label>
-              <input
-                id="create-project-title"
-                type="text"
-                value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  if (titleError) setTitleError("");
-                }}
-                placeholder="e.g. Redesign of Corporate Logo & Asset Book"
-                className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border placeholder-gray-300 text-gray-800 focus:outline-none transition-colors font-medium ${titleError ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}`}
-              />
-              {titleError && (
-                <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                  <span>{titleError}</span>
-                </div>
-              )}
-              <AnimatePresence>{renderTooltip(0)}</AnimatePresence>
-            </div>
-
-            <div>
-              <label
-                htmlFor="create-project-description"
-                className="text-label text-gray-400 mb-1 block"
-              >
-                Comprehensive Deliverables Scope
-              </label>
-              <textarea
-                id="create-project-description"
-                rows={4}
-                value={description}
-                onChange={(e) => {
-                  setDescription(e.target.value);
-                  if (descriptionError) setDescriptionError("");
-                }}
-                placeholder="List precisely what must be delivered (e.g., PSD files, font formats, social layouts). Transparent inputs prevent disputes later."
-                className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border placeholder-gray-300 text-gray-800 focus:outline-none transition-colors font-medium leading-relaxed ${descriptionError ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}`}
-              />
-              {descriptionError && (
-                <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                  <span>{descriptionError}</span>
-                </div>
-              )}
-              <AnimatePresence>{renderTooltip(1)}</AnimatePresence>
-            </div>
-
-            {/* Document attachments instructions */}
-            <div className="bg-amber-50/50 p-4.5 rounded-2xl border border-amber-100/50 text-amber-950 text-xs flex flex-col gap-3">
-              <div className="flex items-start gap-2.5">
-                <FileText className="w-5 h-5 text-brand-secondary shrink-0 mt-0.5" />
-                <div className="leading-relaxed">
-                  <span className="font-bold">Project Clarification:</span>{" "}
-                  Upload all related files or documents that will clarify the
-                  project to avoid issues later.
-                </div>
-              </div>
-              <InteractiveMultiUploader
-                id="creation-attachments-uploader"
-                files={attachedFiles}
-                onChange={setAttachedFiles}
-                placeholder="Drag & drop contract files, templates, or images here to attach"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-label text-gray-400 mb-1 block">
-                  Escrow Currency Mode
-                </label>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setCurrency("NGN")}
-                    className={`flex-1 py-3 text-xs font-bold rounded-xl border transition cursor-pointer ${currency === "NGN" ? "bg-purple-50 text-brand-primary border-brand-primary/50" : "bg-white text-gray-500 border-gray-100"}`}
-                  >
-                    Naira (₦)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCurrency("USD")}
-                    className={`flex-1 py-3 text-xs font-bold rounded-xl border transition cursor-pointer ${currency === "USD" ? "bg-purple-50 text-brand-primary border-brand-primary/50" : "bg-white text-gray-500 border-gray-100"}`}
-                  >
-                    US Dollar ($)
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-label text-gray-400 mb-1 block">
-                  Total Project Value ({currency === "NGN" ? "₦" : "$"})
-                </label>
-                {hasMilestones ? (
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={formatCurrency(amount)}
-                      readOnly
-                      disabled
-                      className="w-full px-4 py-3 text-xs bg-gray-100 border border-gray-200 rounded-xl text-gray-500 font-mono font-bold cursor-not-allowed select-none"
-                    />
-                    <div className="text-[10px] text-brand-primary font-semibold mt-1.5 flex items-center gap-1 pl-1">
-                      <span>
-                        🔗 Calculated automatically from milstones in Step 2.
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <input
-                      type="number"
-                      value={amount || ""}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setAmount(val);
-                        if (val > 0 && amountError) setAmountError("");
-                      }}
-                      placeholder="e.g. 500000"
-                      className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border placeholder-gray-300 text-gray-800 focus:outline-none transition-colors font-mono font-bold ${amountError ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}`}
-                    />
-                    {amountError && (
-                      <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in font-sans">
-                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                        <span>{amountError}</span>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-label text-gray-400 mb-1 block">
-                  Final Close Deadline
-                </label>
-                <input
-                  type="date"
-                  value={deadline}
-                  onChange={(e) => {
-                    setDeadline(e.target.value);
-                    if (e.target.value && deadlineError) setDeadlineError("");
-                  }}
-                  className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border text-gray-800 focus:outline-none transition-colors font-semibold ${deadlineError ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}`}
-                />
-                {deadlineError && (
-                  <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                    <span>{deadlineError}</span>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <label className="text-label text-gray-400 mb-1 block">
-                  Who pays Mimotar Flat Fee (3%)?
-                </label>
-                <select
-                  value={feePayer}
-                  onChange={(e) => setFeePayer(e.target.value as any)}
-                  className="w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border border-gray-100 text-gray-800 focus:outline-none focus:border-brand-primary font-semibold"
-                >
-                  <option value="split">
-                    Split Equally (1.5% Client / 1.5% Freelancer)
-                  </option>
-                  <option value="client">Client pays entire 3% fee</option>
-                  <option value="freelancer">
-                    Freelancer pays entire 3% fee
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-4 flex justify-end">
-            <button
-              onClick={() => {
-                if (validateStep1()) {
-                  setStep(2);
-                }
-              }}
-              className="bg-brand-primary hover:bg-brand-primary/95 text-white text-xs font-bold rounded-xl px-6 py-3.5 transition flex items-center gap-2 cursor-pointer shadow-xs"
-            >
-              Continue
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
+      {step === 1 && <ProjectStepOne />}
 
       {/* STEP 2: Milestones Optional Toggle */}
       {step === 2 && (
@@ -705,7 +520,15 @@ export default function StartProjectFlow() {
             </p>
           </div>
 
-          <AnimatePresence>{renderTooltip(2)}</AnimatePresence>
+          {/* <AnimatePresence>
+            {renderTooltip(
+              2,
+              showTour,
+              activeTourIndex,
+              setShowTour,
+              setActiveTourIndex,
+            )}
+          </AnimatePresence> */}
 
           {hasMilestones ? (
             <div className="space-y-6">
@@ -859,7 +682,10 @@ export default function StartProjectFlow() {
           <div className="pt-4 flex justify-between">
             <button
               type="button"
-              onClick={() => setStep(1)}
+              onClick={() => {
+                navigateProjectStep(1);
+                // setStep(1)
+              }}
               className="px-5 py-3 border border-gray-200 text-gray-600 rounded-xl text-xs font-semibold hover:bg-gray-50 transition"
             >
               Back
@@ -984,7 +810,10 @@ export default function StartProjectFlow() {
           <div className="pt-4 flex justify-between">
             <button
               type="button"
-              onClick={() => setStep(2)}
+              onClick={() => {
+                navigateProjectStep(2);
+                // setStep(2)
+              }}
               className="px-5 py-3 border border-gray-200 text-gray-600 rounded-xl text-xs font-semibold hover:bg-gray-50 transition animate-fade-in"
             >
               Back
@@ -993,7 +822,8 @@ export default function StartProjectFlow() {
             <button
               onClick={() => {
                 if (validateStep3()) {
-                  setStep(4);
+                  navigateProjectStep(4);
+                  // setStep(4);
                 }
               }}
               className="bg-brand-primary hover:bg-brand-primary/95 text-white text-xs font-bold rounded-xl px-6 py-3.5 transition flex items-center gap-2 cursor-pointer shadow-xs"
@@ -1168,7 +998,10 @@ export default function StartProjectFlow() {
           <div className="pt-4 flex justify-between">
             <button
               type="button"
-              onClick={() => setStep(3)}
+              onClick={() => {
+                navigateProjectStep(3);
+                // setStep(3)
+              }}
               className="px-5 py-3 border border-gray-200 text-gray-600 rounded-xl text-xs font-semibold hover:bg-gray-50 transition"
             >
               Modify
@@ -1236,7 +1069,8 @@ export default function StartProjectFlow() {
             </Link>
             <button
               onClick={() => {
-                setStep(1);
+                // setStep(1);
+                navigateProjectStep(1);
                 setTitle("");
                 setDescription("");
                 setAmount(0);
