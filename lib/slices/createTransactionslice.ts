@@ -13,6 +13,9 @@ const initialState: ITicket = {
   attachment: [],
   close_deadline: "",
 
+  //step 2
+  milestones: [],
+
   creator_fullname: "",
   creator_email: "",
   creator_no: "",

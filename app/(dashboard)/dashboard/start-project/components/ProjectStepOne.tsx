@@ -1,6 +1,6 @@
 import { AlertCircle, ArrowRight, FileText } from "lucide-react";
 import { InteractiveMultiUploader } from "./InteractiveMultiUploader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 import { useNavigateProjectStep } from "../hooks/usenavigateProjectStep";
 import { useForm } from "react-hook-form";
@@ -32,49 +32,68 @@ export const fileToPersistedAttachment = (
     reader.readAsDataURL(file);
   });
 };
-// const mapDefaultValues = (ticket: ITicket) => ({
-//   currency: ticket.currency || "",
-//   title: ticket.title || "",
-//   attachment: ticket.attachment || [],
-//   pay_escrow_fee: ticket.pay_escrow_fee || null,
-//   transaction_description: ticket.transaction_description || "",
-//   amount: ticket.amount || "",
-//   close_deadline: ticket.close_deadline || "",
-// });
+const mapDefaultValues = (ticket: ITicket): StepOneForm => ({
+  currency: ticket.currency || "NGN",
+  title: ticket.title || "",
+  attachment: ticket.attachment || [],
+  pay_escrow_fee: ticket.pay_escrow_fee || "BOTH",
+  transaction_description: ticket.transaction_description || "",
+  amount: Number(formatNumberToCurrency(ticket.amount)) || 0,
+  close_deadline: ticket.close_deadline
+    ? new Date(ticket.close_deadline)
+    : new Date(),
+});
 
 export default function ProjectStepOne() {
   const [amount, setAmount] = useState<number>(0);
   const [hasMilestones, setHasMilestones] = useState(false);
   const [currency, setCurrency] = useState<"NGN" | "USD">("NGN");
+  const [uploadFileJson, setUploadFileJson] = useState<IPersistedAttachment[]>(
+    [],
+  );
 
   const ticket = useAppSelector((state) => state.createTransaction);
+  console.log("step 1", ticket);
   const { nextStep } = useNavigateProjectStep();
 
   const dispatch = useAppDispatch();
-
-  const persistAttachment = ticket.attachment;
 
   const {
     register,
     handleSubmit,
     setValue,
+    getValues,
+    reset,
     formState: { errors },
   } = useForm<StepOneForm>({
     resolver: zodResolver(stepOneSchema),
-    defaultValues: {
-      currency: ticket.currency || "NGN",
-      title: ticket.title || "",
-      attachment: ticket.attachment || [],
-      pay_escrow_fee: ticket.pay_escrow_fee || undefined,
-      transaction_description: ticket.transaction_description || "",
-      amount: ticket.amount || 0,
-      close_deadline: new Date(ticket.close_deadline) || new Date(),
-    },
+    defaultValues: mapDefaultValues(ticket),
   });
+
+  useEffect(() => {
+    reset(mapDefaultValues(ticket));
+  }, [ticket, reset]);
 
   console.log(errors);
 
-  const onSubmitStepOne = () => {
+  const persistAttachment = getValues("attachment").filter(
+    (item): item is IPersistedAttachment => !(item instanceof File),
+  );
+
+  console.log(persistAttachment);
+
+  const onSubmitStepOne = (data: StepOneForm) => {
+    dispatch(
+      setTransactionDetails({
+        amount: data.amount,
+        title: data.title,
+        currency: data.currency,
+        pay_escrow_fee: data.pay_escrow_fee,
+        transaction_description: data.transaction_description,
+        close_deadline: String(data.close_deadline),
+        attachment: uploadFileJson,
+      }),
+    );
     nextStep(2);
   };
   return (
@@ -171,10 +190,8 @@ export default function ProjectStepOne() {
             id="creation-attachments-uploader"
             files={persistAttachment}
             onChange={(persistAttachmentObj) => {
-              dispatch(
-                setTransactionDetails({ attachment: persistAttachmentObj }),
-                setValue("attachment", persistAttachmentObj),
-              );
+              setValue("attachment", persistAttachmentObj);
+              setUploadFileJson(persistAttachmentObj);
               // setAttachedFiles;
             }}
             placeholder="Drag & drop contract files, templates, or images here to attach"
@@ -231,13 +248,13 @@ export default function ProjectStepOne() {
               <div className="relative">
                 <input
                   type="text"
-                  // {...register("amount")}
+                  {...register("amount")}
                   //   value={formatCurrency(amount)}
-                  value={formatNumberToCurrency(
-                    amount,
-                    { style: "currency", currency: "NGN" },
-                    "en-NGN",
-                  )}
+                  // value={formatNumberToCurrency(
+                  //   amount,
+                  //   { style: "currency", currency: "NGN" },
+                  //   "en-NGN",
+                  // )}
                   readOnly
                   disabled
                   className="w-full px-4 py-3 text-xs bg-gray-100 border border-gray-200 rounded-xl text-gray-500 font-mono font-bold cursor-not-allowed select-none"
@@ -281,7 +298,11 @@ export default function ProjectStepOne() {
             </label>
             <input
               type="date"
-              {...register("close_deadline")}
+              {...register("close_deadline", {
+                setValueAs(value) {
+                  new Date(value).toISOString().split("T")[0];
+                },
+              })}
               className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border text-gray-800 focus:outline-none transition-colors font-semibold ${errors?.close_deadline ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}`}
             />
             {errors?.close_deadline && (

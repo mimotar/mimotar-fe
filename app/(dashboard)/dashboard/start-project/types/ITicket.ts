@@ -7,6 +7,24 @@ export interface IPersistedAttachment {
   base64Url: string;
 }
 
+export type IMilestone = {
+  id: string;
+  name: string;
+  deadline: string;
+  amount: number;
+  files?: IPersistedAttachment[];
+};
+
+export type IStepOne = {
+  currency: string;
+  title: string;
+  attachment: IPersistedAttachment[];
+  pay_escrow_fee: "CLIENT" | "FREELANCER" | "BOTH" | null;
+  transaction_description: string;
+  amount: number;
+  close_deadline: string;
+};
+
 export interface ITicket {
   //step one
   currency: string;
@@ -16,6 +34,9 @@ export interface ITicket {
   transaction_description: string;
   amount: number;
   close_deadline: string;
+
+  // step two
+  milestones: IMilestone[];
 
   creator_fullname: string;
   creator_email: string;

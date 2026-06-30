@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { InteractiveMultiUploader } from "./InteractiveMultiUploader";
 import { Milestone } from "../types/milestones";
 import { ArrowRight, Plus, Trash2 } from "lucide-react";
 import { useNavigateProjectStep } from "../hooks/usenavigateProjectStep";
+import { useFieldArray, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IMilestones, MilestonesSchema } from "../schema/projectSchema";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { IMilestone, IPersistedAttachment } from "../types/ITicket";
+import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
 
 export default function ProjectStepTwo() {
   const [hasMilestones, setHasMilestones] = useState(false);
@@ -13,13 +19,29 @@ export default function ProjectStepTwo() {
   const [msAmount, setMsAmount] = useState<number>(0);
   const [msDeadline, setMsDeadline] = useState("");
   const [msFile, setMsFile] = useState("");
-  const [msFiles, setMsFiles] = useState<string[]>([]);
+  const [msFiles, setMsFiles] = useState<IPersistedAttachment[]>([]);
   const [milestoneError, setMilestoneError] = useState<string | null>(null);
   const [milestoneAddedSuccess, setMilestoneAddedSuccess] =
-    useState<Milestone | null>(null);
+    useState<IMilestone | null>(null);
   const [amountError, setAmountError] = useState("");
 
+  const dispatch = useAppDispatch();
+  const ticket = useAppSelector((state) => state.createTransaction);
+  console.log(ticket);
   const { nextStep } = useNavigateProjectStep();
+
+  const persistedMilestones = useMemo(() => {
+    return ticket.milestones?.map((obj) => obj);
+  }, [ticket]);
+
+  //   const persistedMilestonesAttachment = useMemo(() => {
+  //   return ticket.milestones?.map((obj) => obj.files);
+  // }, [ticket]);
+
+  const persistedMilestonesAttachment = persistedMilestones?.flatMap(
+    (m) => m.files ?? [],
+  );
+  console.log(persistedMilestones);
 
   const handleAddMilestone = () => {
     setMilestoneError(null);
@@ -29,27 +51,35 @@ export default function ProjectStepTwo() {
     }
 
     const combinedFileList = [...msFiles];
-    if (msFile.trim()) {
-      combinedFileList.push(msFile.trim());
-    }
+    // if (msFile.trim()) {
+    //   combinedFileList.push(msFile.trim());
+    // }
 
-    const newMs: Milestone = {
+    const newMs: IMilestone = {
       id: `ms-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
-      title: msTitle,
+      name: msTitle,
       amount: msAmount,
       deadline: msDeadline,
-      isCompleted: false,
-      isApproved: false,
-      deliveryFile: combinedFileList.join(", ") || undefined,
-      deliveryFiles: combinedFileList,
+      // isCompleted: false,
+      // isApproved: false,
+      // deliveryFile: combinedFileList.join(", ") || undefined,
+      // deliveryFiles: combinedFileList,
+      files: combinedFileList,
     };
 
-    const nextMilestones = [...milestones, newMs];
-    setMilestones(nextMilestones);
+    const nextMilestones = persistedMilestones
+      ? [...persistedMilestones, newMs]
+      : undefined;
+    // setMilestones(nextMilestones);
+    dispatch(
+      setTransactionDetails({
+        milestones: nextMilestones,
+      }),
+    );
 
     // Automatically calculate total project value from milestones sum
-    const newSum = nextMilestones.reduce((sum, m) => sum + m.amount, 0);
-    setAmount(newSum);
+    const newSum = nextMilestones?.reduce((sum, m) => sum + m.amount, 0);
+    setAmount(newSum ?? 0);
     if (amountError) setAmountError("");
 
     // Trigger milestone validation success modal indication
@@ -64,8 +94,13 @@ export default function ProjectStepTwo() {
   };
 
   const handleRemoveMilestone = (id: string) => {
-    const nextMilestones = milestones.filter((m) => m.id !== id);
-    setMilestones(nextMilestones);
+    const nextMilestones = persistedMilestones.filter((m) => m.id !== id);
+    // setMilestones(nextMilestones);
+    dispatch(
+      setTransactionDetails({
+        milestones: nextMilestones,
+      }),
+    );
 
     // Automatically calculate total project value from milestones sum
     const newSum = nextMilestones.reduce((sum, m) => sum + m.amount, 0);
@@ -80,18 +115,36 @@ export default function ProjectStepTwo() {
 
   const handleProceedToSummary = () => {
     if (hasMilestones) {
-      if (milestones.length === 0) {
+      if (persistedMilestones.length === 0) {
         setMilestoneError(
           "At least one milestone phase must be added when milestones are active.",
         );
         return;
       }
-      const sum = milestones.reduce((s, m) => s + m.amount, 0);
-      setAmount(sum);
+      // const sum = milestones.reduce((s, m) => s + m.amount, 0);
+      // setAmount(sum);
     }
     // setStep(4);
-    nextStep(4);
+    // nextStep(4);
   };
+
+  const handleNextStage = (data: IMilestones) => {};
+
+  const { handleSubmit, register, control, reset, trigger, setError } = useForm(
+    {
+      resolver: zodResolver(MilestonesSchema),
+      defaultValues: {
+        milestones: [
+          {
+            name: "",
+            deadline: "",
+            amount: 0,
+            attachment: undefined,
+          },
+        ],
+      },
+    },
+  );
 
   return (
     <div className="space-y-6 animate-fade-in text-left">
@@ -148,7 +201,7 @@ export default function ProjectStepTwo() {
               </AnimatePresence> */}
 
       {hasMilestones ? (
-        <div className="space-y-6">
+        <div onSubmit={handleSubmit(handleNextStage)} className="space-y-6">
           {/* Milestone Builder Forms */}
           <div className="bg-gray-50/70 p-5 rounded-2xl border border-gray-100 flex flex-col gap-4">
             <span className="text-xs font-bold text-gray-800 block">
@@ -199,12 +252,14 @@ export default function ProjectStepTwo() {
               <span className="font-bold flex items-center gap-1.5 text-xs text-amber-950">
                 📷 Phase Deliverables and Guides
               </span>
-              {/* <InteractiveMultiUploader
+              <InteractiveMultiUploader
                 id="milestone-guide-uploader"
-                files={msFiles}
-                onChange={setMsFiles}
+                files={persistedMilestonesAttachment}
+                onChange={(fileJSON) => {
+                  setMsFiles(fileJSON);
+                }}
                 placeholder="Drag & drop guide files, reference documents, or specs here"
-              /> */}
+              />
             </div>
 
             {milestoneError && (
@@ -235,14 +290,14 @@ export default function ProjectStepTwo() {
               </span>
             </div>
 
-            {milestones.length === 0 ? (
+            {persistedMilestones?.length === 0 ? (
               <p className="text-center text-xs py-8 text-gray-400 bg-gray-50/40 rounded-2xl border border-dashed border-gray-100">
                 No active milestones defined. Click add above to secure
                 piecemeal payouts.
               </p>
             ) : (
               <div className="flex flex-col gap-2.5">
-                {milestones.map((m, i) => (
+                {persistedMilestones?.map((m, i) => (
                   <div
                     key={m.id}
                     className="bg-white border border-gray-100 p-4 rounded-xl flex items-center justify-between gap-4 animate-fade-in font-sans"
@@ -252,7 +307,7 @@ export default function ProjectStepTwo() {
                         Milestone {i + 1}
                       </span>
                       <h4 className="text-xs font-bold text-gray-900">
-                        {m.title}
+                        {m.name}
                       </h4>
                       <span className="text-[10px] text-gray-400 block font-semibold">
                         Tethered close date: {m.deadline}

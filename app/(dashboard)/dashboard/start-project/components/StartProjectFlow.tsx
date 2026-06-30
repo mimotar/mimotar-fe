@@ -172,7 +172,6 @@ export default function StartProjectFlow() {
 
   // Validation Error States (to allow clickable navigation buttons with validation highlights)
 
-  const [amountError, setAmountError] = useState("");
   const [otherNameError, setOtherNameError] = useState("");
 
   const validateEmail = (val: string) => {
@@ -196,67 +195,6 @@ export default function StartProjectFlow() {
   const [copied, setCopied] = useState(false);
 
   // ACTIONS
-  const handleAddFile = () => {
-    if (tempFileName.trim()) {
-      setAttachedFiles((p) => [...p, tempFileName.trim()]);
-      setTempFileName("");
-    }
-  };
-
-  const handleRemoveFile = (index: number) => {
-    setAttachedFiles((p) => p.filter((_, i) => i !== index));
-  };
-
-  const handleAddMilestone = () => {
-    setMilestoneError(null);
-    if (!msTitle || msAmount <= 0 || !msDeadline) {
-      setMilestoneError("Milestone Title, Amount, and Deadline are required.");
-      return;
-    }
-
-    const combinedFileList = [...msFiles];
-    if (msFile.trim()) {
-      combinedFileList.push(msFile.trim());
-    }
-
-    const newMs: Milestone = {
-      id: `ms-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
-      title: msTitle,
-      amount: msAmount,
-      deadline: msDeadline,
-      isCompleted: false,
-      isApproved: false,
-      deliveryFile: combinedFileList.join(", ") || undefined,
-      deliveryFiles: combinedFileList,
-    };
-
-    const nextMilestones = [...milestones, newMs];
-    setMilestones(nextMilestones);
-
-    // Automatically calculate total project value from milestones sum
-    const newSum = nextMilestones.reduce((sum, m) => sum + m.amount, 0);
-    setAmount(newSum);
-    if (amountError) setAmountError("");
-
-    // Trigger milestone validation success modal indication
-    setMilestoneAddedSuccess(newMs);
-
-    // Reset inputs
-    setMsTitle("");
-    setMsAmount(0);
-    setMsDeadline("");
-    setMsFile("");
-    setMsFiles([]);
-  };
-
-  const handleRemoveMilestone = (id: string) => {
-    const nextMilestones = milestones.filter((m) => m.id !== id);
-    setMilestones(nextMilestones);
-
-    // Automatically calculate total project value from milestones sum
-    const newSum = nextMilestones.reduce((sum, m) => sum + m.amount, 0);
-    setAmount(newSum);
-  };
 
   const validateStep3 = () => {
     let isValid = true;
@@ -282,21 +220,6 @@ export default function StartProjectFlow() {
     return isValid;
   };
 
-  const handleProceedToSummary = () => {
-    if (hasMilestones) {
-      if (milestones.length === 0) {
-        setMilestoneError(
-          "At least one milestone phase must be added when milestones are active.",
-        );
-        return;
-      }
-      const sum = milestones.reduce((s, m) => s + m.amount, 0);
-      setAmount(sum);
-    }
-    // setStep(4);
-    nextStep(4);
-  };
-
   const handleFinalSubmit = () => {
     // const projId = addNewProject({
     //   title,
@@ -319,7 +242,7 @@ export default function StartProjectFlow() {
 
     // setGeneratedId(projId);
     // setStep(5);
-    navigateProjectStep(5);
+    nextStep(5);
   };
 
   const copyAgreementLink = () => {
@@ -353,7 +276,7 @@ export default function StartProjectFlow() {
               setShowTour(true);
               setActiveTourIndex(0);
               // setStep(1);
-              navigateProjectStep(1);
+              nextStep(1);
               localStorage.setItem("mimotar_tour_dismissed", "false");
             }
           }}
@@ -531,7 +454,7 @@ export default function StartProjectFlow() {
             <button
               type="button"
               onClick={() => {
-                navigateProjectStep(2);
+                nextStep(2);
                 // setStep(2)
               }}
               className="px-5 py-3 border border-gray-200 text-gray-600 rounded-xl text-xs font-semibold hover:bg-gray-50 transition animate-fade-in"
@@ -542,7 +465,7 @@ export default function StartProjectFlow() {
             <button
               onClick={() => {
                 if (validateStep3()) {
-                  navigateProjectStep(4);
+                  nextStep(4);
                   // setStep(4);
                 }
               }}
@@ -719,7 +642,7 @@ export default function StartProjectFlow() {
             <button
               type="button"
               onClick={() => {
-                navigateProjectStep(3);
+                nextStep(3);
                 // setStep(3)
               }}
               className="px-5 py-3 border border-gray-200 text-gray-600 rounded-xl text-xs font-semibold hover:bg-gray-50 transition"
@@ -790,7 +713,7 @@ export default function StartProjectFlow() {
             <button
               onClick={() => {
                 // setStep(1);
-                navigateProjectStep(1);
+                nextStep(1);
                 setTitle("");
                 setDescription("");
                 setAmount(0);

@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-export interface IPersistedAttachment {
-  id: string;
-  name: string;
-  type: string;
-  size: number;
-  lastModified: number;
-  base64Url: string;
-}
+// export interface IPersistedAttachment {
+//   id: string;
+//   name: string;
+//   type: string;
+//   size: number;
+//   lastModified: number;
+//   base64Url: string;
+// }
 
 export const persistedAttachmentSchema = z.object({
   id: z.string().min(1, "id is required"),
@@ -75,7 +75,46 @@ export const stepOneSchema = z.object({
     })
     .positive("Amount must be greater than 0"),
 
-  close_deadline: z.date(),
+  close_deadline: z.coerce.date(),
 });
 
 export type StepOneForm = z.infer<typeof stepOneSchema>;
+// export type StepOneFormInput = z.input<typeof stepOneSchema>;
+// export type StepOneFormOutput = z.output<typeof stepOneSchema>;
+
+// step 2(milestone)
+// attachment
+const milestoneAttachmentSchema = z
+  .instanceof(File, {
+    message: "Please select a file",
+  })
+  .refine((file) => file.size <= 10 * 1024 * 1024, {
+    message: "File size must not exceed 10MB",
+  })
+  .refine(
+    (file) =>
+      ["image/jpeg", "image/png", "application/pdf"].includes(file.type),
+    {
+      message: "Only JPG, PNG and PDF files are allowed",
+    },
+  )
+  .optional();
+
+const milestonePersistSchema = z.union([
+  z.instanceof(File),
+  milestoneAttachmentSchema,
+]);
+export const MilestonesSchema = z
+  .object({
+    milestones: z.array(
+      z.object({
+        name: z.string().min(5),
+        deadline: z.string().min(5),
+        amount: z.coerce.number().min(1),
+        files: milestonePersistSchema,
+      }),
+    ),
+  })
+  .optional();
+
+export type IMilestones = z.infer<typeof MilestonesSchema>;

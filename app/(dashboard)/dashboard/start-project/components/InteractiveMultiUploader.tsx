@@ -93,7 +93,7 @@ export const InteractiveMultiUploader = ({
 
       const next = [...prev];
 
-      files.forEach((file) => {
+      files?.forEach((file) => {
         if (!existingIds.has(file.id)) {
           const sizeKb = Math.round(file.size / 1024);
 
