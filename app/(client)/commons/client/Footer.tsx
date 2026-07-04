@@ -83,6 +83,15 @@ export default function Footer() {
                 Privacy Policy
               </Link>
             </li>
+
+            <li>
+              <Link
+                href={"/refund-policy"}
+                className="text-xs cursor-pointer font-semibold text-gray-400 hover:text-brand-primary transition"
+              >
+                Refund Policy
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -91,7 +100,7 @@ export default function Footer() {
             Headquarters
           </h5>
           <p className="text-xs text-gray-400 leading-relaxed text-left">
-            Eko Atlantic Workspace, Victoria Island,
+            No 42, Mazi Ukadike ibeh street, Marshy hill estate, Ajah,
             <br />
             Lagos, Nigeria.
           </p>

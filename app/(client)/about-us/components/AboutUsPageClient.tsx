@@ -160,7 +160,8 @@ export default function AboutUsPageClient() {
                   The Mimotar Support Team
                 </span>
                 <span className="text-caption text-gray-400">
-                  Victoria Island, Lagos
+                  No 42, Mazi Ukadike ibeh street, Marshy hill estate, Ajah,
+                  Lagos, Nigeria.
                 </span>
               </div>
             </div>
