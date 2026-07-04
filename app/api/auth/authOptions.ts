@@ -4,42 +4,42 @@ import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
 
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      email: string;
-      firstName: string;
-      lastName: string;
-      accessToken: string;
-      verified: boolean;
-      refreshToken?: string;
-      phone_no?: string;
-      address?: string;
-      city?: string;
-      country?: string;
-      postal_code?: string;
-      id_number?: number;
-      avatar?: string;
-    };
-  }
+// declare module "next-auth" {
+//   interface Session {
+//     user: {
+//       id: string;
+//       email: string;
+//       firstName: string;
+//       lastName: string;
+//       accessToken: string;
+//       verified: boolean;
+//       refreshToken?: string;
+//       phone_no?: string;
+//       address?: string;
+//       city?: string;
+//       country?: string;
+//       postal_code?: string;
+//       id_number?: number;
+//       avatar?: string;
+//     };
+//   }
 
-  interface User {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    verified: boolean;
-    accessToken: string;
-    phone_no?: string;
-    address?: string;
-    city?: string;
-    country?: string;
-    postal_code?: string;
-    id_number?: number;
-    avatar?: string;
-  }
-}
+//   interface User {
+//     id: string;
+//     email: string;
+//     firstName: string;
+//     lastName: string;
+//     verified: boolean;
+//     accessToken: string;
+//     phone_no?: string;
+//     address?: string;
+//     city?: string;
+//     country?: string;
+//     postal_code?: string;
+//     id_number?: number;
+//     avatar?: string;
+//   }
+// }
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -57,7 +57,7 @@ export const authOptions: AuthOptions = {
         },
       },
       async authorize(credentials, req) {
-        // console.log("input", req);
+        console.log("input", req);
         return unTokenAxiosInstance
           .post("user/login-with-email", {
             email: credentials?.email as string,
@@ -87,16 +87,16 @@ export const authOptions: AuthOptions = {
             };
           })
           .catch((error) => {
-            // console.log(
-            //   "login error 1",
-            //   JSON.stringify((error as AxiosError).response),
-            // );
+            console.log(
+              "login error 1",
+              JSON.stringify((error as AxiosError).response),
+            );
 
-            // if (error instanceof AxiosError) {
-            //   console.log(error.response?.data.message);
-            // }
+            if (error instanceof AxiosError) {
+              console.log(error.response?.data.message);
+            }
             // throw new Error(error?.response?.data?.response?.message);
-            // console.log("login error", error);
+            console.log("login error", error);
             return null;
           });
       },
@@ -197,7 +197,7 @@ export const authOptions: AuthOptions = {
     },
   },
   pages: {
-    signIn: "/auth/login",
+    signIn: "/auth?auth=login",
     signOut: "/",
   },
 };

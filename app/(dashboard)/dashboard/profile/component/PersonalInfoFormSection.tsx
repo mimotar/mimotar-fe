@@ -55,7 +55,7 @@ export default function PersonalInfoFormSection() {
           <input
             type="email"
             id="email"
-            value={session?.user.email}
+            // value={session?.user.email}
             readOnly
             placeholder="mail"
             className="bg-neutral-200 p-3 outline-none rounded-md "

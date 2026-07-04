@@ -31,32 +31,32 @@ export default function CreateTransactionTermAndAgreement() {
   console.log(errors);
   const handleNext = (data: IStage3TicketSchema) => {
     console.log(data);
-    dispatch(setTransactionDetails(data));
+    // dispatch(setTransactionDetails(data));
     dispatch(setStage(3));
   };
 
-  useEffect(() => {
-    setValue("additional_agreement", transactionData.additional_agreement);
-    setValue("expiresAt", transactionData.expiresAt!);
-    setValue("inspection_duration", transactionData.inspection_duration);
-    if (
-      transactionData.pay_escrow_fee === "BOTH" ||
-      transactionData.pay_escrow_fee === "BUYER" ||
-      transactionData.pay_escrow_fee === "SELLER"
-    ) {
-      setValue("pay_escrow_fee", transactionData.pay_escrow_fee);
-    }
+  // useEffect(() => {
+  //   setValue("additional_agreement", transactionData.additional_agreement);
+  //   setValue("expiresAt", transactionData.expiresAt!);
+  //   setValue("inspection_duration", transactionData.inspection_duration);
+  //   if (
+  //     transactionData.pay_escrow_fee === "BOTH" ||
+  //     transactionData.pay_escrow_fee === "BUYER" ||
+  //     transactionData.pay_escrow_fee === "SELLER"
+  //   ) {
+  //     setValue("pay_escrow_fee", transactionData.pay_escrow_fee);
+  //   }
 
-    if (
-      transactionData.pay_shipping_cost === "BOTH" ||
-      transactionData.pay_shipping_cost === "BUYER" ||
-      transactionData.pay_shipping_cost === "SELLER"
-    ) {
-      setValue("pay_shipping_cost", transactionData.pay_shipping_cost);
-    }
+  //   if (
+  //     transactionData.pay_shipping_cost === "BOTH" ||
+  //     transactionData.pay_shipping_cost === "BUYER" ||
+  //     transactionData.pay_shipping_cost === "SELLER"
+  //   ) {
+  //     setValue("pay_shipping_cost", transactionData.pay_shipping_cost);
+  //   }
 
-    setValue("terms", transactionData.terms);
-  }, [transactionData, setValue]);
+  //   setValue("terms", transactionData.terms);
+  // }, [transactionData, setValue]);
   return (
     <section className="flex flex-col mx-auto sm:w-[580px] w-[95%]">
       <div className="flex flex-col">

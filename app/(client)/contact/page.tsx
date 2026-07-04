@@ -206,14 +206,15 @@ function page() {
               },
               {
                 title: "WhatsApp Chat Support",
-                detail: "+234 (1) 803 0000 000",
+                detail: "+234 81 3367 2833",
                 desc: "Get fast answers and manual help directly on WhatsApp.",
                 icon: Phone,
                 color: "text-amber-500 bg-amber-50 border-amber-100/30",
               },
               {
                 title: "Our Lagos Office",
-                detail: "Eko Atlantic, VI, Lagos, Nigeria",
+                detail:
+                  "No 42, Mazi Ukadike ibeh street, Marshy hill estate, Ajah.",
                 desc: "Our physical office space in Lagos, built for Nigerian creators.",
                 icon: MapPin,
                 color: "text-brand-primary bg-magenta-50 border-magenta-100/30",

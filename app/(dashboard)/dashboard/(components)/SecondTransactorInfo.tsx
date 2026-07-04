@@ -45,9 +45,9 @@ export default function SecondTransactorInfo() {
   }>({ flag: "https://flagcdn.com/16x12/ng.png" });
 
   const [isFlagDropdown, setIsFlagDropdown] = useState(false);
-  const transactionData = useAppSelector(
-    (state) => state.createTransaction,
-  ) as ITransaction;
+  // const transactionData = useAppSelector(
+  //   (state) => state.createTransaction,
+  // ) as ITransaction;
 
   const session = useSession();
   const dispatch = useAppDispatch();
@@ -79,88 +79,88 @@ export default function SecondTransactorInfo() {
     resolver: zodResolver(stage4TicketSchema),
   });
 
-  const onSubmit = async (data: IStage4TicketSchema) => {
-    dispatch(setTransactionDetails(data));
+  // const onSubmit = async (data: IStage4TicketSchema) => {
+  //   dispatch(setTransactionDetails(data));
 
-    const creatorDetail: IStage1TicketSchema = {
-      creator_fullname:
-        (session.data?.user.firstName ?? "") +
-        " " +
-        (session.data?.user?.lastName ?? ""),
-      creator_email: session.data?.user?.email as string,
-      creator_no: session.data?.user?.phone_no || "SELLER",
-      creator_role:
-        (transactionData.creator_role as "SELLER" | "BUYER") || "BUYER",
-      creator_address: "",
-    };
+  //   const creatorDetail: IStage1TicketSchema = {
+  //     creator_fullname:
+  //       (session.data?.user.firstName ?? "") +
+  //       " " +
+  //       (session.data?.user?.lastName ?? ""),
+  //     creator_email: session.data?.user?.email as string,
+  //     creator_no: session.data?.user?.phone_no || "SELLER",
+  //     creator_role:
+  //       (transactionData.creator_role as "SELLER" | "BUYER") || "BUYER",
+  //     creator_address: "",
+  //   };
 
-    const attachments = attachmentsToFiles(
-      normalizeAttachments(transactionData?.attachment),
-    );
-    const mergedData = {
-      ...transactionData,
-      ...data,
-      ...creatorDetail,
-      attachment: attachments,
-    };
-    const dashboardCreateTicket = mergedTicketSchema.safeParse(mergedData);
+  //   const attachments = attachmentsToFiles(
+  //     normalizeAttachments(transactionData?.attachment),
+  //   );
+  //   const mergedData = {
+  //     ...transactionData,
+  //     ...data,
+  //     ...creatorDetail,
+  //     attachment: attachments,
+  //   };
+  //   const dashboardCreateTicket = mergedTicketSchema.safeParse(mergedData);
 
-    if (!dashboardCreateTicket.success) {
-      const errorMsgObj = dashboardCreateTicket.error;
-      let errorMsg = "";
+  //   if (!dashboardCreateTicket.success) {
+  //     const errorMsgObj = dashboardCreateTicket.error;
+  //     let errorMsg = "";
 
-      if (errorMsgObj instanceof z.ZodError) {
-        errorMsg = errorMsgObj.errors.map((err) => err.message).join(" | ");
-      }
+  //     if (errorMsgObj instanceof z.ZodError) {
+  //       errorMsg = errorMsgObj.errors.map((err) => err.message).join(" | ");
+  //     }
 
-      console.log("error", errorMsg);
-      toast.error(errorMsg);
-      return;
-    }
+  //     console.log("error", errorMsg);
+  //     toast.error(errorMsg);
+  //     return;
+  //   }
 
-    const formData = new FormData();
+  //   const formData = new FormData();
 
-    // Append all fields except 'attachment'
-    for (const [key, value] of Object.entries(mergedData)) {
-      if (key !== "attachment" && value !== undefined) {
-        formData.append(key, String(value));
-      }
-    }
+  //   // Append all fields except 'attachment'
+  //   for (const [key, value] of Object.entries(mergedData)) {
+  //     if (key !== "attachment" && value !== undefined) {
+  //       formData.append(key, String(value));
+  //     }
+  //   }
 
-    attachments.forEach((file) => {
-      formData.append("files", file);
-    });
+  //   attachments.forEach((file) => {
+  //     formData.append("files", file);
+  //   });
 
-    // Submit to the server
-    mutate(formData, {
-      onError: (error) => {
-        const errorObj = AxiosErrorHandler(error);
-        toast.error(errorObj);
-      },
-      onSuccess: (data) => {
-        console.log("Transaction created successfully:", data);
-        dispatch(createTicketSuccessPayload(data.data));
-        dispatch(resetTransactionDetails());
-        toast.success(
-          "Transaction created successfully! The other party has been notified to review and approve or reject the transaction.",
-        );
-        dispatch(setStage(4));
-      },
-    });
-  };
+  //   // Submit to the server
+  //   mutate(formData, {
+  //     onError: (error) => {
+  //       const errorObj = AxiosErrorHandler(error);
+  //       toast.error(errorObj);
+  //     },
+  //     onSuccess: (data) => {
+  //       console.log("Transaction created successfully:", data);
+  //       dispatch(createTicketSuccessPayload(data.data));
+  //       dispatch(resetTransactionDetails());
+  //       toast.success(
+  //         "Transaction created successfully! The other party has been notified to review and approve or reject the transaction.",
+  //       );
+  //       dispatch(setStage(4));
+  //     },
+  //   });
+  // };
 
-  useEffect(() => {
-    setValue("receiver_address", transactionData.receiver_address);
-    setValue("receiver_fullname", transactionData.receiver_fullname);
-    setValue("receiver_no", transactionData.receiver_no);
-    setValue("reciever_email", transactionData.reciever_email);
-    if (
-      transactionData.reciever_role === "BUYER" ||
-      transactionData.reciever_role === "SELLER"
-    ) {
-      setValue("reciever_role", transactionData.reciever_role);
-    }
-  }, [transactionData, setValue]);
+  // useEffect(() => {
+  //   setValue("receiver_address", transactionData.receiver_address);
+  //   setValue("receiver_fullname", transactionData.receiver_fullname);
+  //   setValue("receiver_no", transactionData.receiver_no);
+  //   setValue("reciever_email", transactionData.reciever_email);
+  //   if (
+  //     transactionData.reciever_role === "BUYER" ||
+  //     transactionData.reciever_role === "SELLER"
+  //   ) {
+  //     setValue("reciever_role", transactionData.reciever_role);
+  //   }
+  // }, [transactionData, setValue]);
 
   return (
     <section className="flex flex-col mx-auto sm:w-[580px] w-[95%]">
@@ -176,7 +176,7 @@ export default function SecondTransactorInfo() {
 
       <div className="flex flex-col h-full w-full mt-6">
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          // onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col 2xl:gap-8 gap-4"
         >
           <div className="flex flex-col">
