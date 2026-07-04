@@ -5,8 +5,8 @@ import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 import { useNavigateProjectStep } from "../hooks/usenavigateProjectStep";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IPersistedAttachment, ITicket } from "../types/ITicket";
-import { StepOneForm, stepOneSchema } from "../schema/projectSchema";
+import { IPersistedAttachment, IStepOne, ITicket } from "../types/ITicket";
+import { stepOneSchema } from "../schema/projectSchema";
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
 
@@ -32,7 +32,7 @@ export const fileToPersistedAttachment = (
     reader.readAsDataURL(file);
   });
 };
-const mapDefaultValues = (ticket: ITicket): StepOneForm => ({
+const mapDefaultValues = (ticket: ITicket): IStepOne => ({
   currency: ticket.currency || "NGN",
   title: ticket.title || "",
   attachment: ticket.attachment || [],
@@ -40,8 +40,8 @@ const mapDefaultValues = (ticket: ITicket): StepOneForm => ({
   transaction_description: ticket.transaction_description || "",
   amount: Number(formatNumberToCurrency(ticket.amount)) || 0,
   close_deadline: ticket.close_deadline
-    ? new Date(ticket.close_deadline)
-    : new Date(),
+    ? new Date(ticket.close_deadline).toISOString().split("T")[0]
+    : "",
 });
 
 export default function ProjectStepOne() {
@@ -65,7 +65,7 @@ export default function ProjectStepOne() {
     getValues,
     reset,
     formState: { errors },
-  } = useForm<StepOneForm>({
+  } = useForm<IStepOne>({
     resolver: zodResolver(stepOneSchema),
     defaultValues: mapDefaultValues(ticket),
   });
@@ -80,9 +80,7 @@ export default function ProjectStepOne() {
     (item): item is IPersistedAttachment => !(item instanceof File),
   );
 
-  console.log(persistAttachment);
-
-  const onSubmitStepOne = (data: StepOneForm) => {
+  const onSubmitStepOne = (data: IStepOne) => {
     dispatch(
       setTransactionDetails({
         amount: data.amount,
@@ -90,7 +88,7 @@ export default function ProjectStepOne() {
         currency: data.currency,
         pay_escrow_fee: data.pay_escrow_fee,
         transaction_description: data.transaction_description,
-        close_deadline: String(data.close_deadline),
+        close_deadline: new Date(data.close_deadline).toISOString(),
         attachment: uploadFileJson,
       }),
     );
@@ -299,9 +297,9 @@ export default function ProjectStepOne() {
             <input
               type="date"
               {...register("close_deadline", {
-                setValueAs(value) {
-                  new Date(value).toISOString().split("T")[0];
-                },
+                // setValueAs(value) {
+                //   new Date(value).toISOString().split("T")[0];
+                // },
               })}
               className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border text-gray-800 focus:outline-none transition-colors font-semibold ${errors?.close_deadline ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}`}
             />

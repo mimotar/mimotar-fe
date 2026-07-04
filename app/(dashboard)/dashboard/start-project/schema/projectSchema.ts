@@ -78,11 +78,12 @@ export const stepOneSchema = z.object({
   close_deadline: z.coerce.date(),
 });
 
-export type StepOneForm = z.infer<typeof stepOneSchema>;
+// export type StepOneForm = z.infer<typeof stepOneSchema>;
+export type StepOneForm = z.input<typeof stepOneSchema>;
 // export type StepOneFormInput = z.input<typeof stepOneSchema>;
 // export type StepOneFormOutput = z.output<typeof stepOneSchema>;
 
-// step 2(milestone)
+// flow 2(milestone)
 // attachment
 const milestoneAttachmentSchema = z
   .instanceof(File, {
@@ -100,21 +101,91 @@ const milestoneAttachmentSchema = z
   )
   .optional();
 
-const milestonePersistSchema = z.union([
+const milestonePersistFinalAttachmentSchema = z.union([
   z.instanceof(File),
   milestoneAttachmentSchema,
 ]);
-export const MilestonesSchema = z
-  .object({
-    milestones: z.array(
+export const MilestonesSchema = z.object({
+  milestones: z
+    .array(
       z.object({
         name: z.string().min(5),
         deadline: z.string().min(5),
         amount: z.coerce.number().min(1),
-        files: milestonePersistSchema,
+        files: milestonePersistFinalAttachmentSchema,
       }),
-    ),
-  })
-  .optional();
+    )
+    .optional(),
+});
 
 export type IMilestones = z.infer<typeof MilestonesSchema>;
+
+// flow 3
+export const stepThreeSchema = z.object({
+  counterpartyRole: z.enum(["CLIENT", "FREELANCER"]),
+
+  counterpartyName: z
+    .string()
+    .trim()
+    .min(1, "Counterparty Legal Name is required")
+    .max(255, "Counterparty Legal Name cannot exceed 255 characters"),
+
+  counterpartyEmail: z
+    .string()
+    .trim()
+    .min(1, "Counterparty Email Address is required")
+    .email("Please enter a valid counterparty email (e.g., name@email.com)"),
+
+  counterpartyPhone: z
+    .string()
+    .trim()
+    .optional()
+    .refine((value) => !value || /^[+]?[0-9\s()-]{7,20}$/.test(value), {
+      message: "Please enter a valid phone number",
+    }),
+});
+
+export type StepThreeForm = z.infer<typeof stepThreeSchema>;
+
+// flow 4
+export const creatorSchema = z.object({
+  creator_address: z
+    .string()
+    .trim()
+    .min(1, "Creator wallet address is required")
+    .optional(),
+
+  creator_email: z
+    .string()
+    .trim()
+    .min(1, "Creator email is required")
+    .email("Please enter a valid email address"),
+
+  creator_fullname: z
+    .string()
+    .trim()
+    .min(1, "Creator full name is required")
+    .max(255, "Creator full name cannot exceed 255 characters"),
+
+  creator_no: z
+    .string()
+    .trim()
+    .min(1, "Creator phone number is required")
+    .refine((value) => /^[+]?[0-9\s()-]{7,20}$/.test(value), {
+      message: "Please enter a valid phone number",
+    })
+    .optional(),
+
+  creator_role: z.enum(["CLIENT", "FREELANCER"]),
+});
+
+export type CreatorForm = z.infer<typeof creatorSchema>;
+
+export const createTransactionSchema = stepOneSchema
+  .merge(MilestonesSchema)
+  .merge(stepThreeSchema)
+  .merge(creatorSchema);
+
+export type CreateTransactionInput = z.input<typeof createTransactionSchema>;
+
+export type CreateTransaction = z.infer<typeof createTransactionSchema>;

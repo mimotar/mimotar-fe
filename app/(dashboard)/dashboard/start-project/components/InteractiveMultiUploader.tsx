@@ -150,7 +150,7 @@ export const InteractiveMultiUploader = ({
   const handleFilesAdded = async (selectedFiles: FileList | null) => {
     if (!selectedFiles || selectedFiles.length === 0) return;
 
-    const remainingSlots = maxFiles - files.length;
+    const remainingSlots = maxFiles - files?.length;
 
     if (remainingSlots <= 0) {
       alert(`Maximum of ${maxFiles} files reached.`);

@@ -42,24 +42,26 @@ export interface ITicket {
   creator_email: string;
   creator_no: string;
   creator_address: string;
-  creator_role: "SELLER" | "BUYER" | "" | null;
+  // creator_role: "SELLER" | "BUYER" | "" | null;
+  creator_role: "CLIENT" | "FREELANCER" | null;
 
-  transactionType:
-    | "PHYSICAL_PRODUCT"
-    | "ONLINE_PRODUCT"
-    | "SERVICE"
-    | ""
-    | null;
+  // transactionType:
+  //   | "PHYSICAL_PRODUCT"
+  //   | "ONLINE_PRODUCT"
+  //   | "SERVICE"
+  //   | ""
+  //   | null;
 
-  inspection_duration: number; // in days
-  expiresAt: number | null;
-  pay_shipping_cost: "SELLER" | "BUYER" | "BOTH" | "" | null;
-  additional_agreement: string;
+  // inspection_duration: number; // in days
+  // expiresAt: number | null;
+  // pay_shipping_cost: "SELLER" | "BUYER" | "BOTH" | "" | null;
+  // additional_agreement: string;
 
   receiver_fullname: string;
   reciever_email: string;
   receiver_no: string;
   receiver_address: string;
-  reciever_role: "SELLER" | "BUYER" | "" | null;
-  terms: string;
+  // reciever_role: "SELLER" | "BUYER" | "" | null;
+  reciever_role: "CLIENT" | "FREELANCER" | null;
+  // terms: string;
 }

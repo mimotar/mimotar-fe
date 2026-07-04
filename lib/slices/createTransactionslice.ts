@@ -20,21 +20,21 @@ const initialState: ITicket = {
   creator_email: "",
   creator_no: "",
   creator_address: "",
-  creator_role: "",
+  creator_role: null,
 
-  transactionType: "",
+  // transactionType: "",
 
-  inspection_duration: 0,
-  pay_shipping_cost: "",
-  additional_agreement: "",
+  // inspection_duration: 0,
+  // pay_shipping_cost: "",
+  // additional_agreement: "",
 
   receiver_fullname: "",
   reciever_email: "",
   receiver_no: "",
   receiver_address: "",
-  reciever_role: "",
-  terms: "",
-  expiresAt: null,
+  reciever_role: "CLIENT",
+  // terms: "",
+  // expiresAt: null,
 };
 
 const createTransactionSlice = createSlice({
@@ -42,13 +42,19 @@ const createTransactionSlice = createSlice({
   initialState,
   reducers: {
     setTransactionDetails: (state, action: PayloadAction<Partial<ITicket>>) => {
-      // console.log("Setting transaction details:", action.payload);
+      console.log("Setting transaction details:", action.payload);
       return { ...state, ...action.payload };
     },
     resetTransactionDetails: () => initialState,
+    resetMilestones: (state) => {
+      state.milestones = [];
+    },
   },
 });
 
 export default createTransactionSlice.reducer;
-export const { setTransactionDetails, resetTransactionDetails } =
-  createTransactionSlice.actions;
+export const {
+  setTransactionDetails,
+  resetTransactionDetails,
+  resetMilestones,
+} = createTransactionSlice.actions;

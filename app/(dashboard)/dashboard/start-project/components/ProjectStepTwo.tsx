@@ -8,7 +8,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { IMilestones, MilestonesSchema } from "../schema/projectSchema";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { IMilestone, IPersistedAttachment } from "../types/ITicket";
-import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
+import {
+  resetMilestones,
+  setTransactionDetails,
+} from "@/lib/slices/createTransactionslice";
+import toast from "react-hot-toast";
+import { set } from "date-fns";
 
 export default function ProjectStepTwo() {
   const [hasMilestones, setHasMilestones] = useState(false);
@@ -20,28 +25,28 @@ export default function ProjectStepTwo() {
   const [msDeadline, setMsDeadline] = useState("");
   const [msFile, setMsFile] = useState("");
   const [msFiles, setMsFiles] = useState<IPersistedAttachment[]>([]);
+  console.log("added file", msFiles);
   const [milestoneError, setMilestoneError] = useState<string | null>(null);
-  const [milestoneAddedSuccess, setMilestoneAddedSuccess] =
-    useState<IMilestone | null>(null);
-  const [amountError, setAmountError] = useState("");
+  // const [milestoneAddedSuccess, setMilestoneAddedSuccess] =
+  //   useState<IMilestone | null>(null);
+  // const [amountError, setAmountError] = useState("");
 
   const dispatch = useAppDispatch();
   const ticket = useAppSelector((state) => state.createTransaction);
-  console.log(ticket);
+  console.log("step 2", ticket);
   const { nextStep } = useNavigateProjectStep();
 
   const persistedMilestones = useMemo(() => {
-    return ticket.milestones?.map((obj) => obj);
+    setHasMilestones(ticket?.milestones?.length > 0);
+    return ticket?.milestones?.map((obj) => obj);
   }, [ticket]);
 
-  //   const persistedMilestonesAttachment = useMemo(() => {
-  //   return ticket.milestones?.map((obj) => obj.files);
-  // }, [ticket]);
+  console.log("persisted milestones", persistedMilestones);
 
-  const persistedMilestonesAttachment = persistedMilestones?.flatMap(
-    (m) => m.files ?? [],
-  );
-  console.log(persistedMilestones);
+  const persistedMilestonesAttachment = !persistedMilestones
+    ? []
+    : persistedMilestones?.flatMap((m) => m.files ?? []);
+  console.log("persisted attachments", persistedMilestonesAttachment);
 
   const handleAddMilestone = () => {
     setMilestoneError(null);
@@ -50,40 +55,26 @@ export default function ProjectStepTwo() {
       return;
     }
 
-    const combinedFileList = [...msFiles];
-    // if (msFile.trim()) {
-    //   combinedFileList.push(msFile.trim());
-    // }
-
     const newMs: IMilestone = {
       id: `ms-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
       name: msTitle,
       amount: msAmount,
       deadline: msDeadline,
-      // isCompleted: false,
-      // isApproved: false,
-      // deliveryFile: combinedFileList.join(", ") || undefined,
-      // deliveryFiles: combinedFileList,
-      files: combinedFileList,
+
+      files: msFiles,
     };
 
-    const nextMilestones = persistedMilestones
-      ? [...persistedMilestones, newMs]
-      : undefined;
-    // setMilestones(nextMilestones);
+    const nextMilestones = [...persistedMilestones, newMs];
+
+    console.log("next milestone", nextMilestones);
+
     dispatch(
       setTransactionDetails({
         milestones: nextMilestones,
       }),
     );
 
-    // Automatically calculate total project value from milestones sum
-    const newSum = nextMilestones?.reduce((sum, m) => sum + m.amount, 0);
-    setAmount(newSum ?? 0);
-    if (amountError) setAmountError("");
-
-    // Trigger milestone validation success modal indication
-    setMilestoneAddedSuccess(newMs);
+    toast.success("Milestone phase added successfully!");
 
     // Reset inputs
     setMsTitle("");
@@ -95,7 +86,7 @@ export default function ProjectStepTwo() {
 
   const handleRemoveMilestone = (id: string) => {
     const nextMilestones = persistedMilestones.filter((m) => m.id !== id);
-    // setMilestones(nextMilestones);
+
     dispatch(
       setTransactionDetails({
         milestones: nextMilestones,
@@ -114,6 +105,7 @@ export default function ProjectStepTwo() {
   };
 
   const handleProceedToSummary = () => {
+    console.log("form data", persistedMilestones);
     if (hasMilestones) {
       if (persistedMilestones.length === 0) {
         setMilestoneError(
@@ -121,30 +113,10 @@ export default function ProjectStepTwo() {
         );
         return;
       }
-      // const sum = milestones.reduce((s, m) => s + m.amount, 0);
-      // setAmount(sum);
     }
-    // setStep(4);
-    // nextStep(4);
+
+    nextStep(3);
   };
-
-  const handleNextStage = (data: IMilestones) => {};
-
-  const { handleSubmit, register, control, reset, trigger, setError } = useForm(
-    {
-      resolver: zodResolver(MilestonesSchema),
-      defaultValues: {
-        milestones: [
-          {
-            name: "",
-            deadline: "",
-            amount: 0,
-            attachment: undefined,
-          },
-        ],
-      },
-    },
-  );
 
   return (
     <div className="space-y-6 animate-fade-in text-left">
@@ -163,14 +135,18 @@ export default function ProjectStepTwo() {
               const nextVal = !hasMilestones;
               setHasMilestones(nextVal);
               if (nextVal) {
-                const sum = milestones.reduce((s, m) => s + m.amount, 0);
-                setAmount(sum);
+                // const sum = milestones.reduce((s, m) => s + m.amount, 0);
+                // setAmount(sum);
+                return;
               }
+              dispatch(resetMilestones());
             }}
             className="flex items-center gap-1.5 sm:gap-2 bg-gray-50 hover:bg-gray-100/50 border border-gray-100 p-1.5 px-2 sm:p-2 rounded-xl transition cursor-pointer select-none shrink-0"
           >
             <span className="text-[10px] sm:text-xs font-bold text-gray-500">
-              {hasMilestones ? "Milestones Active" : "Milestones inactive"}
+              {persistedMilestones?.length > 0 || hasMilestones
+                ? "Milestones Active"
+                : "Milestones inactive"}
             </span>
             <button
               type="button"
@@ -201,7 +177,10 @@ export default function ProjectStepTwo() {
               </AnimatePresence> */}
 
       {hasMilestones ? (
-        <div onSubmit={handleSubmit(handleNextStage)} className="space-y-6">
+        <div
+          // onSubmit={handleSubmit(handleProceedToSummary)}
+          className="space-y-6"
+        >
           {/* Milestone Builder Forms */}
           <div className="bg-gray-50/70 p-5 rounded-2xl border border-gray-100 flex flex-col gap-4">
             <span className="text-xs font-bold text-gray-800 block">
@@ -254,9 +233,9 @@ export default function ProjectStepTwo() {
               </span>
               <InteractiveMultiUploader
                 id="milestone-guide-uploader"
-                files={persistedMilestonesAttachment}
+                files={msFiles}
                 onChange={(fileJSON) => {
-                  setMsFiles(fileJSON);
+                  setMsFiles([...fileJSON]);
                 }}
                 placeholder="Drag & drop guide files, reference documents, or specs here"
               />
@@ -285,8 +264,10 @@ export default function ProjectStepTwo() {
               <span>Phases Added ({milestones.length})</span>
               <span>
                 Combined Value:{" "}
-                {formatCurrency(milestones.reduce((s, m) => s + m.amount, 0))} /{" "}
-                {formatCurrency(amount)}
+                {formatCurrency(
+                  persistedMilestones.reduce((s, m) => s + m.amount, 0),
+                )}{" "}
+                / {formatCurrency(ticket.amount)}
               </span>
             </div>
 
@@ -339,7 +320,7 @@ export default function ProjectStepTwo() {
           <p className="text-xs text-gray-500 leading-relaxed leading-relaxed">
             You chose not to partition the payment. The total project value of{" "}
             <span className="font-bold text-gray-800 font-mono">
-              {formatCurrency(amount)}
+              {formatCurrency(ticket.amount)}
             </span>{" "}
             will be locked in bulk and released entirely at once upon completion
             delivery and approval. This is super efficient for short-term or

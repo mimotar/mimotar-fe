@@ -18,6 +18,8 @@ import { useNavigateProjectStep } from "../hooks/usenavigateProjectStep";
 import ProjectStepOne from "./ProjectStepOne";
 import { useAppSelector } from "@/lib/hooks";
 import ProjectStepTwo from "./ProjectStepTwo";
+import ProjectStepThree from "./ProjectStepThree";
+import ProjectStepFour from "./ProjectStepFour";
 
 export default function StartProjectFlow() {
   const step = Number(useSearchParams().get("step")) || 1;
@@ -346,319 +348,191 @@ export default function StartProjectFlow() {
       {step === 2 && <ProjectStepTwo />}
 
       {/* STEP 3: Counterparty Invite */}
-      {step === 3 && (
-        <div className="space-y-6 animate-fade-in">
-          <div>
-            <h2 className="text-lg font-extrabold text-[#111827]">
-              Secure your counterparty details
-            </h2>
-            <p className="text-xs text-gray-400 mt-1">
-              Both sides sign the escrow parameters securely inside Lagos
-              portal.
-            </p>
-          </div>
-
-          <div className="space-y-4 text-left">
-            <div>
-              <label className="block text-xs font-bold text-gray-500 mb-1">
-                Their Role in this Project
-              </label>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtherRole("client");
-                  }}
-                  className={`flex-1 py-3 text-xs font-bold rounded-xl border transition cursor-pointer ${otherRole === "client" ? "bg-purple-50 text-brand-primary border-brand-primary/50" : "bg-white text-gray-500 border-gray-100"}`}
-                >
-                  Client
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtherRole("freelancer");
-                  }}
-                  className={`flex-1 py-3 text-xs font-bold rounded-xl border transition cursor-pointer ${otherRole === "freelancer" ? "bg-purple-50 text-brand-primary border-brand-primary/50" : "bg-white text-gray-500 border-gray-100"}`}
-                >
-                  Freelancer
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">
-                  Counterparty Legal Name
-                </label>
-                <input
-                  type="text"
-                  value={otherName}
-                  onChange={(e) => {
-                    setOtherName(e.target.value);
-                    if (otherNameError) setOtherNameError("");
-                  }}
-                  placeholder="e.g. Amara Ndukwe"
-                  className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border placeholder-gray-300 text-gray-800 focus:outline-none transition-colors font-medium ${otherNameError ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}`}
-                />
-                {otherNameError && (
-                  <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                    <span>{otherNameError}</span>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">
-                  Counterparty Email Address
-                </label>
-                <input
-                  type="email"
-                  value={otherEmail}
-                  onChange={(e) => {
-                    setOtherEmail(e.target.value);
-                    if (otherEmailError) setOtherEmailError("");
-                  }}
-                  onBlur={handleOtherEmailBlur}
-                  placeholder="name@email.com"
-                  className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border placeholder-gray-300 text-gray-800 focus:outline-none transition-colors font-medium ${otherEmailError ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}`}
-                />
-                {otherEmailError && (
-                  <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                    <span>{otherEmailError}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-gray-500 mb-1">
-                WhatsApp Phone Number (Optional)
-              </label>
-              <input
-                type="text"
-                value={otherPhone}
-                onChange={(e) => setOtherPhone(e.target.value)}
-                placeholder="e.g. +234 803 123 4567"
-                className="w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border border-gray-100 placeholder-gray-300 text-gray-800 focus:outline-none focus:border-brand-primary font-medium"
-              />
-              <span className="block text-[10px] text-gray-400 mt-1 leading-normal font-sans">
-                Dispute mediators leverage WhatsApp coordinates to reach
-                resolutions directly when incident triggers happen.
-              </span>
-            </div>
-          </div>
-
-          <div className="pt-4 flex justify-between">
-            <button
-              type="button"
-              onClick={() => {
-                nextStep(2);
-                // setStep(2)
-              }}
-              className="px-5 py-3 border border-gray-200 text-gray-600 rounded-xl text-xs font-semibold hover:bg-gray-50 transition animate-fade-in"
-            >
-              Back
-            </button>
-
-            <button
-              onClick={() => {
-                if (validateStep3()) {
-                  nextStep(4);
-                  // setStep(4);
-                }
-              }}
-              className="bg-brand-primary hover:bg-brand-primary/95 text-white text-xs font-bold rounded-xl px-6 py-3.5 transition flex items-center gap-2 cursor-pointer shadow-xs"
-            >
-              View Summary
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
+      {step === 3 && <ProjectStepThree />}
 
       {/* STEP 4: AGREEMENT SUMMARY (CRITICAL, EDITABLE) */}
       {step === 4 && (
-        <div className="space-y-6 animate-fade-in text-left">
-          <div>
-            <h2 className="text-lg font-extrabold text-[#111827]">
-              Escrow Protection Agreement Overview
-            </h2>
-            <p className="text-xs text-gray-400 mt-1">
-              Review your legally binding parameters before generated links
-              dispatch.
-            </p>
-          </div>
+        // <div className="space-y-6 animate-fade-in text-left">
+        //   <div>
+        //     <h2 className="text-lg font-extrabold text-[#111827]">
+        //       Escrow Protection Agreement Overview
+        //     </h2>
+        //     <p className="text-xs text-gray-400 mt-1">
+        //       Review your legally binding parameters before generated links
+        //       dispatch.
+        //     </p>
+        //   </div>
 
-          <div className="border border-purple-100 rounded-3xl p-6.5 bg-purple-100/[0.02] space-y-6 relative">
-            <div className="absolute top-6 right-6 inline-flex items-center gap-1 text-[10px] bg-brand-primary/15 text-brand-primary font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-              🔒 Standard Escrow Lock
-            </div>
+        //   <div className="border border-purple-100 rounded-3xl p-6.5 bg-purple-100/[0.02] space-y-6 relative">
+        //     <div className="absolute top-6 right-6 inline-flex items-center gap-1 text-[10px] bg-brand-primary/15 text-brand-primary font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+        //       🔒 Standard Escrow Lock
+        //     </div>
 
-            <div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
-                Project Specification
-              </span>
-              <h3 className="text-sm font-bold text-gray-900 mt-1.5 leading-snug">
-                {title || "Untitled contract proposal"}
-              </h3>
-              <p className="text-xs text-gray-500 leading-relaxed mt-2.5 whitespace-pre-wrap">
-                {description || "No deliverables details provided yet."}
-              </p>
-            </div>
+        //     <div>
+        //       <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
+        //         Project Specification
+        //       </span>
+        //       <h3 className="text-sm font-bold text-gray-900 mt-1.5 leading-snug">
+        //         {title || "Untitled contract proposal"}
+        //       </h3>
+        //       <p className="text-xs text-gray-500 leading-relaxed mt-2.5 whitespace-pre-wrap">
+        //         {description || "No deliverables details provided yet."}
+        //       </p>
+        //     </div>
 
-            {attachedFiles.length > 0 && (
-              <div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
-                  Contracts guidance attachments
-                </span>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {attachedFiles.map((file, i) => (
-                    <span
-                      key={i}
-                      className="inline-flex items-center gap-1 bg-white border border-gray-150 rounded-xl p-2 text-xs font-medium text-slate-800"
-                    >
-                      📄 {file}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+        //     {attachedFiles.length > 0 && (
+        //       <div>
+        //         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
+        //           Contracts guidance attachments
+        //         </span>
+        //         <div className="flex flex-wrap gap-2 mt-2">
+        //           {attachedFiles.map((file, i) => (
+        //             <span
+        //               key={i}
+        //               className="inline-flex items-center gap-1 bg-white border border-gray-150 rounded-xl p-2 text-xs font-medium text-slate-800"
+        //             >
+        //               📄 {file}
+        //             </span>
+        //           ))}
+        //         </div>
+        //       </div>
+        //     )}
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6.5 pt-4 border-t border-gray-55/40">
-              <div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold block">
-                  Budget Value
-                </span>
-                <span className="text-sm font-extrabold text-gray-800 block mt-1 font-mono">
-                  {formatCurrency(amount)}
-                </span>
-              </div>
-              <div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold block">
-                  Due Deadline
-                </span>
-                <span className="text-xs font-bold text-gray-800 block mt-1">
-                  {deadline || "No select deadline"}
-                </span>
-              </div>
-              <div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold block">
-                  Fee distribution
-                </span>
-                <span className="text-xs font-bold text-brand-primary block mt-1 capitalize">
-                  {feePayer}
-                </span>
-              </div>
-              <div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold block">
-                  Escrow Fee (3%)
-                </span>
-                <span className="text-xs font-bold text-[#854d0e] block mt-1 font-mono">
-                  {formatCurrency(amount * 0.03)}
-                </span>
-              </div>
-            </div>
+        //     <div className="grid grid-cols-2 md:grid-cols-4 gap-6.5 pt-4 border-t border-gray-55/40">
+        //       <div>
+        //         <span className="text-[10px] text-gray-400 uppercase font-bold block">
+        //           Budget Value
+        //         </span>
+        //         <span className="text-sm font-extrabold text-gray-800 block mt-1 font-mono">
+        //           {formatCurrency(amount)}
+        //         </span>
+        //       </div>
+        //       <div>
+        //         <span className="text-[10px] text-gray-400 uppercase font-bold block">
+        //           Due Deadline
+        //         </span>
+        //         <span className="text-xs font-bold text-gray-800 block mt-1">
+        //           {deadline || "No select deadline"}
+        //         </span>
+        //       </div>
+        //       <div>
+        //         <span className="text-[10px] text-gray-400 uppercase font-bold block">
+        //           Fee distribution
+        //         </span>
+        //         <span className="text-xs font-bold text-brand-primary block mt-1 capitalize">
+        //           {feePayer}
+        //         </span>
+        //       </div>
+        //       <div>
+        //         <span className="text-[10px] text-gray-400 uppercase font-bold block">
+        //           Escrow Fee (3%)
+        //         </span>
+        //         <span className="text-xs font-bold text-[#854d0e] block mt-1 font-mono">
+        //           {formatCurrency(amount * 0.03)}
+        //         </span>
+        //       </div>
+        //     </div>
 
-            {hasMilestones && milestones.length > 0 && (
-              <div className="pt-4 border-t border-gray-55/40">
-                <span className="text-[10px] text-gray-400 uppercase font-bold block mb-2.5">
-                  Configured Milestones Phases ({milestones.length})
-                </span>
-                <div className="space-y-2">
-                  {milestones.map((m, i) => (
-                    <div
-                      key={m.id}
-                      className="bg-white p-3 rounded-xl border border-gray-100 flex flex-col gap-1.5 text-xs"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-gray-900 font-sans">
-                            Phase {i + 1}: {m.title}
-                          </span>
-                          <span className="text-[10px] text-gray-400 mt-0.5">
-                            Due {m.deadline}
-                          </span>
-                        </div>
-                        <span className="font-bold text-gray-800 font-mono bg-gray-50 px-2.5 py-1 rounded border border-gray-100">
-                          {formatCurrency(m.amount)}
-                        </span>
-                      </div>
-                      {m.deliveryFiles && m.deliveryFiles.length > 0 ? (
-                        <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-gray-550 border-t border-gray-100 pt-1.5">
-                          <span>📎 Attached Files:</span>
-                          {m.deliveryFiles.map((file, fIdx) => (
-                            <span
-                              key={fIdx}
-                              className="font-mono bg-gray-55/40 text-gray-700 px-1.5 py-0.5 rounded text-[9px]"
-                            >
-                              {file}
-                            </span>
-                          ))}
-                        </div>
-                      ) : m.deliveryFile ? (
-                        <div className="flex items-center gap-1 text-[10px] text-gray-550 border-t border-gray-100 pt-1.5">
-                          <span>📎 Attached File:</span>
-                          <span className="font-mono bg-gray-55/40 text-gray-700 px-1.5 py-0.5 rounded text-[9px]">
-                            {m.deliveryFile}
-                          </span>
-                        </div>
-                      ) : null}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+        //     {hasMilestones && milestones.length > 0 && (
+        //       <div className="pt-4 border-t border-gray-55/40">
+        //         <span className="text-[10px] text-gray-400 uppercase font-bold block mb-2.5">
+        //           Configured Milestones Phases ({milestones.length})
+        //         </span>
+        //         <div className="space-y-2">
+        //           {milestones.map((m, i) => (
+        //             <div
+        //               key={m.id}
+        //               className="bg-white p-3 rounded-xl border border-gray-100 flex flex-col gap-1.5 text-xs"
+        //             >
+        //               <div className="flex items-center justify-between">
+        //                 <div className="flex flex-col">
+        //                   <span className="font-semibold text-gray-900 font-sans">
+        //                     Phase {i + 1}: {m.title}
+        //                   </span>
+        //                   <span className="text-[10px] text-gray-400 mt-0.5">
+        //                     Due {m.deadline}
+        //                   </span>
+        //                 </div>
+        //                 <span className="font-bold text-gray-800 font-mono bg-gray-50 px-2.5 py-1 rounded border border-gray-100">
+        //                   {formatCurrency(m.amount)}
+        //                 </span>
+        //               </div>
+        //               {m.deliveryFiles && m.deliveryFiles.length > 0 ? (
+        //                 <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-gray-550 border-t border-gray-100 pt-1.5">
+        //                   <span>📎 Attached Files:</span>
+        //                   {m.deliveryFiles.map((file, fIdx) => (
+        //                     <span
+        //                       key={fIdx}
+        //                       className="font-mono bg-gray-55/40 text-gray-700 px-1.5 py-0.5 rounded text-[9px]"
+        //                     >
+        //                       {file}
+        //                     </span>
+        //                   ))}
+        //                 </div>
+        //               ) : m.deliveryFile ? (
+        //                 <div className="flex items-center gap-1 text-[10px] text-gray-550 border-t border-gray-100 pt-1.5">
+        //                   <span>📎 Attached File:</span>
+        //                   <span className="font-mono bg-gray-55/40 text-gray-700 px-1.5 py-0.5 rounded text-[9px]">
+        //                     {m.deliveryFile}
+        //                   </span>
+        //                 </div>
+        //               ) : null}
+        //             </div>
+        //           ))}
+        //         </div>
+        //       </div>
+        //     )}
 
-            <div className="pt-4 border-t border-gray-55/40 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold block">
-                  Counterparty Info
-                </span>
-                <span className="text-xs font-bold text-gray-800 block mt-1">
-                  {otherName} ({otherRole})
-                </span>
-                <span className="text-[10px] text-gray-400 font-medium block mt-0.5 font-mono">
-                  {otherEmail}
-                </span>
-              </div>
-              <div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold block">
-                  Owner Role
-                </span>
-                <span className="text-xs font-bold text-gray-800 block mt-1">
-                  {session?.firstName || "" + session?.lastName || ""} (Creator)
-                </span>
-                <span className="text-[10px] text-brand-neutral block mt-0.5 capitalize">
-                  {/* {currentUser.role}  */}
-                  and funding initiator
-                </span>
-              </div>
-            </div>
-          </div>
+        //     <div className="pt-4 border-t border-gray-55/40 grid grid-cols-1 md:grid-cols-2 gap-4">
+        //       <div>
+        //         <span className="text-[10px] text-gray-400 uppercase font-bold block">
+        //           Counterparty Info
+        //         </span>
+        //         <span className="text-xs font-bold text-gray-800 block mt-1">
+        //           {otherName} ({otherRole})
+        //         </span>
+        //         <span className="text-[10px] text-gray-400 font-medium block mt-0.5 font-mono">
+        //           {otherEmail}
+        //         </span>
+        //       </div>
+        //       <div>
+        //         <span className="text-[10px] text-gray-400 uppercase font-bold block">
+        //           Owner Role
+        //         </span>
+        //         <span className="text-xs font-bold text-gray-800 block mt-1">
+        //           {session?.firstName || "" + session?.lastName || ""} (Creator)
+        //         </span>
+        //         <span className="text-[10px] text-brand-neutral block mt-0.5 capitalize">
+        //           {/* {currentUser.role}  */}
+        //           and funding initiator
+        //         </span>
+        //       </div>
+        //     </div>
+        //   </div>
 
-          <div className="pt-4 flex justify-between">
-            <button
-              type="button"
-              onClick={() => {
-                nextStep(3);
-                // setStep(3)
-              }}
-              className="px-5 py-3 border border-gray-200 text-gray-600 rounded-xl text-xs font-semibold hover:bg-gray-50 transition"
-            >
-              Modify
-            </button>
+        //   <div className="pt-4 flex justify-between">
+        //     <button
+        //       type="button"
+        //       onClick={() => {
+        //         nextStep(3);
+        //         // setStep(3)
+        //       }}
+        //       className="px-5 py-3 border border-gray-200 text-gray-600 rounded-xl text-xs font-semibold hover:bg-gray-50 transition"
+        //     >
+        //       Modify
+        //     </button>
 
-            <button
-              onClick={handleFinalSubmit}
-              className="bg-brand-primary text-white text-xs font-bold rounded-xl px-6 py-3.5 transition flex items-center gap-2 cursor-pointer"
-            >
-              Create Contract
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        //     <button
+        //       onClick={handleFinalSubmit}
+        //       className="bg-brand-primary text-white text-xs font-bold rounded-xl px-6 py-3.5 transition flex items-center gap-2 cursor-pointer"
+        //     >
+        //       Create Contract
+        //       <ArrowRight className="w-4 h-4" />
+        //     </button>
+        //   </div>
+        // </div>>
+
+        <ProjectStepFour />
       )}
 
       {/* STEP 5: LINK GENERATION FLOW */}
