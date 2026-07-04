@@ -31,16 +31,16 @@ import {
 export default function StepTwo() {
   const navigate = useRouter();
   const dispatch = useAppDispatch();
-  const transactionData = useAppSelector(
-    (state) => state.createTransaction,
-  ) as ITransaction;
+  // const transactionData = useAppSelector(
+  //   (state) => state.createTransaction,
+  // ) as ITransaction;
   const nextBtnRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const attachmentFiles = useMemo(
-    () => normalizeAttachments(transactionData?.attachment),
-    [transactionData?.attachment],
-  );
+  // const attachmentFiles = useMemo(
+  //   () => normalizeAttachments(transactionData?.attachment),
+  //   [transactionData?.attachment],
+  // );
 
   const {
     handleSubmit,
@@ -51,114 +51,114 @@ export default function StepTwo() {
     resolver: zodResolver(stage2TicketSchema),
   });
 
-  const syncAttachments = (nextAttachments: typeof attachmentFiles) => {
-    dispatch(
-      setTransactionDetails({
-        attachment: nextAttachments,
-      }),
-    );
+  // const syncAttachments = (nextAttachments: typeof attachmentFiles) => {
+  //   dispatch(
+  //     setTransactionDetails({
+  //       attachment: nextAttachments,
+  //     }),
+  //   );
 
-    setValue("attachment", attachmentsToFiles(nextAttachments), {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-  };
+  //   setValue("attachment", attachmentsToFiles(nextAttachments), {
+  //     shouldDirty: true,
+  //     shouldValidate: true,
+  //   });
+  // };
 
-  const onSubmit = async (data: IStage2TicketSchema) => {
-    const serializedAttachments = await serializeFilesToAttachments(
-      data.attachment,
-    );
+  // const onSubmit = async (data: IStage2TicketSchema) => {
+  //   const serializedAttachments = await serializeFilesToAttachments(
+  //     data.attachment,
+  //   );
 
-    dispatch(
-      setTransactionDetails({
-        ...data,
-        attachment: serializedAttachments,
-      }),
-    );
+  //   dispatch(
+  //     setTransactionDetails({
+  //       ...data,
+  //       attachment: serializedAttachments,
+  //     }),
+  //   );
 
-    navigate.push("generate-link?step=3");
-  };
+  //   navigate.push("generate-link?step=3");
+  // };
 
-  const handleAttachment = async (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+  // const handleAttachment = async (event: ChangeEvent<HTMLInputElement>) => {
+  //   const files = event.target.files;
 
-    const fileCheckResult = isFileAcceptedSize(files);
-    if (fileCheckResult && fileCheckResult.error) {
-      toast.error(fileCheckResult.msg);
-      return;
-    }
+  //   const fileCheckResult = isFileAcceptedSize(files);
+  //   if (fileCheckResult && fileCheckResult.error) {
+  //     toast.error(fileCheckResult.msg);
+  //     return;
+  //   }
 
-    if (files instanceof FileList) {
-      const fileArray = Array.from(files);
-      const existingAttachments = attachmentFiles;
-      const incomingAttachments = await serializeFilesToAttachments(fileArray);
-      const mergedAttachments = [...existingAttachments];
+  //   if (files instanceof FileList) {
+  //     const fileArray = Array.from(files);
+  //     const existingAttachments = attachmentFiles;
+  //     const incomingAttachments = await serializeFilesToAttachments(fileArray);
+  //     const mergedAttachments = [...existingAttachments];
 
-      incomingAttachments.forEach((attachment) => {
-        const isDuplicate = mergedAttachments.some((existingAttachment) =>
-          isSameAttachment(existingAttachment, attachment),
-        );
+  //     incomingAttachments.forEach((attachment) => {
+  //       const isDuplicate = mergedAttachments.some((existingAttachment) =>
+  //         isSameAttachment(existingAttachment, attachment),
+  //       );
 
-        if (!isDuplicate) {
-          mergedAttachments.push(attachment);
-        }
-      });
+  //       if (!isDuplicate) {
+  //         mergedAttachments.push(attachment);
+  //       }
+  //     });
 
-      try {
-        syncAttachments(mergedAttachments);
-        event.target.value = "";
-      } catch (err) {
-        toast.error("Error converting files");
-      }
-    }
-  };
+  //     try {
+  //       syncAttachments(mergedAttachments);
+  //       event.target.value = "";
+  //     } catch (err) {
+  //       toast.error("Error converting files");
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    setValue("amount", transactionData.amount);
+  // useEffect(() => {
+  //   setValue("amount", transactionData.amount);
 
-    if (
-      transactionData.transactionType === "PHYSICAL_PRODUCT" ||
-      transactionData.transactionType === "ONLINE_PRODUCT" ||
-      transactionData.transactionType === "SERVICE"
-    ) {
-      setValue("transactionType", transactionData.transactionType);
-    }
-    setValue(
-      "transaction_description",
-      transactionData.transaction_description,
-    );
-    setValue("attachment", attachmentsToFiles(attachmentFiles));
-  }, [
-    attachmentFiles,
-    setValue,
-    transactionData.amount,
-    transactionData.transactionType,
-    transactionData.transaction_description,
-  ]);
+  //   if (
+  //     transactionData.transactionType === "PHYSICAL_PRODUCT" ||
+  //     transactionData.transactionType === "ONLINE_PRODUCT" ||
+  //     transactionData.transactionType === "SERVICE"
+  //   ) {
+  //     setValue("transactionType", transactionData.transactionType);
+  //   }
+  //   setValue(
+  //     "transaction_description",
+  //     transactionData.transaction_description,
+  //   );
+  //   setValue("attachment", attachmentsToFiles(attachmentFiles));
+  // }, [
+  //   attachmentFiles,
+  //   setValue,
+  //   transactionData.amount,
+  //   transactionData.transactionType,
+  //   transactionData.transaction_description,
+  // ]);
 
-  const handleClearFile = () => {
-    syncAttachments([]);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+  // const handleClearFile = () => {
+  //   syncAttachments([]);
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.value = "";
+  //   }
+  // };
 
-  const handleRemoveAttachment = (indexToRemove: number) => {
-    const nextAttachments = attachmentFiles.filter(
-      (_file, index) => index !== indexToRemove,
-    );
+  // const handleRemoveAttachment = (indexToRemove: number) => {
+  //   const nextAttachments = attachmentFiles.filter(
+  //     (_file, index) => index !== indexToRemove,
+  //   );
 
-    syncAttachments(nextAttachments);
+  //   syncAttachments(nextAttachments);
 
-    if (nextAttachments.length === 0 && fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+  //   if (nextAttachments.length === 0 && fileInputRef.current) {
+  //     fileInputRef.current.value = "";
+  //   }
+  // };
   return (
     <section className="flex flex-col h-full w-full overflow-y-auto py-6 scroll-smooth">
       <h1 className="font-bold text-lg">Transaction Details</h1>
       <h3>All information about the transaction.</h3>
-      <form
+      {/* <form
         ref={nextBtnRef}
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-4 mt-6"
@@ -270,9 +270,9 @@ export default function StepTwo() {
             {errors.transactionType.message}
           </small>
         )}
-      </form>
+      </form> */}
 
-      <div className="flex justify-between w-full h-fit mt-10">
+      {/* <div className="flex justify-between w-full h-fit mt-10">
         <PrimaryButton
           onClick={() => navigate.push("generate-link")}
           className="bg-white text-brand-primary border-2 cursor-pointer border-brand-primary text-lg w-36"
@@ -291,7 +291,7 @@ export default function StepTwo() {
             Next <IoMdArrowBack className="rotate-180" />
           </span>
         </SecondaryButton>
-      </div>
+      </div> */}
     </section>
   );
 }

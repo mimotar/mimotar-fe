@@ -37,31 +37,29 @@ export default function StepThree() {
 
   const onSubmit = (data: IStage3TicketSchema) => {
     console.log(data);
-    dispatch(setTransactionDetails(data));
+    // dispatch(setTransactionDetails(data));
     navigate.push("generate-link?step=4");
   };
 
   useEffect(() => {
-    setValue("additional_agreement", transactionData.additional_agreement);
-    setValue("expiresAt", transactionData.expiresAt!);
-    setValue("inspection_duration", transactionData.inspection_duration);
-    if (
-      transactionData.pay_escrow_fee === "BOTH" ||
-      transactionData.pay_escrow_fee === "BUYER" ||
-      transactionData.pay_escrow_fee === "SELLER"
-    ) {
-      setValue("pay_escrow_fee", transactionData.pay_escrow_fee);
-    }
-
-    if (
-      transactionData.pay_shipping_cost === "BOTH" ||
-      transactionData.pay_shipping_cost === "BUYER" ||
-      transactionData.pay_shipping_cost === "SELLER"
-    ) {
-      setValue("pay_shipping_cost", transactionData.pay_shipping_cost);
-    }
-
-    setValue("terms", transactionData.terms);
+    // setValue("additional_agreement", transactionData.additional_agreement);
+    // setValue("expiresAt", transactionData.expiresAt!);
+    // setValue("inspection_duration", transactionData.inspection_duration);
+    // if (
+    //   transactionData.pay_escrow_fee === "BOTH" ||
+    //   transactionData.pay_escrow_fee === "BUYER" ||
+    //   transactionData.pay_escrow_fee === "SELLER"
+    // ) {
+    //   setValue("pay_escrow_fee", transactionData.pay_escrow_fee);
+    // }
+    // if (
+    //   transactionData.pay_shipping_cost === "BOTH" ||
+    //   transactionData.pay_shipping_cost === "BUYER" ||
+    //   transactionData.pay_shipping_cost === "SELLER"
+    // ) {
+    //   setValue("pay_shipping_cost", transactionData.pay_shipping_cost);
+    // }
+    // setValue("terms", transactionData.terms);
   }, [transactionData, setValue]);
   return (
     <section className="flex flex-col w-full h-screen">
