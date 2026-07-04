@@ -32,7 +32,7 @@ export default function StepOne() {
 
   const onSubmit = (data: IStage1TicketSchema) => {
     console.log(data);
-    dispatch(setTransactionDetails(data));
+    // dispatch(setTransactionDetails(data));
     navigate.push("generate-link?step=2");
   };
 
@@ -44,9 +44,9 @@ export default function StepOne() {
     setValue("creator_email", transactionData.creator_email);
     setValue("creator_fullname", transactionData.creator_fullname);
     setValue("creator_no", transactionData.creator_no);
-    if (role === "SELLER" || role === "BUYER") {
-      setValue("creator_role", role);
-    }
+    // if (role === "SELLER" || role === "BUYER") {
+    //   setValue("creator_role", role);
+    // }
   }, [transactionData, setValue]);
 
   return (

@@ -227,7 +227,7 @@ const EditProfileInfoFormSection = () => {
               type="email"
               id="email"
               // {...register("email")}
-              value={session?.user.email}
+              // value={session?.user.email}
               placeholder="olawaleade@gmail.com"
               className="border border-neutral-400 p-3 outline-none rounded-md "
             />

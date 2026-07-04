@@ -81,16 +81,16 @@ export default function StepFour() {
     setValue("receiver_fullname", transactionData.receiver_fullname);
     setValue("receiver_no", transactionData.receiver_no);
     setValue("reciever_email", transactionData.reciever_email);
-    if (
-      transactionData.reciever_role === "BUYER" ||
-      transactionData.reciever_role === "SELLER"
-    ) {
-      setValue("reciever_role", transactionData.reciever_role);
-    }
+    // if (
+    //   transactionData.reciever_role === "BUYER" ||
+    //   transactionData.reciever_role === "SELLER"
+    // ) {
+    //   setValue("reciever_role", transactionData.reciever_role);
+    // }
   }, [transactionData, setValue]);
 
   const onSubmit = async (data: IStage4TicketSchema) => {
-    dispatch(setTransactionDetails(data));
+    // dispatch(setTransactionDetails(data));
 
     const attachmentFiles = attachmentsToFiles(
       normalizeAttachments(transactionData?.attachment),

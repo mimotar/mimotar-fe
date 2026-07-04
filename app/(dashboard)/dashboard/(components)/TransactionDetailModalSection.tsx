@@ -26,15 +26,15 @@ import {
 import { ITransaction } from "@/app/types.ts/ICreateTransaction";
 
 export default function TransactionDetailModalSection() {
-  const transactionData = useAppSelector(
-    (state) => state.createTransaction,
-  ) as ITransaction;
+  // const transactionData = useAppSelector(
+  //   (state) => state.createTransaction,
+  // ) as ITransaction;
   const dispatch = useAppDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const attachmentFiles = useMemo(
-    () => normalizeAttachments(transactionData?.attachment),
-    [transactionData?.attachment],
-  );
+  // const attachmentFiles = useMemo(
+  //   () => normalizeAttachments(transactionData?.attachment),
+  //   [transactionData?.attachment],
+  // );
   const {
     register,
     handleSubmit,
@@ -44,103 +44,103 @@ export default function TransactionDetailModalSection() {
     resolver: zodResolver(stage2TicketSchema),
   });
 
-  const syncAttachments = (nextAttachments: typeof attachmentFiles) => {
-    dispatch(
-      setTransactionDetails({
-        attachment: nextAttachments,
-      }),
-    );
+  // const syncAttachments = (nextAttachments: typeof attachmentFiles) => {
+  //   dispatch(
+  //     setTransactionDetails({
+  //       attachment: nextAttachments,
+  //     }),
+  //   );
 
-    setValue("attachment", attachmentsToFiles(nextAttachments), {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-  };
+  //   setValue("attachment", attachmentsToFiles(nextAttachments), {
+  //     shouldDirty: true,
+  //     shouldValidate: true,
+  //   });
+  // };
 
-  const handleAttachment = async (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+  // const handleAttachment = async (event: ChangeEvent<HTMLInputElement>) => {
+  //   const files = event.target.files;
 
-    const fileCheckResult = isFileAcceptedSize(files);
-    if (fileCheckResult && fileCheckResult.error) {
-      toast.error(fileCheckResult.msg);
-      return;
-    }
+  //   const fileCheckResult = isFileAcceptedSize(files);
+  //   if (fileCheckResult && fileCheckResult.error) {
+  //     toast.error(fileCheckResult.msg);
+  //     return;
+  //   }
 
-    if (files instanceof FileList) {
-      const fileArray = Array.from(files);
-      const incomingAttachments = await serializeFilesToAttachments(fileArray);
-      const mergedAttachments = [...attachmentFiles];
+  //   if (files instanceof FileList) {
+  //     const fileArray = Array.from(files);
+  //     const incomingAttachments = await serializeFilesToAttachments(fileArray);
+  //     const mergedAttachments = [...attachmentFiles];
 
-      incomingAttachments.forEach((attachment) => {
-        const isDuplicate = mergedAttachments.some((existingAttachment) =>
-          isSameAttachment(existingAttachment, attachment),
-        );
+  //     incomingAttachments.forEach((attachment) => {
+  //       const isDuplicate = mergedAttachments.some((existingAttachment) =>
+  //         isSameAttachment(existingAttachment, attachment),
+  //       );
 
-        if (!isDuplicate) {
-          mergedAttachments.push(attachment);
-        }
-      });
+  //       if (!isDuplicate) {
+  //         mergedAttachments.push(attachment);
+  //       }
+  //     });
 
-      syncAttachments(mergedAttachments);
-      event.target.value = "";
-    }
-  };
+  //     syncAttachments(mergedAttachments);
+  //     event.target.value = "";
+  //   }
+  // };
 
-  const handleNext = async (data: IStage2TicketSchema) => {
-    const serializedAttachments = await serializeFilesToAttachments(
-      data.attachment,
-    );
+  // const handleNext = async (data: IStage2TicketSchema) => {
+  //   const serializedAttachments = await serializeFilesToAttachments(
+  //     data.attachment,
+  //   );
 
-    dispatch(
-      setTransactionDetails({
-        ...data,
-        attachment: serializedAttachments,
-      }),
-    );
-    dispatch(setStage(2));
-  };
+  //   dispatch(
+  //     setTransactionDetails({
+  //       ...data,
+  //       attachment: serializedAttachments,
+  //     }),
+  //   );
+  //   dispatch(setStage(2));
+  // };
 
-  useEffect(() => {
-    setValue("amount", transactionData.amount);
+  // useEffect(() => {
+  //   setValue("amount", transactionData.amount);
 
-    if (
-      transactionData.transactionType === "PHYSICAL_PRODUCT" ||
-      transactionData.transactionType === "ONLINE_PRODUCT" ||
-      transactionData.transactionType === "SERVICE"
-    ) {
-      setValue("transactionType", transactionData.transactionType);
-    }
-    setValue(
-      "transaction_description",
-      transactionData.transaction_description,
-    );
-    setValue("attachment", attachmentsToFiles(attachmentFiles));
-  }, [
-    attachmentFiles,
-    setValue,
-    transactionData.amount,
-    transactionData.transactionType,
-    transactionData.transaction_description,
-  ]);
+  //   if (
+  //     transactionData.transactionType === "PHYSICAL_PRODUCT" ||
+  //     transactionData.transactionType === "ONLINE_PRODUCT" ||
+  //     transactionData.transactionType === "SERVICE"
+  //   ) {
+  //     setValue("transactionType", transactionData.transactionType);
+  //   }
+  //   setValue(
+  //     "transaction_description",
+  //     transactionData.transaction_description,
+  //   );
+  //   setValue("attachment", attachmentsToFiles(attachmentFiles));
+  // }, [
+  //   attachmentFiles,
+  //   setValue,
+  //   transactionData.amount,
+  //   transactionData.transactionType,
+  //   transactionData.transaction_description,
+  // ]);
 
-  const handleClearFile = () => {
-    syncAttachments([]);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+  // const handleClearFile = () => {
+  //   syncAttachments([]);
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.value = "";
+  //   }
+  // };
 
-  const handleRemoveAttachment = (indexToRemove: number) => {
-    const nextAttachments = attachmentFiles.filter(
-      (_file, index) => index !== indexToRemove,
-    );
+  // const handleRemoveAttachment = (indexToRemove: number) => {
+  //   const nextAttachments = attachmentFiles.filter(
+  //     (_file, index) => index !== indexToRemove,
+  //   );
 
-    syncAttachments(nextAttachments);
+  //   syncAttachments(nextAttachments);
 
-    if (nextAttachments.length === 0 && fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+  //   if (nextAttachments.length === 0 && fileInputRef.current) {
+  //     fileInputRef.current.value = "";
+  //   }
+  // };
 
   return (
     <section className="flex flex-col mx-auto sm:w-[580px] w-[95%]">
@@ -153,7 +153,7 @@ export default function TransactionDetailModalSection() {
 
       <div className="flex flex-col h-full w-full mt-6">
         <form
-          onSubmit={handleSubmit(handleNext)}
+          // onSubmit={handleSubmit(handleNext)}
           className="flex flex-col 2xl:gap-8 gap-4"
         >
           <div className="flex flex-col">
@@ -191,13 +191,13 @@ export default function TransactionDetailModalSection() {
             <div className="flex flex-col">
               <input
                 ref={fileInputRef}
-                onChange={handleAttachment}
+                // onChange={handleAttachment}
                 type="file"
                 multiple
                 accept=".png,.jpg,.jpeg,.pdf"
                 className="border rounded-md p-2 border-brand-primary"
               />
-              <small className="inline-flex gap-2 mt-2 flex-wrap">
+              {/* <small className="inline-flex gap-2 mt-2 flex-wrap">
                 {attachmentFiles.map((attachment, key) => {
                   const isImage = attachment.type.startsWith("image/");
 
@@ -229,11 +229,11 @@ export default function TransactionDetailModalSection() {
                     </div>
                   );
                 })}
-              </small>
+              </small> */}
             </div>
 
             <button
-              onClick={handleClearFile}
+              // onClick={handleClearFile}
               type="button"
               className="rounded-md text-white self-start bg-brand-secondary hover:bg-brand-secondary/80 cursor-pointer p-2"
             >

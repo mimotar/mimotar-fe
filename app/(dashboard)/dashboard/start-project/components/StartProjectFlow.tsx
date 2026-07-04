@@ -653,7 +653,7 @@ export default function StartProjectFlow() {
 
                 <div className="space-y-0.5">
                   <h4 className="text-xs font-bold text-gray-800 line-clamp-1">
-                    {milestoneAddedSuccess.title}
+                    {/* {milestoneAddedSuccess.title} */}
                   </h4>
                   <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-semibold mt-1">
                     <span>📅 Deadline: {milestoneAddedSuccess.deadline}</span>
