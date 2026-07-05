@@ -1,29 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import SignIn from "./components/SignIn";
 import Login from "./components/Login";
 import UserOtp from "./components/Otp";
 
+type AuthPage = "login" | "signup" | "otp";
+
 export default function Page() {
   const searchParams = useSearchParams();
 
-  const activePage =
-    (searchParams.get("auth") as "login" | "signup" | "otp" | null) ?? "signup";
-
-  const [mode, setMode] = useState<"login" | "signup" | "otp">(() => {
-    return activePage === "login" ? "login" : "signup";
-  });
-
-  useEffect(() => {
-    if (activePage === "login") {
-      setMode("login");
-    } else if (activePage === "signup") {
-      setMode("signup");
-    }
-  }, [activePage]);
+  const mode: AuthPage =
+    (searchParams.get("auth") as AuthPage | null) ?? "signup";
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans animate-fade-in">
