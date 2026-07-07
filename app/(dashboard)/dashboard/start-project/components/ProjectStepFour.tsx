@@ -59,11 +59,12 @@ export default function ProjectStepFour() {
       attachment: ticket.attachment,
       close_deadline: new Date(ticket.close_deadline),
       currency: ticket.currency,
-      milestones: ticket.milestones?.map((milestone) => ({
-        name: milestone.name,
-        deadline: milestone.deadline,
-        amount: milestone.amount,
-      })) ?? [],
+      milestones:
+        ticket.milestones?.map((milestone) => ({
+          name: milestone.name,
+          deadline: milestone.deadline,
+          amount: milestone.amount,
+        })) ?? [],
       pay_escrow_fee: ticket.pay_escrow_fee,
       title: ticket.title,
       transaction_description: ticket.transaction_description,
@@ -113,7 +114,7 @@ export default function ProjectStepFour() {
         toast.success(
           "Transaction created successfully! The other party has been notified to review and approve or reject the transaction.",
         );
-        nextStep(5);
+        // nextStep(5);
       },
 
       onError: (error) => {
