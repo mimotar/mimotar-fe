@@ -47,6 +47,7 @@ export default function ProjectStepFour() {
       counterpartyPhone: ticket.receiver_no,
       counterpartyName: ticket.receiver_fullname,
       counterpartyRole: ticket.reciever_role ?? "CLIENT",
+      counterpartyAddress: ticket.receiver_address || "",
 
       creator_address: session?.address ?? "",
       creator_email: session?.email ?? "",
@@ -55,9 +56,19 @@ export default function ProjectStepFour() {
       creator_no: session?.phone_no ?? "",
       creator_role: ticket.reciever_role === "CLIENT" ? "FREELANCER" : "CLIENT",
 
+      expiresAt: Number(ticket.expiresAt),
+      transactionType: (ticket.milestones.length > 0
+        ? "MILESTONE_BASED_PROJECT"
+        : ticket.transactionType) as
+        | "PHYSICAL_PRODUCT"
+        | "ONLINE_PRODUCT"
+        | "SERVICE"
+        | "RENTAL"
+        | "MILESTONE_BASED_PROJECT",
+
       amount: ticket.amount,
-      attachment: ticket.attachment,
-      close_deadline: new Date(ticket.close_deadline),
+      files: ticket.files,
+      deadline: new Date(ticket.deadline),
       currency: ticket.currency,
       milestones:
         ticket.milestones?.map((milestone) => ({
@@ -67,7 +78,10 @@ export default function ProjectStepFour() {
         })) ?? [],
       pay_escrow_fee: ticket.pay_escrow_fee,
       title: ticket.title,
+
       transaction_description: ticket.transaction_description,
+
+      inspection_duration: ticket.inspection_duration,
     };
 
     const result = createTransactionSchema.safeParse(formValidationSchema);
@@ -78,7 +92,7 @@ export default function ProjectStepFour() {
       errors.title ||
       errors.amount ||
       errors.transaction_description ||
-      errors.close_deadline
+      errors.deadline
     ) {
       nextStep(1);
       return;
@@ -154,13 +168,13 @@ export default function ProjectStepFour() {
           </p>
         </div>
 
-        {ticket.attachment.length > 0 && (
+        {ticket.files.length > 0 && (
           <div>
             <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
               Contracts guidance attachments
             </span>
             <div className="flex flex-wrap gap-2 mt-2">
-              {ticket.attachment.map((file, i) => (
+              {ticket.files.map((file, i) => (
                 <span
                   key={i}
                   className="inline-flex items-center gap-1 bg-white border border-gray-150 rounded-xl p-2 text-xs font-medium text-slate-800"
@@ -189,8 +203,8 @@ export default function ProjectStepFour() {
               Due Deadline
             </span>
             <span className="text-xs font-bold text-gray-800 block mt-1">
-              {ticket.close_deadline
-                ? format(new Date(ticket.close_deadline), "MMMM d, yyyy")
+              {ticket.deadline
+                ? format(new Date(ticket.deadline), "MMMM d, yyyy")
                 : "No selected deadline"}
             </span>
           </div>

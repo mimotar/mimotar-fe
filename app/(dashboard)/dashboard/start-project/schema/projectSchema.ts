@@ -52,9 +52,7 @@ export const stepOneSchema = z.object({
     .min(1, "Title is required")
     .max(255, "Title cannot exceed 255 characters"),
 
-  attachment: z
-    .array(attachmentSchema)
-    .min(1, "Please upload at least one file"),
+  files: z.array(attachmentSchema).min(1, "Please upload at least one file"),
 
   pay_escrow_fee: z
     .enum(["CLIENT", "FREELANCER", "BOTH"])
@@ -75,7 +73,17 @@ export const stepOneSchema = z.object({
     })
     .positive("Amount must be greater than 0"),
 
-  close_deadline: z.coerce.date(),
+  deadline: z.coerce.date(),
+  expiresAt: z.number().positive("Amount must be greater than 0"),
+  transactionType: z.enum([
+    "PHYSICAL_PRODUCT",
+    "ONLINE_PRODUCT",
+    "SERVICE",
+    "RENTAL",
+    "MILESTONE_BASED_PROJECT",
+  ]),
+
+  inspection_duration: z.number().positive("Amount must be greater than 0"),
 });
 
 // export type StepOneForm = z.infer<typeof stepOneSchema>;
@@ -122,7 +130,7 @@ export type IMilestones = z.infer<typeof MilestonesSchema>;
 
 // flow 3
 export const stepThreeSchema = z.object({
-  counterpartyRole: z.enum(["CLIENT", "FREELANCER"]),
+  counterpartyRole: z.enum(["CLIENT", "FREELANCER", "BUYER", "SELLER"]),
 
   counterpartyName: z
     .string()
@@ -143,6 +151,26 @@ export const stepThreeSchema = z.object({
     .refine((value) => !value || /^[+]?[0-9\s()-]{7,20}$/.test(value), {
       message: "Please enter a valid phone number",
     }),
+
+  counterpartyAddress: z
+    .string()
+    .trim()
+    .min(1, "Creator Address is required")
+    .max(400, "Creator Address cannot exceed 400 characters"),
+
+  //creator
+  creator_no: z
+    .string()
+    .trim()
+    .refine((value) => !value || /^[+]?[0-9\s()-]{7,20}$/.test(value), {
+      message: "Please enter a valid phone number",
+    }),
+
+  creator_address: z
+    .string()
+    .trim()
+    .min(1, "Creator Address is required")
+    .max(400, "Creator Address cannot exceed 400 characters"),
 });
 
 export type StepThreeForm = z.infer<typeof stepThreeSchema>;
