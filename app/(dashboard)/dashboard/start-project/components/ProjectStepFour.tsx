@@ -128,7 +128,7 @@ export default function ProjectStepFour() {
         toast.success(
           "Transaction created successfully! The other party has been notified to review and approve or reject the transaction.",
         );
-        // nextStep(5);
+        nextStep(5);
       },
 
       onError: (error) => {
