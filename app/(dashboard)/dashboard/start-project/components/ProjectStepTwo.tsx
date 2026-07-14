@@ -13,7 +13,6 @@ import {
   setTransactionDetails,
 } from "@/lib/slices/createTransactionslice";
 import toast from "react-hot-toast";
-import { set } from "date-fns";
 
 export default function ProjectStepTwo() {
   const [hasMilestones, setHasMilestones] = useState(false);
@@ -46,7 +45,6 @@ export default function ProjectStepTwo() {
   const persistedMilestonesAttachment = !persistedMilestones
     ? []
     : persistedMilestones?.flatMap((m) => m.files ?? []);
-  console.log("persisted attachments", persistedMilestonesAttachment);
 
   const handleAddMilestone = () => {
     setMilestoneError(null);
@@ -105,6 +103,15 @@ export default function ProjectStepTwo() {
   };
 
   const handleProceedToSummary = () => {
+    if (
+      ticket.transactionType === "MILESTONE_BASED_PROJECT" &&
+      persistedMilestones.length === 0
+    ) {
+      toast.error(
+        "When transaction type is MILESTONE_BASED_PROJECT, Milestone Must be added",
+      );
+      return;
+    }
     console.log("form data", persistedMilestones);
     if (hasMilestones) {
       if (persistedMilestones.length === 0) {

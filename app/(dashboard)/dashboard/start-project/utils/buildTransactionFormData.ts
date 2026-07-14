@@ -7,14 +7,19 @@ export function buildTransactionFormData(ticket: ITicket, session: Session) {
   const formData = new FormData();
 
   // Creator
-  formData.append("creator_address", session?.user.address ?? "");
+  formData.append(
+    "creator_address",
+    session?.user.address?.trim() || ticket.creator_address?.trim() || "",
+  );
   formData.append("creator_email", session?.user.email ?? "");
   formData.append(
     "creator_fullname",
     `${session?.user.firstName ?? ""} ${session?.user.lastName ?? ""}`.trim(),
   );
-  formData.append("creator_no", session?.user.phone_no ?? "");
-
+  formData.append(
+    "creator_no",
+    session?.user.phone_no?.trim() || ticket.creator_no?.trim() || "",
+  );
   formData.append(
     "creator_role",
     ticket.reciever_role === "CLIENT" ? "FREELANCER" : "CLIENT",
@@ -22,9 +27,10 @@ export function buildTransactionFormData(ticket: ITicket, session: Session) {
 
   // Counterparty
   formData.append("receiver_fullname", ticket.receiver_fullname);
-  formData.append("receiver_email", ticket.reciever_email);
-  formData.append("receiver_phone", ticket.receiver_no ?? "");
-  formData.append("receiver_role", ticket.reciever_role ?? "");
+  formData.append("reciever_email", ticket.reciever_email);
+  formData.append("receiver_no", ticket.receiver_no ?? "");
+  formData.append("reciever_role", ticket.reciever_role ?? "");
+  formData.append("receiver_address", ticket.receiver_address ?? "");
 
   // Transaction
   formData.append("title", ticket.title);
@@ -32,16 +38,17 @@ export function buildTransactionFormData(ticket: ITicket, session: Session) {
   formData.append("currency", ticket.currency);
   formData.append("amount", ticket.amount.toString());
 
-  formData.append(
-    "close_deadline",
-    format(new Date(ticket.close_deadline), "yyyy-MM-dd"),
-  );
+  formData.append("deadline", format(new Date(ticket.deadline), "yyyy-MM-dd"));
 
   formData.append("pay_escrow_fee", ticket.pay_escrow_fee ?? "");
 
+  formData.append("expiresAt", String(ticket.expiresAt ?? 0));
+
+  formData.append("transactionType", ticket.transactionType ?? "");
+
   // Attachments
-  ticket.attachment.forEach((attachment) => {
-    formData.append("attachments", base64ToFile(attachment));
+  ticket.files.forEach((attachment) => {
+    formData.append("files", base64ToFile(attachment));
   });
 
   // Milestones
@@ -61,6 +68,8 @@ export function buildTransactionFormData(ticket: ITicket, session: Session) {
       });
     }
   });
+
+  formData.append("inspection_duration", String(ticket.inspection_duration));
 
   return formData;
 }

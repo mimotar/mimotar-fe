@@ -93,7 +93,7 @@ export default function StepFour() {
     // dispatch(setTransactionDetails(data));
 
     const attachmentFiles = attachmentsToFiles(
-      normalizeAttachments(transactionData?.attachment),
+      normalizeAttachments(transactionData?.files),
     );
     const mergedData = {
       ...transactionData,

@@ -7,12 +7,16 @@ import { IStepThreeForm } from "../types/IStepThree";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setTransactionDetails } from "@/lib/slices/createTransactionslice";
 import { ITicket } from "../types/ITicket";
+import { Textarea } from "@/components/ui/textarea";
 
 export const mapStepThreeDefaultValues = (ticket: ITicket): IStepThreeForm => ({
   counterpartyRole: ticket.reciever_role ?? "CLIENT",
   counterpartyName: ticket.receiver_fullname ?? "",
   counterpartyEmail: ticket.reciever_email ?? "",
   counterpartyPhone: ticket.receiver_no ?? "",
+  creator_no: ticket.creator_no ?? "",
+  creator_address: ticket.creator_address ?? "",
+  counterpartyAddress: ticket.receiver_address || "",
 });
 
 export default function ProjectStepThree() {
@@ -43,6 +47,9 @@ export default function ProjectStepThree() {
         reciever_role: data.counterpartyRole.toUpperCase() as
           | "CLIENT"
           | "FREELANCER",
+        creator_address: data.creator_address,
+        creator_no: data.creator_no,
+        receiver_address: data.counterpartyAddress,
       }),
     );
     nextStep(4);
@@ -139,7 +146,7 @@ export default function ProjectStepThree() {
 
         <div>
           <label className="block text-xs font-bold text-gray-500 mb-1">
-            WhatsApp Phone Number (Optional)
+            WhatsApp Phone Number
           </label>
           <input
             type="text"
@@ -156,6 +163,67 @@ export default function ProjectStepThree() {
             <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               <span>{errors?.counterpartyPhone?.message}</span>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-xs font-bold text-gray-500 mb-1">
+            Counterparty Address
+          </label>
+          <Textarea
+            rows={5}
+            {...register("counterpartyAddress")}
+            placeholder="No 2 Akingbala-titun street, Alex Avenue, Lagos"
+            className="w-full px-4 py-3 text-xs bg-gray-50/50 resize-none rounded-xl border border-gray-100 placeholder-gray-300 text-gray-800 focus:outline-none focus:border-brand-primary font-medium"
+          />
+
+          {errors?.counterpartyAddress && (
+            <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{errors?.counterpartyAddress?.message}</span>
+            </div>
+          )}
+        </div>
+
+        {/* ORIGINATOR */}
+        <h2 className="text-lg font-extrabold text-[#111827]">
+          Secure your Creator details
+        </h2>
+        <div>
+          <label className="block text-xs font-bold text-gray-500 mb-1">
+            Creator Phone Number
+          </label>
+          <input
+            type="text"
+            {...register("creator_no")}
+            placeholder="e.g. +234 803 123 4567"
+            className="w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border border-gray-100 placeholder-gray-300 text-gray-800 focus:outline-none focus:border-brand-primary font-medium"
+          />
+
+          {errors?.creator_no && (
+            <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{errors?.creator_no?.message}</span>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-xs font-bold text-gray-500 mb-1">
+            Creator Address
+          </label>
+          <Textarea
+            rows={5}
+            {...register("creator_address")}
+            placeholder="No 2 Akingbala-titun street, Alex Avenue, Lagos"
+            className="w-full px-4 py-3 text-xs bg-gray-50/50 resize-none rounded-xl border border-gray-100 placeholder-gray-300 text-gray-800 focus:outline-none focus:border-brand-primary font-medium"
+          />
+
+          {errors?.creator_address && (
+            <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{errors?.creator_address?.message}</span>
             </div>
           )}
         </div>
