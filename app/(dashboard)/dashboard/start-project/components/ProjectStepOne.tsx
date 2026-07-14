@@ -35,13 +35,16 @@ export const fileToPersistedAttachment = (
 const mapDefaultValues = (ticket: ITicket): IStepOne => ({
   currency: ticket.currency || "NGN",
   title: ticket.title || "",
-  attachment: ticket.attachment || [],
+  files: ticket.files || [],
   pay_escrow_fee: ticket.pay_escrow_fee || "BOTH",
   transaction_description: ticket.transaction_description || "",
   amount: Number(formatNumberToCurrency(ticket.amount)) || 0,
-  close_deadline: ticket.close_deadline
-    ? new Date(ticket.close_deadline).toISOString().split("T")[0]
+  deadline: ticket.deadline
+    ? new Date(ticket.deadline).toISOString().split("T")[0]
     : "",
+  expiresAt: ticket.expiresAt,
+  transactionType: ticket.transactionType,
+  inspection_duration: ticket.inspection_duration,
 });
 
 export default function ProjectStepOne() {
@@ -76,7 +79,7 @@ export default function ProjectStepOne() {
 
   console.log(errors);
 
-  const persistAttachment = getValues("attachment").filter(
+  const persistAttachment = getValues("files").filter(
     (item): item is IPersistedAttachment => !(item instanceof File),
   );
 
@@ -88,8 +91,11 @@ export default function ProjectStepOne() {
         currency: data.currency,
         pay_escrow_fee: data.pay_escrow_fee,
         transaction_description: data.transaction_description,
-        close_deadline: new Date(data.close_deadline).toISOString(),
-        attachment: uploadFileJson,
+        deadline: new Date(data.deadline).toISOString(),
+        files: uploadFileJson,
+        expiresAt: data.expiresAt,
+        transactionType: data.transactionType,
+        inspection_duration: data.inspection_duration,
       }),
     );
     nextStep(2);
@@ -188,17 +194,17 @@ export default function ProjectStepOne() {
             id="creation-attachments-uploader"
             files={persistAttachment}
             onChange={(persistAttachmentObj) => {
-              setValue("attachment", persistAttachmentObj);
+              setValue("files", persistAttachmentObj);
               setUploadFileJson(persistAttachmentObj);
               // setAttachedFiles;
             }}
             placeholder="Drag & drop contract files, templates, or images here to attach"
           />
 
-          {errors?.attachment && (
+          {errors?.files && (
             <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in font-sans">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-              <span>{errors.attachment?.message}</span>
+              <span>{errors.files?.message}</span>
             </div>
           )}
         </div>
@@ -296,17 +302,17 @@ export default function ProjectStepOne() {
             </label>
             <input
               type="date"
-              {...register("close_deadline", {
+              {...register("deadline", {
                 // setValueAs(value) {
                 //   new Date(value).toISOString().split("T")[0];
                 // },
               })}
-              className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border text-gray-800 focus:outline-none transition-colors font-semibold ${errors?.close_deadline ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}`}
+              className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border text-gray-800 focus:outline-none transition-colors font-semibold ${errors?.deadline ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}`}
             />
-            {errors?.close_deadline && (
+            {errors?.deadline && (
               <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                <span>{errors.close_deadline?.message}</span>
+                <span>{errors.deadline?.message}</span>
               </div>
             )}
           </div>
@@ -330,6 +336,110 @@ export default function ProjectStepOne() {
               <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 <span>{errors.pay_escrow_fee?.message}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="create-project-title"
+              className="text-label text-gray-400 mb-1 block"
+            >
+              Expires At
+            </label>
+            <input
+              id="create-project-title"
+              type="number"
+              {...register("expiresAt", { valueAsNumber: true })}
+              placeholder="e.g. expires in"
+              className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border placeholder-gray-300 text-gray-800 focus:outline-none transition-colors font-medium 
+         ${errors?.expiresAt ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}
+                `}
+            />
+            {errors?.expiresAt && (
+              <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors.expiresAt?.message}</span>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="text-label text-gray-400 mb-1 block">
+              Transaction Type
+            </label>
+            <select
+              {...register("transactionType")}
+              className="w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border border-gray-100 text-gray-800 focus:outline-none focus:border-brand-primary font-semibold"
+            >
+              <option>SELECT TYPE</option>
+              <option value="PHYSICAL_PRODUCT">PHYSICAL PRODUCT</option>
+              <option value="ONLINE_PRODUCT">ONLINE PRODUCT</option>
+              <option value="SERVICE">SERVICE</option>
+              <option value="RENTAL">RENTAL</option>
+              <option value="MILESTONE_BASED_PROJECT">
+                MILESTONE BASED PROJECT
+              </option>
+            </select>
+
+            {errors?.transactionType && (
+              <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors.transactionType?.message}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="create-project-title"
+              className="text-label text-gray-400 mb-1 block"
+            >
+              Inspection duration
+            </label>
+            <input
+              id="create-project-title"
+              type="number"
+              {...register("inspection_duration", { valueAsNumber: true })}
+              placeholder="e.g. Inspection Duration of the product"
+              className={`w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border placeholder-gray-300 text-gray-800 focus:outline-none transition-colors font-medium 
+         ${errors?.inspection_duration ? "border-red-300 bg-red-50/10 focus:border-red-500" : "border-gray-100 focus:border-brand-primary"}
+                `}
+            />
+            {errors?.inspection_duration && (
+              <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors.inspection_duration?.message}</span>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="text-label text-gray-400 mb-1 block">
+              Transaction Type
+            </label>
+            <select
+              {...register("transactionType")}
+              className="w-full px-4 py-3 text-xs bg-gray-50/50 rounded-xl border border-gray-100 text-gray-800 focus:outline-none focus:border-brand-primary font-semibold"
+            >
+              <option>SELECT TYPE</option>
+              <option value="PHYSICAL_PRODUCT">PHYSICAL PRODUCT</option>
+              <option value="ONLINE_PRODUCT">ONLINE PRODUCT</option>
+              <option value="SERVICE">SERVICE</option>
+              <option value="RENTAL">RENTAL</option>
+              <option value="MILESTONE_BASED_PROJECT">
+                MILESTONE BASED PROJECT
+              </option>
+            </select>
+
+            {errors?.transactionType && (
+              <div className="text-[10px] text-red-600 font-semibold mt-1 flex items-center gap-1 pl-1 animate-fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors.transactionType?.message}</span>
               </div>
             )}
           </div>

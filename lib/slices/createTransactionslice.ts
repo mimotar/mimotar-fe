@@ -10,8 +10,8 @@ const initialState: ITicket = {
   amount: 0,
   transaction_description: "",
   pay_escrow_fee: null,
-  attachment: [],
-  close_deadline: "",
+  files: [],
+  deadline: "",
 
   //step 2
   milestones: [],
@@ -22,9 +22,9 @@ const initialState: ITicket = {
   creator_address: "",
   creator_role: null,
 
-  // transactionType: "",
+  transactionType: "",
 
-  // inspection_duration: 0,
+  inspection_duration: 0,
   // pay_shipping_cost: "",
   // additional_agreement: "",
 
@@ -34,7 +34,7 @@ const initialState: ITicket = {
   receiver_address: "",
   reciever_role: "CLIENT",
   // terms: "",
-  // expiresAt: null,
+  expiresAt: null,
 };
 
 const createTransactionSlice = createSlice({

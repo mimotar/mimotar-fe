@@ -18,22 +18,32 @@ export type IMilestone = {
 export type IStepOne = {
   currency: string;
   title: string;
-  attachment: IPersistedAttachment[];
+  files: IPersistedAttachment[];
   pay_escrow_fee: "CLIENT" | "FREELANCER" | "BOTH" | null;
   transaction_description: string;
   amount: number;
-  close_deadline: string;
+  deadline: string;
+  expiresAt: number | null;
+  transactionType:
+    | "PHYSICAL_PRODUCT"
+    | "ONLINE_PRODUCT"
+    | "SERVICE"
+    | "RENTAL"
+    | "MILESTONE_BASED_PROJECT"
+    | ""
+    | null;
+  inspection_duration: number;
 };
 
 export interface ITicket {
   //step one
   currency: string;
   title: string;
-  attachment: IPersistedAttachment[];
+  files: IPersistedAttachment[];
   pay_escrow_fee: "CLIENT" | "FREELANCER" | "BOTH" | null;
   transaction_description: string;
   amount: number;
-  close_deadline: string;
+  deadline: string;
 
   // step two
   milestones: IMilestone[];
@@ -45,15 +55,17 @@ export interface ITicket {
   // creator_role: "SELLER" | "BUYER" | "" | null;
   creator_role: "CLIENT" | "FREELANCER" | null;
 
-  // transactionType:
-  //   | "PHYSICAL_PRODUCT"
-  //   | "ONLINE_PRODUCT"
-  //   | "SERVICE"
-  //   | ""
-  //   | null;
+  transactionType:
+    | "PHYSICAL_PRODUCT"
+    | "ONLINE_PRODUCT"
+    | "SERVICE"
+    | "RENTAL"
+    | "MILESTONE_BASED_PROJECT"
+    | ""
+    | null;
 
-  // inspection_duration: number; // in days
-  // expiresAt: number | null;
+  inspection_duration: number; // in days
+  expiresAt: number | null;
   // pay_shipping_cost: "SELLER" | "BUYER" | "BOTH" | "" | null;
   // additional_agreement: string;
 
@@ -61,7 +73,6 @@ export interface ITicket {
   reciever_email: string;
   receiver_no: string;
   receiver_address: string;
-  // reciever_role: "SELLER" | "BUYER" | "" | null;
-  reciever_role: "CLIENT" | "FREELANCER" | null;
+  reciever_role: "CLIENT" | "FREELANCER" | "SELLER" | "BUYER" | null;
   // terms: string;
 }

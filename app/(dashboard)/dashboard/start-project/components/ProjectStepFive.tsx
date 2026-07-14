@@ -1,16 +1,30 @@
 import { CheckCircle, Copy } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useNavigateProjectStep } from "../hooks/usenavigateProjectStep";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { resetTicketSuccessPayload } from "@/lib/slices/TicketSuccessSlice";
+import { useRouter } from "next/navigation";
 
 export default function ProjectStepFive() {
   const [copied, setCopied] = useState(false);
+  const { nextStep } = useNavigateProjectStep();
+  const ticket = useAppSelector((state) => state.TicketSuccessPayload);
+  const dispatch = useAppDispatch();
+  const navigate = useRouter();
+
+  console.log("success ticket", ticket);
 
   const copyAgreementLink = () => {
-    const link = `${window.location.origin}/accept-agreement/${1}`;
+    const link = ticket.txn_link;
+    if (!link) {
+      return;
+    }
     navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
   return (
     <div className="space-y-8 animate-fade-in text-center py-6">
       <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -32,9 +46,10 @@ export default function ProjectStepFive() {
         <input
           type="text"
           readOnly
-          value={`${window.location.origin}/accept-agreement/${1}`}
+          value={ticket.txn_link || "no link available"}
           className="flex-1 bg-transparent text-xs text-gray-500 font-semibold focus:outline-none select-all truncate border-none font-mono"
         />
+
         <button
           onClick={copyAgreementLink}
           className="p-2.5 bg-white border border-gray-150 hover:bg-slate-50 text-brand-primary rounded-xl transition cursor-pointer flex items-center gap-1.5 text-xs font-bold shadow-xs active:scale-95"
@@ -50,18 +65,19 @@ export default function ProjectStepFive() {
       </div>
 
       <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center max-w-sm mx-auto">
-        <Link
-          href="/dashboard"
-          //   onClick={() => {
-          //     setActivePage("dashboard");
-          //   }}
+        <button
+          onClick={() => {
+            dispatch(resetTicketSuccessPayload());
+            navigate.push("/dashboard");
+          }}
           className="flex-1 py-3 bg-brand-primary text-white text-xs font-bold rounded-xl transition hover:bg-brand-primary/95 cursor-pointer text-center"
         >
           Dashboard
-        </Link>
+        </button>
         <button
           onClick={() => {
-            // setStep(1);
+            nextStep(1);
+            dispatch(resetTicketSuccessPayload());
           }}
           className="flex-1 py-3 border border-gray-200 text-gray-600 text-xs font-semibold rounded-xl hover:bg-gray-50 transition cursor-pointer text-center"
         >
