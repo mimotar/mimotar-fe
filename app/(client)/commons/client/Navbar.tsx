@@ -52,7 +52,7 @@ export const Navbar: React.FC = () => {
           className="cursor-pointer"
           onClick={() => {
             if (session && userVerified) {
-              navigate.push("dashboard");
+              navigate.push("dashboard/portal");
             } else {
               navigate.push("/");
             }
@@ -108,7 +108,7 @@ export const Navbar: React.FC = () => {
           {session && userVerified ? (
             <>
               <Link
-                href="/dashboard"
+                href="/dashboard/portal"
                 className="text-sm font-semibold cursor-pointer text-brand-primary transition hover:underline"
               >
                 Go to Dashboard
@@ -200,7 +200,7 @@ export const Navbar: React.FC = () => {
             {session && userVerified ? (
               <>
                 <Link
-                  href={"dashboard"}
+                  href={"dashboard/portal"}
                   // onClick={() => navigate.push("dashboard")}
                   className="w-full text-center cursor-pointer text-sm font-semibold bg-brand-primary text-white rounded-xl py-3 transition"
                 >

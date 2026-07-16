@@ -2,7 +2,7 @@
 
 import { authOptions } from "@/app/api/auth/authOptions";
 import { getServerSession } from "next-auth";
-import { DashboardSummaryResponse } from "../types/IGetDashboard";
+import { DashboardSummaryResponse } from "../portal/types/IGetDashboard";
 
 export async function getDashboard(
   month: number,

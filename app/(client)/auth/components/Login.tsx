@@ -10,7 +10,6 @@ import toast from "react-hot-toast";
 import { AxiosErrorHandler } from "@/app/utils/axiosErrorHandler";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { isPending } from "@reduxjs/toolkit";
 import Link from "next/link";
 
 export default function Login() {

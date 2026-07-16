@@ -24,7 +24,7 @@ export const Homepage: React.FC = () => {
 
   const startCTA = () => {
     if (session && IsAuthenticated) {
-      navigate.push("dashboard");
+      navigate.push("dashboard/portal");
     } else {
       navigate.push("auth");
     }
