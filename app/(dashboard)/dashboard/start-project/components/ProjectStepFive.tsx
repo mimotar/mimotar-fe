@@ -68,7 +68,7 @@ export default function ProjectStepFive() {
         <button
           onClick={() => {
             dispatch(resetTicketSuccessPayload());
-            navigate.push("/dashboard");
+            navigate.push("/dashboard/portal");
           }}
           className="flex-1 py-3 bg-brand-primary text-white text-xs font-bold rounded-xl transition hover:bg-brand-primary/95 cursor-pointer text-center"
         >

@@ -15,7 +15,7 @@ export const Sidebar = () => {
   const navigate = useRouter();
 
   const menuItems = [
-    { page: "/dashboard", name: "Dashboard", icon: LayoutDashboard },
+    { page: "/dashboard/portal", name: "Dashboard", icon: LayoutDashboard },
     { page: "/projects", name: "Projects", icon: FolderKanban },
     { page: "/settings", name: "Settings", icon: Settings },
   ];

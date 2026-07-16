@@ -8,9 +8,12 @@ import Link from "next/link";
 import WalletCard from "./WalletCard";
 import ActionRequired from "./ActionRequired";
 import ActiveContract_RecentLog from "./ActiveContract_RecentLog";
+import { useDashboardQuery } from "../hooks/useDashboardQuery";
 
 export default function DashboardIndex() {
   const { session } = useAuth();
+  // const dashboardData = useDashboardQuery();
+
   return (
     <main className="space-y-8 animate-fade-in font-sans">
       {/* Top Welcome Title Grid */}

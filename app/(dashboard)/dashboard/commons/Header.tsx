@@ -105,7 +105,7 @@ export const Header = () => {
         {/* Logo in header for small screens, also acts as portal trigger */}
         <div
           className="cursor-pointer"
-          onClick={() => navigate.push("/dashboard")}
+          onClick={() => navigate.push("/dashboard/portal")}
         >
           <MimotarLogo size="sm" />
         </div>

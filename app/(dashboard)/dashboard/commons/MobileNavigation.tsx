@@ -7,7 +7,7 @@ export const MobileNavigation: React.FC = () => {
   const activePage = usePathname();
 
   const items = [
-    { page: "dashboard", name: "Dashboard", icon: LayoutDashboard },
+    { page: "dashboard/portal", name: "Dashboard", icon: LayoutDashboard },
     { page: "projects", name: "Projects", icon: FolderKanban },
     { page: "wallet", name: "Wallet", icon: UserIcon },
   ];
