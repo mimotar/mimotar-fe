@@ -23,7 +23,7 @@ import {
 } from "chart.js";
 import ModalOverlay from "../../commons/ModalOverlay";
 import FromToDateSection from "./FromToDateSection";
-import { type ITransactionCount } from "../types/IGetDashboard";
+import { type ITransactionCount } from "../portal/types/IGetDashboard";
 
 ChartJS.register(
   ArcElement,

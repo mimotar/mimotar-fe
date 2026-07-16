@@ -407,7 +407,7 @@ export function HeroSection({
             </div>
             <div className="fb-text">
               <strong>Flutterwave + Stripe</strong>
-              <span>PCI-DSS compliant</span>
+              {/* <span>PCI-DSS compliant</span> */}
             </div>
           </div>
         </div>

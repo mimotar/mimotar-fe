@@ -112,13 +112,13 @@ export default function Footer() {
           &copy; {new Date().getFullYear()} Mimotar Inc. All rights reserved.
           Registered under CAC Nigeria.
         </span>
-        <div className="flex items-center gap-2 text-[10px] text-gray-400 font-mono">
+        {/* <div className="flex items-center gap-2 text-[10px] text-gray-400 font-mono">
           <span>Server status: </span>
           <span className="inline-block w-2 bg-emerald-500 rounded-full h-2 animate-ping" />
           <span className="font-semibold text-emerald-600">
             Secure (PCI-DSS compliant)
           </span>
-        </div>
+        </div> */}
       </div>
     </footer>
   );
