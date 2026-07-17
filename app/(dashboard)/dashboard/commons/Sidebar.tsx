@@ -16,8 +16,8 @@ export const Sidebar = () => {
 
   const menuItems = [
     { page: "/dashboard/portal", name: "Dashboard", icon: LayoutDashboard },
-    { page: "/projects", name: "Projects", icon: FolderKanban },
-    { page: "/settings", name: "Settings", icon: Settings },
+    { page: "/dashboard/projects", name: "Projects", icon: FolderKanban },
+    { page: "/dashboard/settings", name: "Settings", icon: Settings },
   ];
 
   return (
