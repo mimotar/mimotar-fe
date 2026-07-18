@@ -8,7 +8,14 @@ export type TransactionStatus =
   | "EXPIRED"
   | "PENDING_CLOSURE";
 
-export type DisputeStatus = "ongoing" | "resolved" | "closed";
+export type IMilestoneStatus =
+  | "CREATED"
+  | "ONGOING"
+  | "PENDING_CLOSURE"
+  | "DISPUTE"
+  | "COMPLETED";
+
+export type DisputeStatus = "ongoing" | "cancel" | "closed";
 
 export type Currency = "NGN" | "USD";
 
@@ -20,7 +27,28 @@ export type TransactionType =
   | "ONLINE_PRODUCT"
   | "SERVICE";
 
-export type EscrowFeePayer = "BOTH";
+export type EscrowFeePayer = "BOTH" | "CLIENT" | "FREELANCER";
+
+export type ResolutionOption =
+  | "REFUND_ONLY"
+  | "REPLACEMENT_ONLY"
+  | "REFUND_OR_REPLACEMENT"
+  | "PARTIAL_REPAYMENT"
+  | "RESEND_PRODUCT"
+  | "REPEAT_SERVICE"
+  | "CANCEL_TRANSACTION"
+  | "OTHERS";
+
+export interface DeadlineExtension {
+  id: number;
+  transactionId: number;
+  milestoneId: number | null;
+  previousDeadline: string; // ISO date string
+  newDeadline: string; // ISO date string
+  reason: string | null;
+  extendedById: number;
+  createdAt: string; // ISO date string
+}
 
 // got this from previous type
 
@@ -64,15 +92,44 @@ export interface Milestone {
   amount: number;
   deadline: string;
   files: TransactionFile[];
-  status: TransactionStatus;
+  status: IMilestoneStatus;
   activatedAt: string | null;
   completedAt: string | null;
   releasedAt: string | null;
   images: unknown[];
-  deadlineExtensions: unknown[];
+  deadlineExtensions: DeadlineExtension[];
 }
 
-export interface Transaction {
+// NEW SECTION
+
+export interface Dispute {
+  transactionId: number;
+  milestoneId: number | null;
+
+  reason: string;
+  description: string;
+
+  resolutionOption: ResolutionOption;
+
+  evidenceUrl: string | null;
+  evidenceId: string | null;
+
+  status: DisputeStatus;
+
+  id: number;
+
+  resolution: string | null;
+
+  createdAt: string | null;
+  elapsesAt: string | null;
+
+  resolvedAt: string | null;
+  resolvedById: number | null;
+
+  milestone: Milestone | null;
+}
+
+export interface ITransaction {
   id: number;
   title: string;
   receiver_fullname: string;
@@ -118,14 +175,14 @@ export interface Transaction {
   link_expires: boolean;
   deadline: string;
 
-  deadlineExtensions: unknown[];
+  deadlineExtensions: DeadlineExtension[];
 
   milestones: Milestone[];
 
   history: TransactionHistory;
 }
 
-export type ITransactionsResponseData = Transaction[];
+export type ITransactionsResponseData = ITransaction[];
 export type ITransactionsResponse = {
   message: string;
   data: ITransactionsResponseData;

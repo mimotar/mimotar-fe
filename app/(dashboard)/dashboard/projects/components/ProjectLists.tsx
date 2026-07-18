@@ -9,10 +9,15 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
-import { type ITransactionsResponseData } from "../types/ITransaction";
+import {
+  ITransaction,
+  type ITransactionsResponseData,
+} from "../types/ITransaction";
+import { useAuth } from "@/app/(client)/(page)/hooks/useAuth";
+import { format, isValid } from "date-fns";
 
 interface IProjectLists {
-  filteredProjects: ITransactionsResponseData[];
+  filteredProjects: ITransactionsResponseData;
   setSearchTerm: Dispatch<SetStateAction<string>>;
   setStatusFilter: Dispatch<
     SetStateAction<
@@ -31,15 +36,17 @@ export default function ProjectLists({
   setSearchTerm,
   setStatusFilter,
 }: IProjectLists) {
-  const getStatusBadge = (project: any) => {
-    if (project.escrowStatus === "completed" || project.isReleased) {
+  const session = useAuth();
+  const getStatusBadge = (project: ITransaction) => {
+    // project.isReleased
+    if (project.status === "COMPLETED") {
       return (
         <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded-full border border-emerald-150 uppercase tracking-wider flex items-center gap-1">
           <CheckCircle className="w-3 h-3" /> Released
         </span>
       );
     }
-    if (project.escrowStatus === "disputed") {
+    if (project.status === "DISPUTE") {
       return (
         <span className="px-3 py-1 bg-red-50 text-red-650 text-[10px] font-bold rounded-full border border-red-150 uppercase tracking-wider flex items-center gap-1 animate-pulse">
           <ShieldAlert className="w-3 h-3" /> Disputed
@@ -47,8 +54,9 @@ export default function ProjectLists({
       );
     }
     if (
-      project.escrowStatus === "funded" ||
-      project.escrowStatus === "in_progress"
+      // project.status === "funded" ||
+      project.payment ||
+      project.status === "ONGOING"
     ) {
       return (
         <span className="px-3 py-1 bg-magenta-50 text-brand-primary text-[10px] font-bold rounded-full border border-brand-primary/20 uppercase tracking-wider flex items-center gap-1">
@@ -58,12 +66,14 @@ export default function ProjectLists({
       );
     }
     if (
-      project.agreementStatus === "pending_invite" ||
-      project.agreementStatus === "draft"
+      // project.status === "pending_invite" ||
+      // project.agreementStatus === "draft"
+
+      project.status !== "APPROVED"
     ) {
       return (
         <span className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-bold rounded-full border border-gray-150 uppercase tracking-wider flex items-center gap-1">
-          <Clock className="w-3 h-3" /> Pending Agreement
+          <Clock className="w-3 h-3" /> Pending others Approval
         </span>
       );
     }
@@ -105,7 +115,7 @@ export default function ProjectLists({
           {filteredProjects.map((project) => {
             const hasMilestones = project.milestones.length > 0;
             const completedCount = project.milestones.filter(
-              (m) => m.isCompleted,
+              (m) => m.status === "COMPLETED",
             ).length;
             const totalCount = project.milestones.length;
 
@@ -121,13 +131,13 @@ export default function ProjectLists({
                     <div className="space-y-0.5 text-left">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <span className="text-[10px] text-gray-400 font-mono font-bold tracking-tight uppercase">
-                          MIM-{project.id.toUpperCase()}-TX
+                          MIM-{project.id}-TX
                         </span>
                         <span
-                          className={`text-[9px] px-1.5 py-0.5 font-bold uppercase rounded-md tracking-wider ${project.creatorRole === "client" ? "bg-indigo-50 text-indigo-700 border border-indigo-100/50" : "bg-magenta-55/15 text-[#c026d3] border border-magenta-200/20"}`}
+                          className={`text-[9px] px-1.5 py-0.5 font-bold uppercase rounded-md tracking-wider ${project.creator_role === "CLIENT" ? "bg-indigo-50 text-indigo-700 border border-indigo-100/50" : "bg-magenta-55/15 text-[#c026d3] border border-magenta-200/20"}`}
                         >
                           You:{" "}
-                          {project.creatorRole === "client"
+                          {project.creator_role === "CLIENT"
                             ? "Client"
                             : "Freelancer"}
                         </span>
@@ -141,7 +151,7 @@ export default function ProjectLists({
 
                   {/* Card Description */}
                   <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-6">
-                    {project.description}
+                    {project.transaction_description}
                   </p>
 
                   {/* Info stats split */}
@@ -151,10 +161,10 @@ export default function ProjectLists({
                         Counterparty Nodes
                       </span>
                       <span className="text-xs font-bold text-gray-800 truncate block">
-                        {project.otherPartyName}
+                        {project.receiver_fullname}
                       </span>
                       <span className="text-[9px] text-gray-450 uppercase tracking-widest block font-mono">
-                        {project.otherPartyRole}
+                        {project.reciever_role}
                       </span>
                     </div>
 
@@ -165,7 +175,7 @@ export default function ProjectLists({
                       <span className="text-[15px] font-black text-gray-950 block tracking-tight font-display">
                         {/* {formatMoney(project.amount, project.currency)} */}
                         {formatNumberToCurrency(project.amount, {
-                          currency: "NGN",
+                          currency: project.currency ?? "NGN",
                           style: "currency",
                         })}
                       </span>
@@ -180,7 +190,13 @@ export default function ProjectLists({
                 <div className="pt-4 flex items-center justify-between text-[11px] text-gray-400 mt-auto leading-none">
                   <div className="flex items-center gap-1.5 font-medium">
                     <Calendar className="w-3.5 h-3.5" />
-                    <span>DUE: {project.deadline}</span>
+
+                    <span>
+                      DUE:{" "}
+                      {project.deadline && isValid(new Date(project.deadline))
+                        ? format(new Date(project.deadline), "MMM d, yyyy")
+                        : "N/A"}
+                    </span>
                   </div>
 
                   {hasMilestones ? (

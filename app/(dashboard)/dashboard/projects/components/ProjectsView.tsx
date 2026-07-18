@@ -88,11 +88,11 @@ export function ProjectsView() {
       />
 
       {/* Grid listing */}
-      {/* <ProjectLists
-        filteredProjects={filteredProjects}
+      <ProjectLists
+        filteredProjects={projects.data ?? []}
         setSearchTerm={setSearchTerm}
         setStatusFilter={setStatusFilter}
-      /> */}
+      />
 
       {/* Bottom informational card */}
       <BottomInfoCard />
