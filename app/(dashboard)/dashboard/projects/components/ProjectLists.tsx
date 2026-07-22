@@ -15,6 +15,7 @@ import {
 } from "../types/ITransaction";
 import { useAuth } from "@/app/(client)/(page)/hooks/useAuth";
 import { format, isValid } from "date-fns";
+import { useRouter } from "next/navigation";
 
 interface IProjectLists {
   filteredProjects: ITransactionsResponseData;
@@ -37,7 +38,12 @@ export default function ProjectLists({
   setStatusFilter,
 }: IProjectLists) {
   const session = useAuth();
+  const navigate = useRouter();
   const getStatusBadge = (project: ITransaction) => {
+    const approvalLabel =
+      session.session?.email === project.creator_email
+        ? "Pending others Approval"
+        : "waiting for my Approval";
     // project.isReleased
     if (project.status === "COMPLETED") {
       return (
@@ -73,7 +79,7 @@ export default function ProjectLists({
     ) {
       return (
         <span className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-bold rounded-full border border-gray-150 uppercase tracking-wider flex items-center gap-1">
-          <Clock className="w-3 h-3" /> Pending others Approval
+          <Clock className="w-3 h-3" /> {approvalLabel}
         </span>
       );
     }
@@ -122,7 +128,7 @@ export default function ProjectLists({
             return (
               <div
                 key={project.id}
-                // onClick={() => handleOpenProject(project.id)}
+                onClick={() => navigate.push(`project-workspace/${project.id}`)}
                 className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col h-full justify-between transition-all hover:shadow-md hover:border-gray-150 group cursor-pointer text-left"
               >
                 <div>
