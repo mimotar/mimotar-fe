@@ -32,6 +32,8 @@ import { useAuth } from "@/app/(client)/(page)/hooks/useAuth";
 import { useProjectApp } from "../hooks/useProjectApp";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { InteractiveMultiUploader } from "../../../start-project/components/InteractiveMultiUploader";
+// import { toast } from "@/components/ui/toast";
 
 const AutoReleaseTimer: React.FC<{ deliveredAt?: string }> = ({
   deliveredAt,
@@ -157,7 +159,6 @@ export default function ProjectWorkspaceView() {
 
   // const project = projects.find((p) => p.id === selectedProjectId);
   const project = getProject.data;
-  console.log("unique project:", project);
 
   // Modal / form states
   const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -260,20 +261,20 @@ export default function ProjectWorkspaceView() {
     }
   };
 
-  // const handleExtendDeadlineSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!project) return;
-  //   if (!extendedDeadline) {
-  //     showAlert("Total project deadline cannot be empty", "error");
-  //     return;
-  //   }
-  //   extendProjectDeadline(
-  //     project.id,
-  //     extendedDeadline,
-  //     extendedMilestoneDeadlines,
-  //   );
-  //   setShowExtendModal(false);
-  // };
+  const handleExtendDeadlineSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!project) return;
+    if (!extendedDeadline) {
+      toast.error("Total project deadline cannot be empty");
+      return;
+    }
+    // extendProjectDeadline(
+    //   project.id,
+    //   extendedDeadline,
+    //   extendedMilestoneDeadlines,
+    // );
+    setShowExtendModal(false);
+  };
 
   // Flutterwave simulated overlay
   const [showFlutterwavePay, setShowFlutterwavePay] = useState(false);
@@ -344,91 +345,100 @@ export default function ProjectWorkspaceView() {
       ? project.creator_role
       : project.reciever_role;
 
+  const myMail =
+    project.creator_email === session.session?.email
+      ? project.creator_email
+      : project.reciever_email;
+
+  const countyPartyMail =
+    project.creator_email === session.session?.email
+      ? project.reciever_email
+      : "";
+
   const formatMoney = (amount: number, currency: "NGN" | "USD") => {
     return currency === "NGN"
       ? `₦${amount.toLocaleString()}`
       : `$${amount.toLocaleString()}`;
   };
 
-  // const handleFlutterwaveFund = () => {
-  //   setIsProcessingPayment(true);
-  //   setTimeout(() => {
-  //     fundProjectEscrow(project.id);
-  //     setIsProcessingPayment(false);
-  //     setShowFlutterwavePay(false);
-  //     const feePercent =
-  //       project.feePayer === "client"
-  //         ? 3
-  //         : project.feePayer === "split"
-  //           ? 1.5
-  //           : 0;
-  //     const feeAmt = project.amount * (feePercent / 100);
-  //     const totalAmt = project.amount + feeAmt;
-  //     showAlert(
-  //       `Flutterwave Secure Lock Approved: ${formatMoney(totalAmt, project.currency)} deposited and locked successfully!`,
-  //       "success",
-  //     );
-  //   }, 2000);
-  // };
+  const handleFlutterwaveFund = () => {
+    setIsProcessingPayment(true);
+    setTimeout(() => {
+      // fundProjectEscrow(project.id);
+      setIsProcessingPayment(false);
+      setShowFlutterwavePay(false);
+      const feePercent =
+        project.pay_escrow_fee === "CLIENT"
+          ? 3
+          : project.pay_escrow_fee === "BOTH"
+            ? 1.5
+            : 0;
+      const feeAmt = project.amount * (feePercent / 100);
+      const totalAmt = project.amount + feeAmt;
+      toast.add({
+        description: `Flutterwave Secure Lock Approved: ${formatMoney(totalAmt, project.currency)} deposited and locked successfully!`,
+        type: "success",
+      });
+    }, 2000);
+  };
 
-  // const handleDeliverySubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!submissionNotes) {
-  //     setUploadError("Please describe what deliverables you are attaching.");
-  //     return;
-  //   }
+  const handleDeliverySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!submissionNotes) {
+      setUploadError("Please describe what deliverables you are attaching.");
+      return;
+    }
 
-  //   submitProjectDelivery(
-  //     project.id,
-  //     submissionNotes,
-  //     submissionFiles.join(", ") || undefined,
-  //   );
-  //   setShowSubmitModal(false);
-  //   setSubmissionNotes("");
-  //   setSubmissionFileName("");
-  //   setSubmissionFiles([]);
-  // };
+    // submitProjectDelivery(
+    //   project.id,
+    //   submissionNotes,
+    //   submissionFiles.join(", ") || undefined,
+    // );
+    setShowSubmitModal(false);
+    setSubmissionNotes("");
+    setSubmissionFileName("");
+    setSubmissionFiles([]);
+  };
 
-  // const handleDisputeSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!disputeReason) return;
-  //   if (disputeEvidenceFiles.length === 0) {
-  //     showAlert(
-  //       "You must upload at least one evidence file (screenshot, log, or document) to initiate a project dispute.",
-  //       "error",
-  //     );
-  //     return;
-  //   }
+  const handleDisputeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!disputeReason) return;
+    if (disputeEvidenceFiles.length === 0) {
+      toast.error(
+        "You must upload at least one evidence file (screenshot, log, or document) to initiate a project dispute.",
+      );
+      return;
+    }
 
-  //   if (!currentUser.phoneVerified) {
-  //     setPendingDisputeAction({
-  //       type: "project",
-  //       reason: disputeReason,
-  //       evidenceFiles: disputeEvidenceFiles,
-  //     });
-  //     setDisputeOtpPhone(currentUser.phone || "");
-  //     setDisputeOtpSent(false);
-  //     setDisputeOtpCode("");
-  //     setDisputeOtpError("");
-  //     setShowDisputeModal(false);
-  //     return;
-  //   }
+    // if (!currentUser.phoneVerified) {
+    //   setPendingDisputeAction({
+    //     type: "project",
+    //     reason: disputeReason,
+    //     evidenceFiles: disputeEvidenceFiles,
+    //   });
+    //   // setDisputeOtpPhone(currentUser.phone || "");
+    //   setDisputeOtpSent(false);
+    //   setDisputeOtpCode("");
+    //   setDisputeOtpError("");
+    //   setShowDisputeModal(false);
+    //   return;
+    // }
 
-  //   raiseProjectDispute(
-  //     project.id,
-  //     disputeReason,
-  //     disputeEvidenceFiles.join(", ") || undefined,
-  //   );
-  //   setShowDisputeModal(false);
-  //   setDisputeReason("");
-  //   setDisputeEvidence("");
-  //   setDisputeEvidenceFiles([]);
-  // };
+    // raiseProjectDispute(
+    //   project.id,
+    //   disputeReason,
+    //   disputeEvidenceFiles.join(", ") || undefined,
+    // );
+    setShowDisputeModal(false);
+    setDisputeReason("");
+    setDisputeEvidence("");
+    setDisputeEvidenceFiles([]);
+  };
 
-  // const handleResolveConfirmTriggerChange = () => {
-  //   resolveProjectDispute(project.id);
-  //   setShowResolveConfirm(false);
-  // };
+  const handleResolveConfirmTriggerChange = () => {
+    // resolveProjectDispute(project.id);
+    setShowResolveConfirm(false);
+  };
 
   return (
     // <Suspense fallback="Loading ...">Hello project </Suspense>
@@ -724,10 +734,10 @@ export default function ProjectWorkspaceView() {
             )}
 
             {/* FREELANCER ACTION PATH */}
-            {demoRole === "freelancer" &&
-              project.agreementStatus === "accepted" && (
-                <div className="space-y-4">
-                  {project.escrowStatus === "unfunded" && (
+            {role === "FREELANCER" && project.status === "APPROVED" && (
+              <div className="space-y-4">
+                {project.payment?.status === "PENDING" ||
+                  (project.payment?.status === "FAILED" && (
                     <div className="p-5.5 bg-gray-50 rounded-2xl">
                       <span className="text-xs font-semibold text-gray-500 block">
                         Status: Waiting for Client to Fund Escrow
@@ -738,39 +748,36 @@ export default function ProjectWorkspaceView() {
                         funding security layers.
                       </p>
                     </div>
-                  )}
+                  ))}
 
-                  {project.escrowStatus === "funded" &&
-                    !project.isDelivered && (
-                      <div className="p-5 bg-brand-primary/[0.01] border border-brand-primary/10 rounded-2xl space-y-4">
-                        <span className="text-xs font-bold text-brand-primary">
-                          🎉 Client Has Funded Escrow contract
-                        </span>
-                        <p className="text-xs text-gray-500 leading-relaxed text-left">
-                          {project.hasMilestones &&
-                          project.milestones.length > 0
-                            ? "Your milestones are secured in safety! You can now proceed to implement each phase with 100% security backing. Submit deliverables per-milestone in the milestones section below."
-                            : "Your funds are locked in safety! You can now proceed to implement specifications with 100% security backing. When finished, submit work deliverables."}
-                        </p>
-                        {!(
-                          project.hasMilestones && project.milestones.length > 0
-                        ) && (
-                          <button
-                            onClick={() => setShowSubmitModal(true)}
-                            className="w-full py-3 bg-brand-primary text-white text-xs font-bold rounded-xl shadow-xs hover:bg-brand-primary/95 transition cursor-pointer text-center"
-                          >
-                            Submit Work
-                          </button>
-                        )}
-                      </div>
+                {project.payment?.status === "COMPLETED" && (
+                  <div className="p-5 bg-brand-primary/[0.01] border border-brand-primary/10 rounded-2xl space-y-4">
+                    <span className="text-xs font-bold text-brand-primary">
+                      🎉 Client Has Funded Escrow contract
+                    </span>
+                    <p className="text-xs text-gray-500 leading-relaxed text-left">
+                      {project.milestones && project.milestones.length > 0
+                        ? "Your milestones are secured in safety! You can now proceed to implement each phase with 100% security backing. Submit deliverables per-milestone in the milestones section below."
+                        : "Your funds are locked in safety! You can now proceed to implement specifications with 100% security backing. When finished, submit work deliverables."}
+                    </p>
+                    {!(project.milestones && project.milestones.length > 0) && (
+                      <button
+                        onClick={() => setShowSubmitModal(true)}
+                        className="w-full py-3 bg-brand-primary text-white text-xs font-bold rounded-xl shadow-xs hover:bg-brand-primary/95 transition cursor-pointer text-center"
+                      >
+                        Submit Work
+                      </button>
                     )}
+                  </div>
+                )}
 
-                  {project.isDelivered &&
-                    !project.isReleased &&
-                    project.escrowStatus !== "disputed" &&
-                    !(
-                      project.hasMilestones && project.milestones.length > 0
-                    ) && (
+                {
+                  // project.isDelivered &&
+                  //   !project.isReleased &&
+                  ["APPROVED", "ONGOING", "PENDING_CLOSURE"].includes(
+                    project.status,
+                  ) &&
+                    !(project.milestones && project.milestones.length > 0) && (
                       <div className="p-5.5 bg-emerald-50 text-emerald-950 rounded-2xl border border-emerald-100 space-y-3">
                         <span className="text-xs font-bold text-emerald-800">
                           Deliverables Submitted Awaiting Approval
@@ -782,34 +789,37 @@ export default function ProjectWorkspaceView() {
                           balance instantly.
                         </p>
                       </div>
-                    )}
-                </div>
-              )}
+                    )
+                }
+              </div>
+            )}
 
             {/* AUTO-RELEASE TIMER COUNTDOWN (VERY IMPORTANT MOMENT) */}
-            {project.isDelivered &&
-              !project.isReleased &&
-              project.escrowStatus !== "disputed" &&
-              !(project.hasMilestones && project.milestones.length > 0) && (
-                <div className="p-5 bg-amber-50 rounded-2xl border border-amber-200/50 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in text-left">
-                  <div className="flex items-center gap-3">
-                    <Clock className="w-8 h-8 text-brand-secondary shrink-0 animate-pulse" />
-                    <div>
-                      <span className="text-xs font-bold text-amber-900 block">
-                        Auto-Release Countdown
-                      </span>
-                      <p className="text-[10px] text-amber-800/80 leading-relaxed mt-0.5">
-                        Funds will be released into freelancer's available
-                        balance in 48 hours if client takes no action.
-                      </p>
+            {
+              // project.isDelivered &&
+              //   !project.isReleased &&
+              project.status !== "DISPUTE" &&
+                !(project.milestones && project.milestones.length > 0) && (
+                  <div className="p-5 bg-amber-50 rounded-2xl border border-amber-200/50 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in text-left">
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-8 h-8 text-brand-secondary shrink-0 animate-pulse" />
+                      <div>
+                        <span className="text-xs font-bold text-amber-900 block">
+                          Auto-Release Countdown
+                        </span>
+                        <p className="text-[10px] text-amber-800/80 leading-relaxed mt-0.5">
+                          Funds will be released into freelancer's available
+                          balance in 48 hours if client takes no action.
+                        </p>
+                      </div>
                     </div>
+                    <AutoReleaseTimer deliveredAt={project.expiresAt} />
                   </div>
-                  <AutoReleaseTimer deliveredAt={project.deliveredAt} />
-                </div>
-              )}
+                )
+            }
 
             {/* COMPLETED SUCCESS STATE DETAILS */}
-            {project.escrowStatus === "completed" && (
+            {project.status === "COMPLETED" && (
               <div className="p-6 bg-emerald-50 text-emerald-950 rounded-3xl border border-emerald-100 text-center space-y-4 animate-fade-in">
                 <div className="w-12 h-12 bg-white text-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-xs">
                   <FileCheck className="w-6 h-6" />
@@ -829,9 +839,8 @@ export default function ProjectWorkspaceView() {
                     href="#download"
                     onClick={(e) => {
                       e.preventDefault();
-                      showAlert(
+                      toast.success(
                         "Downloading official encrypted Mimotar Transaction receipt PDF...",
-                        "success",
                       );
                     }}
                     className="inline-flex items-center gap-1.5 text-xs text-brand-primary font-bold hover:underline"
@@ -854,22 +863,22 @@ export default function ProjectWorkspaceView() {
                 {project.title}
               </h3>
               <p className="text-xs text-gray-500 leading-relaxed whitespace-pre-wrap">
-                {project.description}
+                {project.transaction_description}
               </p>
             </div>
 
-            {project.attachments && project.attachments.length > 0 && (
+            {project.files && project.files.length > 0 && (
               <div className="pt-2">
                 <span className="text-[10px] text-gray-400 font-bold block mb-2">
                   Scope Clarification uploads:
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  {project.attachments.map((file, i) => (
+                  {project.files.map((file, i) => (
                     <span
                       key={i}
                       className="inline-flex items-center gap-1.5 text-xs bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-lg text-slate-800 font-medium font-sans"
                     >
-                      📄 {file}
+                      📄 {file.fileName}
                     </span>
                   ))}
                 </div>
@@ -898,25 +907,25 @@ export default function ProjectWorkspaceView() {
                   Fee Division
                 </span>
                 <span className="font-bold text-gray-800 block mt-1 capitalize">
-                  {project.feePayer}
+                  {/* {project.feePayer} */}
+                  {project.pay_escrow_fee}
                 </span>
               </div>
             </div>
 
-            {demoRole === "client" &&
-              project.escrowStatus !== "completed" &&
-              !project.isReleased && (
-                <div className="pt-3 border-t border-gray-100 flex justify-end">
-                  <button
-                    type="button"
-                    id="btn_extend_deadlines_open"
-                    onClick={() => setShowExtendModal(true)}
-                    className="flex items-center gap-1.5 px-3.5 py-2 text-[11.5px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-xl hover:bg-indigo-100 transition duration-150 cursor-pointer text-right shrink-0"
-                  >
-                    <Clock className="w-3.5 h-3.5" /> Extend Deadline
-                  </button>
-                </div>
-              )}
+            {role === "CLIENT" && project.status !== "COMPLETED" && (
+              // !project.isReleased &&
+              <div className="pt-3 border-t border-gray-100 flex justify-end">
+                <button
+                  type="button"
+                  id="btn_extend_deadlines_open"
+                  onClick={() => setShowExtendModal(true)}
+                  className="flex items-center gap-1.5 px-3.5 py-2 text-[11.5px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-xl hover:bg-indigo-100 transition duration-150 cursor-pointer text-right shrink-0"
+                >
+                  <Clock className="w-3.5 h-3.5" /> Extend Deadline
+                </button>
+              </div>
+            )}
 
             {/* FEE TRANSPARENCY EXPLANATORY PANEL (COLLAPSIBLE TO PREVENT COGNITIVE OVERLOAD) */}
             <div className="pt-2">
@@ -929,9 +938,9 @@ export default function ProjectWorkspaceView() {
                   ⚙️{" "}
                   <span className="text-gray-700">
                     Fee Allocation Details (
-                    {project.feePayer === "split"
+                    {project.pay_escrow_fee === "BOTH"
                       ? "Split 1.5%"
-                      : project.feePayer === "client"
+                      : project.pay_escrow_fee === "CLIENT"
                         ? "Covered by Client 3%"
                         : "Settled by Freelancer 3%"}
                     )
@@ -946,9 +955,9 @@ export default function ProjectWorkspaceView() {
                 <div className="mt-2 animate-fade-in">
                   {(() => {
                     const deductPercent =
-                      project.feePayer === "freelancer"
+                      project.pay_escrow_fee === "FREELANCER"
                         ? 3
-                        : project.feePayer === "split"
+                        : project.pay_escrow_fee === "BOTH"
                           ? 1.5
                           : 0;
                     if (deductPercent > 0) {
@@ -962,12 +971,12 @@ export default function ProjectWorkspaceView() {
                             <span className="text-gray-500 font-medium block">
                               Under the{" "}
                               <span className="text-brand-primary font-bold capitalize">
-                                "{project.feePayer}"
+                                "{project.pay_escrow_fee}"
                               </span>{" "}
                               agreement terms:
                             </span>
                             <ul className="list-disc pl-4 text-gray-500 font-medium space-y-1.5 mt-1.5">
-                              {project.feePayer === "split" ? (
+                              {project.pay_escrow_fee === "BOTH" ? (
                                 <>
                                   <li>
                                     <strong className="text-gray-800">
@@ -998,7 +1007,7 @@ export default function ProjectWorkspaceView() {
                                       project.currency,
                                     )}
                                     ) which is automatically deducted from the{" "}
-                                    {project.hasMilestones
+                                    {project.milestones
                                       ? "first milestone phase payout"
                                       : "full payout withdrawal"}
                                     . Note: subsequent payouts will experience
@@ -1031,7 +1040,7 @@ export default function ProjectWorkspaceView() {
                                       project.currency,
                                     )}
                                     ) which is automatically deducted from the{" "}
-                                    {project.hasMilestones
+                                    {project.milestones
                                       ? "first milestone phase payout"
                                       : "completed payout withdrawal"}
                                     .
@@ -1068,21 +1077,23 @@ export default function ProjectWorkspaceView() {
               )}
             </div>
 
-            {project.hasMilestones && project.milestones.length > 0 && (
+            {project.milestones && project.milestones.length > 0 && (
               <div className="pt-4 border-t border-gray-50">
                 <span className="text-label text-gray-400 block mb-3 font-bold uppercase tracking-wider text-[10px]">
                   Escrow Milestone Phases ({project.milestones.length})
                 </span>
                 <div className="space-y-4">
                   {project.milestones.map((m, i) => {
-                    const isProjectFunded = project.escrowStatus !== "unfunded";
+                    const isProjectFunded =
+                      project.payment?.status == "PENDING" ||
+                      project.payment?.status == "FAILED";
 
                     // Determine Milestone Status Layout
                     let statusBadge = null;
                     let cardBorderColor = "border-gray-100";
                     let cardBgColor = "bg-gray-50/50";
 
-                    if (m.isApproved) {
+                    if (m.status === "COMPLETED") {
                       statusBadge = (
                         <span className="text-[10px] text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
                           Released
@@ -1090,7 +1101,7 @@ export default function ProjectWorkspaceView() {
                       );
                       cardBorderColor = "border-emerald-100/55";
                       cardBgColor = "bg-emerald-50/[0.02]";
-                    } else if (m.isDisputed) {
+                    } else if (m.status === "DISPUTE") {
                       statusBadge = (
                         <span className="text-[10px] text-red-650 bg-red-50 border border-red-100 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider animate-pulse">
                           Disputed
@@ -1098,7 +1109,7 @@ export default function ProjectWorkspaceView() {
                       );
                       cardBorderColor = "border-red-100/60";
                       cardBgColor = "bg-red-50/[0.01]";
-                    } else if (m.isSubmitted) {
+                    } else if (m.status === "ONGOING") {
                       statusBadge = (
                         <span className="text-[10px] text-amber-600 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
                           Submitted - Pending Release
@@ -1137,7 +1148,7 @@ export default function ProjectWorkspaceView() {
                               {statusBadge}
                             </div>
                             <h4 className="text-sm font-bold text-gray-900 font-display mt-1">
-                              {m.title}
+                              {m.name}
                             </h4>
                             <span className="text-[10.5px] text-gray-405 block font-semibold">
                               Deadline:{" "}
@@ -1157,23 +1168,22 @@ export default function ProjectWorkspaceView() {
                         </div>
 
                         {/* Spec / Attachments row */}
-                        {(m.deliveryFiles && m.deliveryFiles.length > 0) ||
-                        m.deliveryFile ? (
+                        {(m.files && m.files.length > 0) || m.files ? (
                           <div className="text-[10.5px] bg-gray-50/50 border border-gray-100 p-2.5 rounded-xl flex flex-wrap items-center gap-2 text-gray-600 font-medium">
                             <span className="text-gray-450 font-semibold">
                               📎 Technical Specifications:
                             </span>
                             <div className="flex flex-wrap gap-1.5">
-                              {m.deliveryFiles?.map((file, fIdx) => (
+                              {m.files?.map((file, fIdx) => (
                                 <span
                                   key={fIdx}
                                   className="text-brand-primary font-mono select-all font-semibold bg-white border border-gray-150 px-2 py-0.5 rounded text-[9.5px]"
                                 >
-                                  {file}
+                                  {file.fileName}
                                 </span>
                               )) || (
                                 <span className="text-brand-primary font-mono select-all font-semibold bg-white border border-gray-150 px-2 py-0.5 rounded text-[9.5px]">
-                                  {m.deliveryFile}
+                                  {/* {m.deliveryFile} */}
                                 </span>
                               )}
                             </div>
@@ -1181,7 +1191,7 @@ export default function ProjectWorkspaceView() {
                         ) : null}
 
                         {/* Details on Submissions or Disputes */}
-                        {m.isSubmitted && m.deliveryNotes && (
+                        {/* {m.isSubmitted && m.deliveryNotes && (
                           <div className="mt-1 p-3 bg-amber-50/20 border border-amber-100 rounded-xl space-y-2 text-left font-sans">
                             <span className="text-[9px] font-bold text-amber-600 uppercase tracking-wider block">
                               Freelancer Submission deliverables
@@ -1206,15 +1216,16 @@ export default function ProjectWorkspaceView() {
                               </span>
                             </div>
                           </div>
-                        )}
+                        )} */}
 
-                        {m.isDisputed && m.disputeReason && (
+                        {m.status === "DISPUTE" && "" && (
                           <div className="mt-1 p-3 bg-red-50/20 border border-red-100 rounded-xl space-y-1.5 text-left font-sans">
                             <span className="text-[9px] font-bold text-red-650 uppercase tracking-wider block">
                               Active Milestone dispute details
                             </span>
                             <p className="text-xs text-red-900 bg-red-50/40 p-2 rounded-lg border border-red-100/40 leading-relaxed font-semibold">
-                              Reason specified: "{m.disputeReason}"
+                              Reason specified:
+                              {/* "{m.disputeReason}" */}
                             </p>
                             <p className="text-[10px] text-gray-400">
                               Independent assessment has locked these escrow
@@ -1225,19 +1236,22 @@ export default function ProjectWorkspaceView() {
                         )}
 
                         {i === 0 &&
-                          (project.feePayer === "freelancer" ||
-                            project.feePayer === "split") &&
-                          !m.isApproved && (
+                          (project.pay_escrow_fee === "FREELANCER" ||
+                            project.pay_escrow_fee === "BOTH") &&
+                          m.status !== "COMPLETED" && (
                             <div className="p-3 bg-brand-primary/[0.015] border border-dashed border-brand-primary/20 rounded-xl space-y-0.5 mt-0.5 text-left">
                               <span className="text-[9px] text-brand-primary font-bold uppercase tracking-wider font-mono">
                                 ⚠️ Escrow Fee Scheduled
                               </span>
                               <p className="text-[10px] text-gray-500 font-semibold leading-relaxed">
                                 Platform fee of{" "}
-                                {project.feePayer === "split" ? "1.5%" : "3%"} (
+                                {project.pay_escrow_fee === "BOTH"
+                                  ? "1.5%"
+                                  : "3%"}{" "}
+                                (
                                 {formatMoney(
                                   project.amount *
-                                    (project.feePayer === "split"
+                                    (project.pay_escrow_fee === "BOTH"
                                       ? 0.015
                                       : 0.03),
                                   project.currency,
@@ -1249,392 +1263,394 @@ export default function ProjectWorkspaceView() {
                           )}
 
                         {/* INTERACTIVE COMPONENT ACTIONS PER ROLE */}
-                        {isProjectFunded && !m.isApproved && (
+                        {isProjectFunded && m.status !== "COMPLETED" && (
                           <div className="mt-2 pt-3.5 border-t border-gray-100">
-                            {demoRole === "freelancer" ? (
-                              // Freelancer actions
-                              <div className="space-y-3.5">
-                                {!m.isSubmitted &&
-                                  !m.isDisputed &&
-                                  (submittingMilestoneId === m.id ? (
-                                    <form
-                                      onSubmit={(e) => {
-                                        e.preventDefault();
-                                        if (!milestoneNotes) {
-                                          showAlert(
-                                            "Please explain what you are delivering for this phase.",
-                                            "error",
-                                          );
-                                          return;
-                                        }
-                                        submitMilestoneDelivery(
-                                          project.id,
-                                          m.id,
-                                          milestoneNotes,
-                                          milestoneFilesList.join(", ") ||
-                                            undefined,
-                                          milestoneFilesList,
-                                        );
-                                        setSubmittingMilestoneId(null);
-                                        setMilestoneNotes("");
-                                        setMilestoneFile("");
-                                        setMilestoneFilesList([]);
-                                      }}
-                                      className="bg-white border border-brand-primary/10 p-4 rounded-xl space-y-4.5 shadow-xs animate-fade-in"
-                                    >
-                                      <div className="flex items-center justify-between border-b border-gray-55 pb-2">
-                                        <span className="text-[10px] text-brand-primary font-bold uppercase tracking-wider">
-                                          Submitting Deliverables for Phase{" "}
-                                          {i + 1}
-                                        </span>
-                                        <span className="text-[9px] text-gray-400 font-medium">
-                                          Step 2 of 2
-                                        </span>
-                                      </div>
-
-                                      <div className="space-y-1.5">
-                                        <label className="block text-[10px] font-bold text-gray-500 uppercase">
-                                          Submission Notes or Description
-                                        </label>
-                                        <textarea
-                                          value={milestoneNotes}
-                                          onChange={(e) =>
-                                            setMilestoneNotes(e.target.value)
-                                          }
-                                          placeholder="Define what you built, add live staging credentials, Github pull requests, or design document pointers..."
-                                          className="w-full text-xs p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-primary font-medium"
-                                          rows={2.5}
-                                          required
-                                        />
-                                      </div>
-
-                                      {/* Drag & Drop File Upload Area */}
-                                      <InteractiveMultiUploader
-                                        id={`milestone-file-uploader-${m.id}`}
-                                        files={milestoneFilesList}
-                                        onChange={setMilestoneFilesList}
-                                        label="Upload Work Deliverables Attachment"
-                                        placeholder="Drag & drop work deliverables, zip archives, or assets here"
-                                      />
-
-                                      <div className="flex gap-2.5 pt-2">
-                                        <button
-                                          type="submit"
-                                          className="flex-1 py-2 bg-brand-primary hover:bg-brand-primary/95 text-white text-[11px] font-bold rounded-lg cursor-pointer text-center"
-                                        >
-                                          Submit Deliverables
-                                        </button>
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            setSubmittingMilestoneId(null);
-                                            setMilestoneNotes("");
-                                            setMilestoneFile("");
-                                          }}
-                                          className="px-3.5 py-2 bg-gray-50 border border-gray-150 text-[11px] text-gray-500 font-semibold rounded-lg"
-                                        >
-                                          Cancel
-                                        </button>
-                                      </div>
-                                    </form>
-                                  ) : (
-                                    <button
-                                      onClick={() =>
-                                        setSubmittingMilestoneId(m.id)
-                                      }
-                                      className="w-full py-2 bg-brand-primary hover:bg-brand-primary/95 text-white text-xs font-bold rounded-xl transition duration-150 shadow-xs cursor-pointer text-center block"
-                                    >
-                                      📤 Submit Deliverables (Phase {i + 1})
-                                    </button>
-                                  ))}
-
-                                {m.isSubmitted && (
-                                  <div className="space-y-3.5">
-                                    {/* Elegant watchdog visual stopwatch for the Freelancer */}
-                                    <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl text-left space-y-2.5 animate-fade-in">
-                                      <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">
-                                            Automatic Watchdog Timer
-                                          </span>
-                                          <span className="text-[9px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100 uppercase tracking-wider animate-pulse">
-                                            Running
-                                          </span>
-                                        </div>
-                                        <span className="text-[10px] text-slate-500 font-mono font-semibold">
-                                          T+48 Hrs Max
-                                        </span>
-                                      </div>
-
-                                      <div className="flex items-start gap-3">
-                                        <div className="w-9 h-9 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-500 shrink-0 text-base">
-                                          ⏱️
-                                        </div>
-                                        <div className="space-y-0.5">
-                                          <div className="text-base font-bold text-slate-800 font-mono tracking-tight leading-none">
-                                            <MilestoneCountdown
-                                              submittedAt={m.submittedAt}
-                                            />
-                                          </div>
-                                          <p className="text-[10px] text-gray-450 leading-relaxed font-medium">
-                                            Countdown is active! If the client
-                                            does not dispute or release this
-                                            phase within 48 hours, these escrow
-                                            funds will automatically transfer
-                                            into your available balance wallet.
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    <div className="p-3 bg-brand-primary/[0.02] border border-brand-primary/10 rounded-xl flex items-center justify-between gap-3 text-xs leading-none">
-                                      <div className="flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-brand-primary animate-ping" />
-                                        <span className="text-[10px] font-bold text-brand-primary uppercase font-sans tracking-wide">
-                                          Waiting for Client Review & Release
-                                        </span>
-                                      </div>
-                                      <span className="text-[10px] text-gray-405 font-medium">
-                                        WhatsApp moderator standby
-                                      </span>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {m.isDisputed && (
-                                  <div className="text-[10.5px] p-2.5 bg-gray-150/40 border border-gray-200 rounded-xl leading-relaxed font-semibold block">
-                                    🛡️ Escrow funds are locked since the client
-                                    raised a dispute. Mimotar mediator support
-                                    team will review is ongoing.
-                                  </div>
-                                )}
-                              </div>
+                            {role === "FREELANCER" ? (
+                              <></>
                             ) : (
+                              // Freelancer actions
+                              // <div className="space-y-3.5">
+                              //   {!m.isSubmitted &&
+                              //     !m.isDisputed &&
+                              //     (submittingMilestoneId === m.id ? (
+                              //       <form
+                              //         onSubmit={(e) => {
+                              //           e.preventDefault();
+                              //           if (!milestoneNotes) {
+                              //             showAlert(
+                              //               "Please explain what you are delivering for this phase.",
+                              //               "error",
+                              //             );
+                              //             return;
+                              //           }
+                              //           submitMilestoneDelivery(
+                              //             project.id,
+                              //             m.id,
+                              //             milestoneNotes,
+                              //             milestoneFilesList.join(", ") ||
+                              //               undefined,
+                              //             milestoneFilesList,
+                              //           );
+                              //           setSubmittingMilestoneId(null);
+                              //           setMilestoneNotes("");
+                              //           setMilestoneFile("");
+                              //           setMilestoneFilesList([]);
+                              //         }}
+                              //         className="bg-white border border-brand-primary/10 p-4 rounded-xl space-y-4.5 shadow-xs animate-fade-in"
+                              //       >
+                              //         <div className="flex items-center justify-between border-b border-gray-55 pb-2">
+                              //           <span className="text-[10px] text-brand-primary font-bold uppercase tracking-wider">
+                              //             Submitting Deliverables for Phase{" "}
+                              //             {i + 1}
+                              //           </span>
+                              //           <span className="text-[9px] text-gray-400 font-medium">
+                              //             Step 2 of 2
+                              //           </span>
+                              //         </div>
+
+                              //         <div className="space-y-1.5">
+                              //           <label className="block text-[10px] font-bold text-gray-500 uppercase">
+                              //             Submission Notes or Description
+                              //           </label>
+                              //           <textarea
+                              //             value={milestoneNotes}
+                              //             onChange={(e) =>
+                              //               setMilestoneNotes(e.target.value)
+                              //             }
+                              //             placeholder="Define what you built, add live staging credentials, Github pull requests, or design document pointers..."
+                              //             className="w-full text-xs p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-primary font-medium"
+                              //             rows={2.5}
+                              //             required
+                              //           />
+                              //         </div>
+
+                              //         {/* Drag & Drop File Upload Area */}
+                              //         <InteractiveMultiUploader
+                              //           id={`milestone-file-uploader-${m.id}`}
+                              //           files={milestoneFilesList}
+                              //           onChange={setMilestoneFilesList}
+                              //           label="Upload Work Deliverables Attachment"
+                              //           placeholder="Drag & drop work deliverables, zip archives, or assets here"
+                              //         />
+
+                              //         <div className="flex gap-2.5 pt-2">
+                              //           <button
+                              //             type="submit"
+                              //             className="flex-1 py-2 bg-brand-primary hover:bg-brand-primary/95 text-white text-[11px] font-bold rounded-lg cursor-pointer text-center"
+                              //           >
+                              //             Submit Deliverables
+                              //           </button>
+                              //           <button
+                              //             type="button"
+                              //             onClick={() => {
+                              //               setSubmittingMilestoneId(null);
+                              //               setMilestoneNotes("");
+                              //               setMilestoneFile("");
+                              //             }}
+                              //             className="px-3.5 py-2 bg-gray-50 border border-gray-150 text-[11px] text-gray-500 font-semibold rounded-lg"
+                              //           >
+                              //             Cancel
+                              //           </button>
+                              //         </div>
+                              //       </form>
+                              //     ) : (
+                              //       <button
+                              //         onClick={() =>
+                              //           setSubmittingMilestoneId(m.id)
+                              //         }
+                              //         className="w-full py-2 bg-brand-primary hover:bg-brand-primary/95 text-white text-xs font-bold rounded-xl transition duration-150 shadow-xs cursor-pointer text-center block"
+                              //       >
+                              //         📤 Submit Deliverables (Phase {i + 1})
+                              //       </button>
+                              //     ))}
+
+                              //   {m.isSubmitted && (
+                              //     <div className="space-y-3.5">
+                              //       {/* Elegant watchdog visual stopwatch for the Freelancer */}
+                              //       <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl text-left space-y-2.5 animate-fade-in">
+                              //         <div className="flex items-center justify-between">
+                              //           <div className="flex items-center gap-2">
+                              //             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">
+                              //               Automatic Watchdog Timer
+                              //             </span>
+                              //             <span className="text-[9px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100 uppercase tracking-wider animate-pulse">
+                              //               Running
+                              //             </span>
+                              //           </div>
+                              //           <span className="text-[10px] text-slate-500 font-mono font-semibold">
+                              //             T+48 Hrs Max
+                              //           </span>
+                              //         </div>
+
+                              //         <div className="flex items-start gap-3">
+                              //           <div className="w-9 h-9 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-500 shrink-0 text-base">
+                              //             ⏱️
+                              //           </div>
+                              //           <div className="space-y-0.5">
+                              //             <div className="text-base font-bold text-slate-800 font-mono tracking-tight leading-none">
+                              //               <MilestoneCountdown
+                              //                 submittedAt={m.submittedAt}
+                              //               />
+                              //             </div>
+                              //             <p className="text-[10px] text-gray-450 leading-relaxed font-medium">
+                              //               Countdown is active! If the client
+                              //               does not dispute or release this
+                              //               phase within 48 hours, these escrow
+                              //               funds will automatically transfer
+                              //               into your available balance wallet.
+                              //             </p>
+                              //           </div>
+                              //         </div>
+                              //       </div>
+
+                              //       <div className="p-3 bg-brand-primary/[0.02] border border-brand-primary/10 rounded-xl flex items-center justify-between gap-3 text-xs leading-none">
+                              //         <div className="flex items-center gap-2">
+                              //           <span className="w-2 h-2 rounded-full bg-brand-primary animate-ping" />
+                              //           <span className="text-[10px] font-bold text-brand-primary uppercase font-sans tracking-wide">
+                              //             Waiting for Client Review & Release
+                              //           </span>
+                              //         </div>
+                              //         <span className="text-[10px] text-gray-405 font-medium">
+                              //           WhatsApp moderator standby
+                              //         </span>
+                              //       </div>
+                              //     </div>
+                              //   )}
+
+                              //   {m.isDisputed && (
+                              //     <div className="text-[10.5px] p-2.5 bg-gray-150/40 border border-gray-200 rounded-xl leading-relaxed font-semibold block">
+                              //       🛡️ Escrow funds are locked since the client
+                              //       raised a dispute. Mimotar mediator support
+                              //       team will review is ongoing.
+                              //     </div>
+                              //   )}
+                              // </div>
+                              <></>
                               // Client actions
-                              <div className="space-y-3.5">
-                                {!m.isSubmitted && !m.isDisputed && (
-                                  <div className="text-[10.5px] text-gray-455 italic font-semibold">
-                                    ⌛ Freelancer is currently working on this
-                                    milestone.
-                                  </div>
-                                )}
+                              // <div className="space-y-3.5">
+                              //   {!m.isSubmitted && !m.isDisputed && (
+                              //     <div className="text-[10.5px] text-gray-455 italic font-semibold">
+                              //       ⌛ Freelancer is currently working on this
+                              //       milestone.
+                              //     </div>
+                              //   )}
 
-                                {m.isSubmitted && (
-                                  <div className="space-y-3.5">
-                                    {/* Watchdog Countdown Timer visible to Client */}
-                                    <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl text-left space-y-2.5 animate-fade-in">
-                                      <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">
-                                            Automatic Watchdog Timer
-                                          </span>
-                                          <span className="text-[9px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100 uppercase tracking-wider animate-pulse">
-                                            Running
-                                          </span>
-                                        </div>
-                                        <span className="text-[10px] text-slate-500 font-mono font-semibold">
-                                          T+48 Hrs Max
-                                        </span>
-                                      </div>
+                              //   {m.isSubmitted && (
+                              //     <div className="space-y-3.5">
+                              //       {/* Watchdog Countdown Timer visible to Client */}
+                              //       <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl text-left space-y-2.5 animate-fade-in">
+                              //         <div className="flex items-center justify-between">
+                              //           <div className="flex items-center gap-2">
+                              //             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">
+                              //               Automatic Watchdog Timer
+                              //             </span>
+                              //             <span className="text-[9px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100 uppercase tracking-wider animate-pulse">
+                              //               Running
+                              //             </span>
+                              //           </div>
+                              //           <span className="text-[10px] text-slate-500 font-mono font-semibold">
+                              //             T+48 Hrs Max
+                              //           </span>
+                              //         </div>
 
-                                      <div className="flex items-start gap-3">
-                                        <div className="w-9 h-9 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-500 shrink-0 text-base">
-                                          ⏱️
-                                        </div>
-                                        <div className="space-y-0.5">
-                                          <div className="text-base font-bold text-slate-800 font-mono tracking-tight leading-none">
-                                            <MilestoneCountdown
-                                              submittedAt={m.submittedAt}
-                                            />
-                                          </div>
-                                          <p className="text-[10px] text-gray-450 leading-relaxed font-semibold">
-                                            Please review and approve or raise a
-                                            dispute on this milestone phase
-                                            before the countdown expires.
-                                            Unresolved phases automatically
-                                            release funds.
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </div>
+                              //         <div className="flex items-start gap-3">
+                              //           <div className="w-9 h-9 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-500 shrink-0 text-base">
+                              //             ⏱️
+                              //           </div>
+                              //           <div className="space-y-0.5">
+                              //             <div className="text-base font-bold text-slate-800 font-mono tracking-tight leading-none">
+                              //               <MilestoneCountdown
+                              //                 submittedAt={m.submittedAt}
+                              //               />
+                              //             </div>
+                              //             <p className="text-[10px] text-gray-450 leading-relaxed font-semibold">
+                              //               Please review and approve or raise a
+                              //               dispute on this milestone phase
+                              //               before the countdown expires.
+                              //               Unresolved phases automatically
+                              //               release funds.
+                              //             </p>
+                              //           </div>
+                              //         </div>
+                              //       </div>
 
-                                    {disputingMilestoneId === m.id ? (
-                                      <form
-                                        onSubmit={(e) => {
-                                          e.preventDefault();
-                                          if (!milestoneDisputeReason) {
-                                            showAlert(
-                                              "Please state a valid reason for this dispute.",
-                                              "error",
-                                            );
-                                            return;
-                                          }
-                                          if (
-                                            milestoneDisputeEvidenceFiles.length ===
-                                            0
-                                          ) {
-                                            showAlert(
-                                              "You must upload at least one evidence file (screenshot, log, or document) to initiate a milestone dispute.",
-                                              "error",
-                                            );
-                                            return;
-                                          }
-                                          if (!currentUser.phoneVerified) {
-                                            setPendingDisputeAction({
-                                              type: "milestone",
-                                              milestoneId: m.id,
-                                              reason: milestoneDisputeReason,
-                                              evidenceFiles:
-                                                milestoneDisputeEvidenceFiles,
-                                            });
-                                            setDisputeOtpPhone(
-                                              currentUser.phone || "",
-                                            );
-                                            setDisputeOtpSent(false);
-                                            setDisputeOtpCode("");
-                                            setDisputeOtpError("");
-                                            setDisputingMilestoneId(null);
-                                            setMilestoneDisputeReason("");
-                                            return;
-                                          }
-                                          raiseMilestoneDispute(
-                                            project.id,
-                                            m.id,
-                                            milestoneDisputeReason,
-                                            milestoneDisputeEvidenceFiles.join(
-                                              ", ",
-                                            ),
-                                          );
-                                          setMilestoneDisputeEvidenceFiles([]);
-                                          setDisputingMilestoneId(null);
-                                          setMilestoneDisputeReason("");
-                                        }}
-                                        className="bg-white border border-red-200 p-3.5 rounded-xl space-y-3 shadow-xs animate-fade-in"
-                                      >
-                                        <span className="text-[10px] text-red-600 font-bold uppercase tracking-wider">
-                                          Raise Dispute on Phase {i + 1}
-                                        </span>
-                                        <div className="space-y-2">
-                                          <label className="block text-[10px] font-bold text-gray-500 uppercase">
-                                            Reason for dispute
-                                          </label>
-                                          <textarea
-                                            value={milestoneDisputeReason}
-                                            onChange={(e) =>
-                                              setMilestoneDisputeReason(
-                                                e.target.value,
-                                              )
-                                            }
-                                            placeholder="Explain key missing parts, bugs, or differences against milestone guidelines..."
-                                            className="w-full text-xs p-2 bg-gray-50 border border-red-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-red-500 animate-pulse"
-                                            rows={2.5}
-                                            required
-                                          />
-                                        </div>
-                                        <div className="space-y-2">
-                                          <InteractiveMultiUploader
-                                            id={`milestone-dispute-uploader-${m.id}`}
-                                            files={
-                                              milestoneDisputeEvidenceFiles
-                                            }
-                                            onChange={
-                                              setMilestoneDisputeEvidenceFiles
-                                            }
-                                            label="Upload Milestone Dispute Evidence"
-                                            placeholder="Drag & drop screenshots, logs, or chat proofs here"
-                                            theme="danger"
-                                          />
-                                        </div>
+                              //       {disputingMilestoneId === m.id ? (
+                              //         <form
+                              //           onSubmit={(e) => {
+                              //             e.preventDefault();
+                              //             if (!milestoneDisputeReason) {
+                              //               showAlert(
+                              //                 "Please state a valid reason for this dispute.",
+                              //                 "error",
+                              //               );
+                              //               return;
+                              //             }
+                              //             if (
+                              //               milestoneDisputeEvidenceFiles.length ===
+                              //               0
+                              //             ) {
+                              //               showAlert(
+                              //                 "You must upload at least one evidence file (screenshot, log, or document) to initiate a milestone dispute.",
+                              //                 "error",
+                              //               );
+                              //               return;
+                              //             }
+                              //             if (!currentUser.phoneVerified) {
+                              //               setPendingDisputeAction({
+                              //                 type: "milestone",
+                              //                 milestoneId: m.id,
+                              //                 reason: milestoneDisputeReason,
+                              //                 evidenceFiles:
+                              //                   milestoneDisputeEvidenceFiles,
+                              //               });
+                              //               setDisputeOtpPhone(
+                              //                 currentUser.phone || "",
+                              //               );
+                              //               setDisputeOtpSent(false);
+                              //               setDisputeOtpCode("");
+                              //               setDisputeOtpError("");
+                              //               setDisputingMilestoneId(null);
+                              //               setMilestoneDisputeReason("");
+                              //               return;
+                              //             }
+                              //             raiseMilestoneDispute(
+                              //               project.id,
+                              //               m.id,
+                              //               milestoneDisputeReason,
+                              //               milestoneDisputeEvidenceFiles.join(
+                              //                 ", ",
+                              //               ),
+                              //             );
+                              //             setMilestoneDisputeEvidenceFiles([]);
+                              //             setDisputingMilestoneId(null);
+                              //             setMilestoneDisputeReason("");
+                              //           }}
+                              //           className="bg-white border border-red-200 p-3.5 rounded-xl space-y-3 shadow-xs animate-fade-in"
+                              //         >
+                              //           <span className="text-[10px] text-red-600 font-bold uppercase tracking-wider">
+                              //             Raise Dispute on Phase {i + 1}
+                              //           </span>
+                              //           <div className="space-y-2">
+                              //             <label className="block text-[10px] font-bold text-gray-500 uppercase">
+                              //               Reason for dispute
+                              //             </label>
+                              //             <textarea
+                              //               value={milestoneDisputeReason}
+                              //               onChange={(e) =>
+                              //                 setMilestoneDisputeReason(
+                              //                   e.target.value,
+                              //                 )
+                              //               }
+                              //               placeholder="Explain key missing parts, bugs, or differences against milestone guidelines..."
+                              //               className="w-full text-xs p-2 bg-gray-50 border border-red-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-red-500 animate-pulse"
+                              //               rows={2.5}
+                              //               required
+                              //             />
+                              //           </div>
+                              //           <div className="space-y-2">
+                              //             <InteractiveMultiUploader
+                              //               id={`milestone-dispute-uploader-${m.id}`}
+                              //               files={
+                              //                 milestoneDisputeEvidenceFiles
+                              //               }
+                              //               onChange={
+                              //                 setMilestoneDisputeEvidenceFiles
+                              //               }
+                              //               label="Upload Milestone Dispute Evidence"
+                              //               placeholder="Drag & drop screenshots, logs, or chat proofs here"
+                              //               theme="danger"
+                              //             />
+                              //           </div>
 
-                                        <div className="flex gap-2 pt-1.5">
-                                          <button
-                                            type="submit"
-                                            className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold rounded-lg cursor-pointer text-center shadow-xs"
-                                          >
-                                            Freeze Escrow & Dispute
-                                          </button>
-                                          <button
-                                            type="button"
-                                            onClick={() => {
-                                              setDisputingMilestoneId(null);
-                                              setMilestoneDisputeReason("");
-                                              setMilestoneDisputeEvidenceFiles(
-                                                [],
-                                              );
-                                            }}
-                                            className="px-3 py-2 bg-gray-50 border border-gray-150 text-[11px] text-gray-500 font-semibold rounded-lg"
-                                          >
-                                            Cancel
-                                          </button>
-                                        </div>
-                                      </form>
-                                    ) : (
-                                      <div className="space-y-3">
-                                        <div className="flex flex-col sm:flex-row gap-2.5">
-                                          <button
-                                            onClick={() => {
-                                              releaseMilestoneFunds(
-                                                project.id,
-                                                m.id,
-                                              );
-                                            }}
-                                            className="flex-1 py-2.5 bg-brand-primary hover:bg-brand-primary/95 text-white text-xs font-bold rounded-xl transition duration-150 shadow-xs cursor-pointer text-center block"
-                                          >
-                                            ✅ Approve & Release Funds
-                                          </button>
-                                          <button
-                                            onClick={() =>
-                                              setDisputingMilestoneId(m.id)
-                                            }
-                                            className="py-2.5 px-4 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 text-xs font-semibold rounded-xl transition cursor-pointer text-center block animate-fade-in"
-                                          >
-                                            🚨 Dispute
-                                          </button>
-                                        </div>
+                              //           <div className="flex gap-2 pt-1.5">
+                              //             <button
+                              //               type="submit"
+                              //               className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold rounded-lg cursor-pointer text-center shadow-xs"
+                              //             >
+                              //               Freeze Escrow & Dispute
+                              //             </button>
+                              //             <button
+                              //               type="button"
+                              //               onClick={() => {
+                              //                 setDisputingMilestoneId(null);
+                              //                 setMilestoneDisputeReason("");
+                              //                 setMilestoneDisputeEvidenceFiles(
+                              //                   [],
+                              //                 );
+                              //               }}
+                              //               className="px-3 py-2 bg-gray-50 border border-gray-150 text-[11px] text-gray-500 font-semibold rounded-lg"
+                              //             >
+                              //               Cancel
+                              //             </button>
+                              //           </div>
+                              //         </form>
+                              //       ) : (
+                              //         <div className="space-y-3">
+                              //           <div className="flex flex-col sm:flex-row gap-2.5">
+                              //             <button
+                              //               onClick={() => {
+                              //                 releaseMilestoneFunds(
+                              //                   project.id,
+                              //                   m.id,
+                              //                 );
+                              //               }}
+                              //               className="flex-1 py-2.5 bg-brand-primary hover:bg-brand-primary/95 text-white text-xs font-bold rounded-xl transition duration-150 shadow-xs cursor-pointer text-center block"
+                              //             >
+                              //               ✅ Approve & Release Funds
+                              //             </button>
+                              //             <button
+                              //               onClick={() =>
+                              //                 setDisputingMilestoneId(m.id)
+                              //               }
+                              //               className="py-2.5 px-4 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 text-xs font-semibold rounded-xl transition cursor-pointer text-center block animate-fade-in"
+                              //             >
+                              //               🚨 Dispute
+                              //             </button>
+                              //           </div>
 
-                                        {/* Client simulation bypass button triggers 48h automatic release */}
-                                        <div className="border-t border-gray-100 pt-3 flex items-center justify-between gap-2">
-                                          <span className="text-[10px] text-gray-400 font-semibold italic">
-                                            Demo Simulator
-                                          </span>
-                                          <button
-                                            onClick={() =>
-                                              simulateMilestone48hPassage(
-                                                project.id,
-                                                m.id,
-                                              )
-                                            }
-                                            className="py-1.5 px-3 bg-brand-primary/10 hover:bg-brand-primary/15 text-brand-primary text-[10px] font-bold rounded-lg cursor-pointer transition shrink-0 flex items-center gap-1.5"
-                                            title="Simulated 48 hours passage to test system watchdog release trigger"
-                                          >
-                                            ⏩ Fast-Forward 48H (Auto-Release
-                                            Simulation)
-                                          </button>
-                                        </div>
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
+                              //           {/* Client simulation bypass button triggers 48h automatic release */}
+                              //           <div className="border-t border-gray-100 pt-3 flex items-center justify-between gap-2">
+                              //             <span className="text-[10px] text-gray-400 font-semibold italic">
+                              //               Demo Simulator
+                              //             </span>
+                              //             <button
+                              //               onClick={() =>
+                              //                 simulateMilestone48hPassage(
+                              //                   project.id,
+                              //                   m.id,
+                              //                 )
+                              //               }
+                              //               className="py-1.5 px-3 bg-brand-primary/10 hover:bg-brand-primary/15 text-brand-primary text-[10px] font-bold rounded-lg cursor-pointer transition shrink-0 flex items-center gap-1.5"
+                              //               title="Simulated 48 hours passage to test system watchdog release trigger"
+                              //             >
+                              //               ⏩ Fast-Forward 48H (Auto-Release
+                              //               Simulation)
+                              //             </button>
+                              //           </div>
+                              //         </div>
+                              //       )}
+                              //     </div>
+                              //   )}
 
-                                {m.isDisputed && (
-                                  <div className="bg-red-50/20 p-2.5 rounded-xl border border-red-100 flex flex-col sm:flex-row gap-2.5 items-center justify-between">
-                                    <span className="text-[10px] text-red-700 font-bold">
-                                      Dispute Resolution Platform
-                                    </span>
-                                    <button
-                                      onClick={() => {
-                                        resolveMilestoneDispute(
-                                          project.id,
-                                          m.id,
-                                        );
-                                      }}
-                                      className="py-1.5 px-3 bg-red-650 hover:bg-red-700 text-white text-[10.5px] font-bold rounded-lg transition shadow-xs cursor-pointer shrink-0 block"
-                                    >
-                                      🤝 Resolve & Release Milestone
-                                    </button>
-                                  </div>
-                                )}
-                              </div>
+                              //   {m.isDisputed && (
+                              //     <div className="bg-red-50/20 p-2.5 rounded-xl border border-red-100 flex flex-col sm:flex-row gap-2.5 items-center justify-between">
+                              //       <span className="text-[10px] text-red-700 font-bold">
+                              //         Dispute Resolution Platform
+                              //       </span>
+                              //       <button
+                              //         onClick={() => {
+                              //           resolveMilestoneDispute(
+                              //             project.id,
+                              //             m.id,
+                              //           );
+                              //         }}
+                              //         className="py-1.5 px-3 bg-red-650 hover:bg-red-700 text-white text-[10.5px] font-bold rounded-lg transition shadow-xs cursor-pointer shrink-0 block"
+                              //       >
+                              //         🤝 Resolve & Release Milestone
+                              //       </button>
+                              //     </div>
+                              //   )}
+                              // </div>
                             )}
                           </div>
                         )}
@@ -1668,17 +1684,17 @@ export default function ProjectWorkspaceView() {
               <div className="flex items-center justify-between p-2.5 bg-gray-50/60 rounded-xl border border-gray-100/55">
                 <div className="space-y-0.5">
                   <span className="text-[10.5px] font-bold text-gray-800">
-                    You ({project.creatorRole})
+                    You ({role})
                   </span>
                   <span className="block text-[9.5px] text-gray-400 truncate max-w-[130px]">
-                    {currentUser.email}
+                    {session.session?.email}
                   </span>
                 </div>
                 <div className="flex flex-col items-end gap-1 shrink-0">
                   <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100/50">
                     Email ✓
                   </span>
-                  {currentUser.phoneVerified ? (
+                  {session.session?.phone_no ? (
                     <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100/50">
                       WhatsApp Verified ✓
                     </span>
@@ -1694,14 +1710,13 @@ export default function ProjectWorkspaceView() {
               <div className="flex items-center justify-between p-2.5 bg-gray-50/60 rounded-xl border border-gray-100/55">
                 <div className="space-y-0.5">
                   <span className="text-[10.5px] font-bold text-gray-800">
-                    Partner (
-                    {project.creatorRole === "client" ? "freelancer" : "client"}
-                    )
+                    Partner ({role === "CLIENT" ? "freelancer" : "client"})
                   </span>
                   <span className="block text-[9.5px] text-gray-400 truncate max-w-[130px]">
-                    {project.creatorRole === "client"
+                    {/* {project.creatorRole === "CLIENT"
                       ? "amara@freelancer.io"
-                      : "chidi@client.co"}
+                      : "chidi@client.co"} */}
+                    {countyPartyMail}
                   </span>
                 </div>
                 <div className="flex flex-col items-end gap-1 shrink-0">
@@ -1717,7 +1732,7 @@ export default function ProjectWorkspaceView() {
           </div>
 
           {/* RESOLVED DISPUTE BUTTON & CONFIRMATION DIALOG */}
-          {project.escrowStatus === "disputed" && (
+          {project.status === "DISPUTE" && (
             <div className="bg-red-50/20 border border-red-200/50 p-5 rounded-2xl space-y-3 text-left animate-fade-in animate-pulse">
               <span className="text-xs font-bold text-red-700 block mb-1">
                 Incident Dispute Resolution
@@ -1727,7 +1742,7 @@ export default function ProjectWorkspaceView() {
                 funds will be released to the freelancer.
               </p>
 
-              {demoRole === "freelancer" ? (
+              {role === "FREELANCER" ? (
                 <div className="bg-white border border-gray-150 p-3 rounded-xl text-center">
                   <span className="text-[10px] text-slate-500 font-semibold leading-relaxed block">
                     Freelancers are already protected by locked funds and cannot
@@ -1773,13 +1788,13 @@ export default function ProjectWorkspaceView() {
           )}
 
           {/* D. DISPUTE ACTION BUTTONS WHEN APPLICABLE */}
-          {project.escrowStatus !== "disputed" &&
-            project.escrowStatus !== "completed" &&
-            project.escrowStatus !== "unfunded" &&
-            (demoRole === "client" &&
-            !project.hasMilestones &&
-            (project.isDelivered ||
-              new Date(project.deadline).getTime() < Date.now()) ? (
+          {project.status !== "DISPUTE" &&
+            project.status !== "COMPLETED" &&
+            project.payment?.status == "COMPLETED" &&
+            (role === "CLIENT" &&
+            !project.milestones &&
+            // project.isDelivered ||
+            new Date(project.deadline).getTime() < Date.now() ? (
               <button
                 onClick={() => setShowDisputeModal(true)}
                 className="w-full py-3 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-2xl transition cursor-pointer flex items-center justify-center gap-1.5 border border-red-100 animate-fade-in"
@@ -1789,7 +1804,7 @@ export default function ProjectWorkspaceView() {
             ) : null)}
 
           {/* WHATSAPP SUPPORT DETAILS */}
-          {project.escrowStatus === "disputed" && (
+          {project.status === "DISPUTE" && (
             <div className="bg-white rounded-3xl p-5.5 shadow-xs border border-gray-100/50 space-y-4 text-left">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
                 Dispute Mediation Support
@@ -1820,11 +1835,11 @@ export default function ProjectWorkspaceView() {
                   You will be contacted by a Mimotar representative on your
                   registered WhatsApp phone number:
                 </p>
-                {currentUser.phone ? (
+                {session.session?.phone_no ? (
                   <div className="mt-2.5 flex items-center gap-1.5 bg-white p-2 rounded-xl border border-emerald-100">
                     <span className="inline-block w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                     <span className="font-mono font-bold text-emerald-800 text-xs">
-                      {currentUser.phone}
+                      {session.session?.phone_no}
                     </span>
                     <span className="text-[9px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-bold ml-auto border border-emerald-100">
                       Confirmed
@@ -1839,10 +1854,10 @@ export default function ProjectWorkspaceView() {
                     </div>
                     <button
                       onClick={() => {
-                        setActivePage("settings");
-                        showAlert(
+                        // setActivePage("settings");
+
+                        toast.error(
                           "Please configuration save your WhatsApp Phone Number.",
-                          "info",
                         );
                       }}
                       className="w-full text-center py-2 bg-brand-primary text-white text-[10px] font-bold rounded-lg hover:bg-brand-primary/95 transition cursor-pointer"
@@ -1857,52 +1872,39 @@ export default function ProjectWorkspaceView() {
 
           {/* PROJECT TIMELINE / SECURE ACTIVITY LEDGER */}
           {(() => {
-            const rawLogs = project.activityLogs || [];
+            // const rawLogs = project.activityLogs || [];
+            const rawLogs = [];
 
             // Generate some fallback logs if is empty for visual layout robustness
-            const logsToRender =
-              rawLogs.length > 0
-                ? rawLogs
-                : [
-                    {
-                      id: "fallback-agree-created",
-                      title: "Contract Agreement Created",
-                      description: `Oluwaseun Adebayo drafted escrow specifications of "${project.title}" for ${project.currency === "NGN" ? "₦" : "$"}${project.amount.toLocaleString()}. Counterparty secure invite links dispatched.`,
-                      timestamp:
-                        project.createdAt ||
-                        new Date(Date.now() - 4 * 3600 * 1000).toISOString(),
-                      actor: "client" as const,
-                      type: "project_created",
-                    },
-                    ...(project.fundedAt
-                      ? [
-                          {
-                            id: "fallback-escrow-funded",
-                            title: "Escrow Secured (Flutterwave)",
-                            description: `Payment lock triggered successfully. Secure deposit of ${project.currency === "NGN" ? "₦" : "$"}${project.amount.toLocaleString()} received and locked inside Mimotar safe custodian box. Hash ID: TX-184920-LOK.`,
-                            timestamp: project.fundedAt,
-                            actor: "client" as const,
-                            type: "escrow_funded",
-                          },
-                        ]
-                      : []),
-                    ...(project.isDelivered
-                      ? [
-                          {
-                            id: "fallback-work-submitted",
-                            title: "Work Deliverables Submitted",
-                            description: `Amara Ndukwe uploaded final deliverables archive. Countdown clock initialized. Notes: "${project.deliveryNotes || "Project milestone attachments successfully prepared."}"`,
-                            timestamp:
-                              project.deliveredAt ||
-                              new Date(
-                                Date.now() - 1 * 3600 * 1000,
-                              ).toISOString(),
-                            actor: "freelancer" as const,
-                            type: "work_submitted",
-                          },
-                        ]
-                      : []),
-                  ];
+            const logsToRender = [
+              {
+                id: "fallback-agree-created",
+                title: "Contract Agreement Created",
+                description: `Oluwaseun Adebayo drafted escrow specifications of "${project.title}" for ${project.currency === "NGN" ? "₦" : "$"}${project.amount.toLocaleString()}. Counterparty secure invite links dispatched.`,
+                timestamp:
+                  // project.createdAt ||
+                  new Date(Date.now() - 4 * 3600 * 1000).toISOString(),
+                actor: "client" as const,
+                type: "project_created",
+              },
+              {
+                id: "fallback-escrow-funded",
+                title: "Escrow Secured (Flutterwave)",
+                description: `Payment lock triggered successfully. Secure deposit of ${project.currency === "NGN" ? "₦" : "$"}${project.amount.toLocaleString()} received and locked inside Mimotar safe custodian box. Hash ID: TX-184920-LOK.`,
+                timestamp: new Date(Date.now() - 4 * 3600 * 1000).toISOString(),
+                actor: "client" as const,
+                type: "escrow_funded",
+              },
+
+              {
+                id: "fallback-work-submitted",
+                title: "Work Deliverables Submitted",
+                description: `Amara Ndukwe uploaded final deliverables archive. Countdown clock initialized. Notes: "Project milestone attachments successfully prepared."}"`,
+                timestamp: new Date(Date.now() - 1 * 3600 * 1000).toISOString(),
+                actor: "freelancer" as const,
+                type: "work_submitted",
+              },
+            ];
 
             // Filter based on active filter state
             const filteredLogs = logsToRender.filter((log) => {
@@ -1990,7 +1992,7 @@ export default function ProjectWorkspaceView() {
                           actorBadgeColor =
                             "bg-indigo-55/10 text-indigo-700 hover:bg-indigo-100/50";
                           actorName =
-                            project.creatorRole === "client"
+                            project.creator_role === "CLIENT"
                               ? "Client"
                               : "Counterparty Client";
                         } else if (log.actor === "freelancer") {
@@ -1998,7 +2000,7 @@ export default function ProjectWorkspaceView() {
                           actorBadgeColor =
                             "bg-brand-primary/5 text-brand-primary hover:bg-brand-primary/10";
                           actorName =
-                            project.creatorRole === "freelancer"
+                            project.creator_role === "FREELANCER"
                               ? "Freelancer"
                               : "Counterparty Freelancer";
                         } else {
@@ -2138,9 +2140,9 @@ export default function ProjectWorkspaceView() {
 
             {(() => {
               const feePercent =
-                project.feePayer === "client"
+                project.pay_escrow_fee === "CLIENT"
                   ? 3
-                  : project.feePayer === "split"
+                  : project.pay_escrow_fee === "BOTH"
                     ? 1.5
                     : 0;
               const feeAmt = project.amount * (feePercent / 100);
@@ -2157,9 +2159,9 @@ export default function ProjectWorkspaceView() {
                     <div className="flex justify-between text-xs">
                       <span className="text-slate-500">Fee Mode:</span>
                       <span className="font-bold text-brand-primary capitalize">
-                        {project.feePayer === "split"
+                        {project.pay_escrow_fee === "BOTH"
                           ? "Split 50/50"
-                          : project.feePayer === "freelancer"
+                          : project.pay_escrow_fee === "FREELANCER"
                             ? "Freelancer Pays All"
                             : "Client Pays All"}
                       </span>
@@ -2182,7 +2184,7 @@ export default function ProjectWorkspaceView() {
                     </div>
                   </div>
 
-                  {project.feePayer === "split" && (
+                  {project.pay_escrow_fee === "BOTH" && (
                     <div className="space-y-2 mb-6">
                       <div className="p-3 bg-indigo-50/50 text-brand-primary text-[10.5px] leading-relaxed rounded-xl font-semibold border border-indigo-100/50">
                         🤝 <strong>Split Fee Selected (1.5% each):</strong> You
@@ -2193,7 +2195,7 @@ export default function ProjectWorkspaceView() {
                     </div>
                   )}
 
-                  {project.feePayer === "freelancer" && (
+                  {project.pay_escrow_fee === "FREELANCER" && (
                     <div className="space-y-2 mb-6">
                       <div className="p-3 bg-emerald-50/50 text-emerald-800 text-[10.5px] leading-relaxed rounded-xl font-semibold border border-emerald-100/50">
                         🛡️ <strong>Freelancer Handled Fee:</strong> You pay 0%
@@ -2204,7 +2206,7 @@ export default function ProjectWorkspaceView() {
                     </div>
                   )}
 
-                  {project.feePayer === "client" && (
+                  {project.pay_escrow_fee === "CLIENT" && (
                     <div className="space-y-2 mb-6">
                       <div className="p-3 bg-purple-50/50 text-purple-900 text-[10.5px] leading-relaxed rounded-xl font-semibold border border-purple-100/50">
                         💎 <strong>Client Coivered Fee:</strong> You are
@@ -2419,7 +2421,7 @@ export default function ProjectWorkspaceView() {
               />
             </div>
 
-            {project.hasMilestones && extendedMilestoneDeadlines.length > 0 && (
+            {project.milestones && extendedMilestoneDeadlines.length > 0 && (
               <div className="space-y-3 pt-1 border-t border-gray-100">
                 <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
                   Modify Milestone Phases Deadlines
@@ -2603,28 +2605,27 @@ export default function ProjectWorkspaceView() {
                           disputeOtpCode === "9999"
                         ) {
                           // Complete Verification!
-                          updatePhoneNumber(disputeOtpPhone, true);
-                          showAlert(
+                          // updatePhoneNumber(disputeOtpPhone, true);
+                          toast.success(
                             "WhatsApp Phone Number verified successfully!",
-                            "success",
                           );
 
                           // Execute Dispute Action!
                           if (pendingDisputeAction.type === "project") {
-                            raiseProjectDispute(
-                              project.id,
-                              pendingDisputeAction.reason,
-                              pendingDisputeAction.evidenceFiles.join(", ") ||
-                                undefined,
-                            );
+                            // raiseProjectDispute(
+                            //   project.id,
+                            //   pendingDisputeAction.reason,
+                            //   pendingDisputeAction.evidenceFiles.join(", ") ||
+                            //     undefined,
+                            // );
                           } else {
-                            raiseMilestoneDispute(
-                              project.id,
-                              pendingDisputeAction.milestoneId!,
-                              pendingDisputeAction.reason,
-                              pendingDisputeAction.evidenceFiles.join(", ") ||
-                                undefined,
-                            );
+                            // raiseMilestoneDispute(
+                            //   project.id,
+                            //   pendingDisputeAction.milestoneId!,
+                            //   pendingDisputeAction.reason,
+                            //   pendingDisputeAction.evidenceFiles.join(", ") ||
+                            //     undefined,
+                            // );
                           }
                           setPendingDisputeAction(null);
                         } else {
