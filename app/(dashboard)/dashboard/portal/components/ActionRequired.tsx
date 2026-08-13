@@ -1,29 +1,48 @@
-export default function ActionRequired() {
+import { ChevronRight } from "lucide-react";
+import { ActionRequiredItem } from "../types/IGetDashboard";
+import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
+import { Session } from "next-auth";
+
+interface IActionRequired {
+  actionRequiredProjects: {
+    count: number;
+    items: ActionRequiredItem[];
+  };
+
+  session?: Session["user"];
+}
+
+export default function ActionRequired({
+  actionRequiredProjects,
+  session,
+}: IActionRequired) {
+  const myMail = session?.email;
+  const role = "";
   return (
     <>
-      {/* {actionRequiredProjects.length > 0 && (
+      {actionRequiredProjects.items.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-brand-primary animate-ping" />
             <h2 className="text-h4 text-gray-800">
-              Action Required ({actionRequiredProjects.length})
+              Action Required ({actionRequiredProjects.count})
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {actionRequiredProjects.map((p) => {
+            {actionRequiredProjects.items.map((p, idx) => {
               // Determine prompt copy dynamically based on status & current view
               let actionTitle = "";
               let actionBtnText = "";
               let badgeStyle = "";
 
-              if (p.agreementStatus === "pending_invite") {
+              if (p.status !== "APPROVED") {
                 actionTitle = "Review & Sign Agreement Proposal";
                 actionBtnText = "Accept / Review";
                 badgeStyle = "bg-purple-100 text-purple-700";
               } else if (
-                p.agreementStatus === "accepted" &&
-                p.escrowStatus === "unfunded"
+                p.status === "APPROVED"
+                // p.escrowStatus === "unfunded"
               ) {
                 actionTitle = `Fund Pending Escrow Contract`;
                 actionBtnText = "Fund (Flutterwave)";
@@ -44,7 +63,7 @@ export default function ActionRequired() {
 
               return (
                 <div
-                  key={p.id}
+                  key={idx}
                   className="bg-white p-5 rounded-2xl shadow-xs border border-gray-100 hover:shadow-md transition flex flex-col justify-between gap-4 animate-fade-in text-left"
                 >
                   <div className="flex items-start justify-between">
@@ -68,7 +87,10 @@ export default function ActionRequired() {
                       <p className="text-body-sm text-gray-400 mt-1">
                         Contract value:{" "}
                         <span className="font-extrabold text-amount text-gray-700">
-                          {formatMoney(p.amount, p.currency)}
+                          {formatNumberToCurrency(p.amount, {
+                            style: "currency",
+                            currency: p.currency,
+                          })}
                         </span>
                       </p>
                     </div>
@@ -92,7 +114,7 @@ export default function ActionRequired() {
             })}
           </div>
         </div>
-      )} */}
+      )}
     </>
   );
 }

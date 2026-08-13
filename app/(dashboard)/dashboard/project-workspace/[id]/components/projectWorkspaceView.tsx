@@ -626,7 +626,7 @@ export default function ProjectWorkspaceView() {
                 )}
                 {project.payment?.status === "COMPLETED" &&
                   // !project.isDelivered &&
-                  //project.hasMilestones &&
+                  project.milestones &&
                   !(project.milestones.length > 0) && (
                     <div className="p-5.5 bg-gray-50 rounded-2xl">
                       <span className="text-xs font-semibold text-gray-500 block">
