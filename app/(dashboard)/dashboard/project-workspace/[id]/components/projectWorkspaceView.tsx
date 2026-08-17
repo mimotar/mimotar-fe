@@ -33,6 +33,8 @@ import { useProjectApp } from "../hooks/useProjectApp";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { InteractiveMultiUploader } from "../../../start-project/components/InteractiveMultiUploader";
+import Header from "./Header";
+import AgreementAcceptanceBlock from "./AgreementAcceptanceBlock";
 // import { toast } from "@/components/ui/toast";
 
 const AutoReleaseTimer: React.FC<{ deliveredAt?: string }> = ({
@@ -126,29 +128,6 @@ const MilestoneCountdown: React.FC<{ submittedAt?: string }> = ({
 };
 
 export default function ProjectWorkspaceView() {
-  // const {
-  //   projects,
-  //   demoRole,
-  //   currentUser,
-  //   setActivePage,
-  //   selectedProjectId,
-  //   acceptProjectAgreement,
-  //   rejectProjectAgreement,
-  //   fundProjectEscrow,
-  //   submitProjectDelivery,
-  //   releaseEscrowFunds,
-  //   raiseProjectDispute,
-  //   resolveProjectDispute,
-  //   extendProjectDeadline,
-  //   submitMilestoneDelivery,
-  //   releaseMilestoneFunds,
-  //   raiseMilestoneDispute,
-  //   resolveMilestoneDispute,
-  //   simulateMilestone48hPassage,
-  //   showAlert,
-  //   updatePhoneNumber,
-  // } = useAppState();
-
   const params = useParams();
   const navigate = useRouter();
 
@@ -441,29 +420,10 @@ export default function ProjectWorkspaceView() {
   };
 
   return (
-    // <Suspense fallback="Loading ...">Hello project </Suspense>
     <div className="space-y-6 animate-fade-in font-sans pb-10">
       {/* Back to Dashboard bar and Role helpful hints selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <button
-          onClick={() => navigate.push("./dashboard/portal")}
-          className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-brand-primary transition cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to Interactive Dashboard
-        </button>
 
-        <div className="text-right flex items-center gap-2.5 bg-brand-primary/5 px-3 py-1.5 rounded-xl border border-brand-primary/10">
-          <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">
-            Reviewing Perspective:
-          </span>
-          <span className="text-xs font-bold text-brand-primary capitalize">
-            {/* {demoRole === "client" ? "Client Controls" : "Freelancer Controls"} */}
-            {project.creator_email === session.session?.email
-              ? project.creator_role
-              : project.reciever_role}
-          </span>
-        </div>
-      </div>
+      <Header session={session.session} project={project} />
 
       {/* DISPUTE LOCK STATE BANNER */}
       {project.status === "DISPUTE" && (
@@ -572,34 +532,7 @@ export default function ProjectWorkspaceView() {
             </div>
 
             {/* AGREEMENT ACCEPTANCE BLOCK */}
-            {/* {project.agreementStatus === "pending_invite" && ( */}
-            {project.status !== "APPROVED" && (
-              <div className="p-5.5 bg-yellow-50 rounded-2xl border border-yellow-200/50 space-y-4">
-                <span className="text-xs font-bold text-yellow-800">
-                  Proposal Pending Verification
-                </span>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  The counterparty must accept these terms before payments can
-                  be funded. As the simulator, you can accept or decline
-                  instantly to bypass!
-                </p>
-
-                <div className="flex gap-3">
-                  <button
-                    // onClick={() => acceptProjectAgreement(project.id)}
-                    className="flex-1 py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl shadow-xs cursor-pointer hover:bg-brand-primary/95 transition text-center"
-                  >
-                    Accept Terms
-                  </button>
-                  <button
-                    // onClick={() => rejectProjectAgreement(project.id)}
-                    className="px-4 py-2.5 bg-white border border-red-200 hover:bg-red-50 text-red-500 text-xs font-semibold rounded-xl transition cursor-pointer"
-                  >
-                    Reject
-                  </button>
-                </div>
-              </div>
-            )}
+            <AgreementAcceptanceBlock project={project} />
 
             {/* CLIENT ACTION PATH */}
             {role === "CLIENT" && project.status === "APPROVED" && (

@@ -53,19 +53,22 @@ export default function ActiveContract_RecentLog({
         ) : (
           <div className="flex flex-col gap-3">
             {activeContracts.map((p) => {
+              const isClient = p.role === "CLIENT";
+              const isFreelancer = p.role === "FREELANCER";
+
               let statusBadge = "";
               let statusLabel = "";
 
-              if (p.escrowStatus === "unfunded") {
+              if (p.fundedStatus === "UNFUNDED") {
                 statusBadge = "bg-gray-100 text-gray-500";
                 statusLabel = "Awaiting Funding";
-              } else if (p.escrowStatus === "funded" && !p.isDelivered) {
+              } else if (p.fundedStatus === "FUNDED" && !p.isDelivered) {
                 statusBadge = "bg-purple-100 text-brand-primary font-bold";
                 statusLabel = "In Progress";
               } else if (p.isDelivered && !p.isReleased) {
                 statusBadge = "bg-amber-100 text-[#854d0e] font-bold";
                 statusLabel = "Delivered";
-              } else if (p.escrowStatus === "disputed") {
+              } else if (p.status === "DISPUTE") {
                 statusBadge = "bg-red-100 text-red-700 font-bold";
                 statusLabel = "Disputed";
               }
@@ -86,8 +89,7 @@ export default function ActiveContract_RecentLog({
                       <span
                         className={`text-[9px] px-2 py-0.5 font-bold uppercase rounded-md tracking-wider ${p.creatorRole === "client" ? "bg-indigo-50 text-indigo-700 border border-indigo-100/50" : "bg-magenta-55/15 text-[#c026d3] border border-magenta-200/20"}`}
                       >
-                        You:{" "}
-                        {p.creatorRole === "client" ? "Client" : "Freelancer"}
+                        You: {isClient ? "Client" : "Freelancer"}
                       </span>
                       <span className="text-caption text-gray-400 font-mono">
                         ID: {p.id}
@@ -111,9 +113,9 @@ export default function ActiveContract_RecentLog({
                   <div className="text-right">
                     <span className="text-caption text-gray-400 block mb-1">
                       Fee:{" "}
-                      {p.feePayer === "split"
+                      {p.feePayer === "BOTH"
                         ? "Split (1.5% each)"
-                        : p.feePayer === "client"
+                        : p.feePayer === "CLIENT"
                           ? "Client Paid"
                           : "Freelancer Paid"}
                     </span>

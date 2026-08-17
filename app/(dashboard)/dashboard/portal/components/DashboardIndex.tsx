@@ -16,7 +16,7 @@ import ActionRequired from "./ActionRequired";
 import ActiveContract_RecentLog from "./ActiveContract_RecentLog";
 import { useDashboardQuery } from "../hooks/useDashboardQuery";
 import { DashboardHeader } from "./DashboardHeader";
-import { IWallet } from "../types/IGetDashboard";
+import { ActionRequiredItem, IWallet } from "../types/IGetDashboard";
 
 export default function DashboardIndex() {
   const { session } = useAuth();
@@ -87,6 +87,27 @@ export default function DashboardIndex() {
     );
   }
 
+  /*
+   * No data state
+   */
+  if (!dashboardData) {
+    return (
+      <main className="min-h-[500px] flex items-center justify-center font-sans">
+        <div className="text-center">
+          <p className="text-gray-500 text-sm">No dashboard data available.</p>
+
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="mt-4 text-sm font-semibold text-brand-primary hover:underline"
+          >
+            Refresh
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="space-y-8 animate-fade-in font-sans">
       {/* Top Welcome Title Grid */}
@@ -120,17 +141,17 @@ export default function DashboardIndex() {
       ) : null}
 
       {/* Wallet Card Section (Important but not Dominant) */}
-      <WalletCard wallet={dashboardData?.balance as IWallet} />
+      <WalletCard wallet={dashboardData.balance} />
 
       {/* Action Required Priority Bar */}
       <ActionRequired
-        actionRequiredProjects={dashboardData?.actionsRequired!}
+        actionRequiredProjects={dashboardData.actionsRequired}
         session={session}
       />
 
       {/* Main Active Escrow Board vs Empty State */}
       <ActiveContract_RecentLog
-        activeContracts={[]}
+        activeContracts={dashboardData.activeContracts ?? []}
         recentLogs={dashboardData?.recentActivity ?? []}
       />
     </main>

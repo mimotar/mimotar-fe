@@ -70,8 +70,15 @@ export interface ActionRequiredItem {
     name: string;
     email: string;
   };
+  fundStatus: "UNFUNDED" | "FUNDED";
+  roleStatus: "CLIENT" | "FREELANCER";
+  deliveredAndReleasedStatus:
+    | "NOT_DELIVERED"
+    | "DELIVERED"
+    | "RELEASED"
+    | "NOT_RELEASED";
   createdAt: string;
-  type: string;
+  type: "APPROVE_OR_REJECT";
 }
 
 export interface RecentActivity {
@@ -93,6 +100,9 @@ export interface ActiveContract {
     email: string;
   };
   paymentSentToEscrowAt: string;
+  fundedStatus: "UNFUNDED" | "FUNDED";
+  feePayer: "CLIENT" | "FREELANCER" | "BOTH";
+  role: "CLIENT" | "FREELANCER";
   activeMilestone: {
     id: number;
     name: string;
