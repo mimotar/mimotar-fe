@@ -55,19 +55,13 @@ export const Sidebar = () => {
             <div className="flex justify-between items-center text-xs">
               <span className="text-gray-500 font-medium">Naira (NGN):</span>
               <span className="font-bold text-gray-900 font-display">
-                {formatNumberToCurrency(450000, {
-                  style: "currency",
-                  currency: "NGN",
-                })}
+                {formatNumberToCurrency(450000, "NGN")}
               </span>
             </div>
             <div className="flex justify-between items-center text-xs border-t border-gray-200/40 pt-1.5">
               <span className="text-gray-500 font-medium">Dollars (USD):</span>
               <span className="font-bold text-brand-primary font-mono">
-                {formatNumberToCurrency(350, {
-                  style: "currency",
-                  currency: "USD",
-                })}
+                {formatNumberToCurrency(350, "USD")}
               </span>
             </div>
           </div>

@@ -38,7 +38,10 @@ const mapDefaultValues = (ticket: ITicket): IStepOne => ({
   files: ticket.files || [],
   pay_escrow_fee: ticket.pay_escrow_fee || "BOTH",
   transaction_description: ticket.transaction_description || "",
-  amount: Number(formatNumberToCurrency(ticket.amount)) || 0,
+  amount:
+    Number(
+      formatNumberToCurrency(ticket.amount, ticket.currency as "NGN" | "USD"),
+    ) || 0,
   deadline: ticket.deadline
     ? new Date(ticket.deadline).toISOString().split("T")[0]
     : "",

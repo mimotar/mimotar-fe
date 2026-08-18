@@ -192,10 +192,7 @@ export default function ProjectStepFour() {
               Budget Value
             </span>
             <span className="text-sm font-extrabold text-gray-800 block mt-1 font-mono">
-              {formatNumberToCurrency(ticket.amount, {
-                currency: "NGN",
-                style: "currency",
-              })}
+              {formatNumberToCurrency(ticket.amount, "NGN")}
             </span>
           </div>
           <div>
@@ -221,10 +218,7 @@ export default function ProjectStepFour() {
               Escrow Fee (3%)
             </span>
             <span className="text-xs font-bold text-[#854d0e] block mt-1 font-mono">
-              {formatNumberToCurrency(ticket.amount * 0.03, {
-                currency: "NGN",
-                style: "currency",
-              })}
+              {formatNumberToCurrency(ticket.amount * 0.03, "NGN")}
             </span>
           </div>
         </div>
@@ -250,10 +244,7 @@ export default function ProjectStepFour() {
                       </span>
                     </div>
                     <span className="font-bold text-gray-800 font-mono bg-gray-50 px-2.5 py-1 rounded border border-gray-100">
-                      {formatNumberToCurrency(m.amount, {
-                        currency: "NGN",
-                        style: "currency",
-                      })}
+                      {formatNumberToCurrency(m.amount, "NGN")}
                     </span>
                   </div>
                   {m.files && m.files.length > 0 ? (

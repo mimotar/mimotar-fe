@@ -102,10 +102,10 @@ export default function ActiveContract_RecentLog({
                       Total Escrow Value:{" "}
                       <span className="font-extrabold text-amount text-gray-700">
                         {/* {formatMoney(p.amount, p.currency)} */}
-                        {formatNumberToCurrency(p.amount, {
-                          style: "currency",
-                          currency: p.currency,
-                        })}
+                        {formatNumberToCurrency(
+                          p.amount,
+                          p.currency as "USD" | "NGN",
+                        )}
                       </span>
                     </p>
                   </div>

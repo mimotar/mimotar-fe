@@ -180,10 +180,10 @@ export default function ProjectLists({
                       </span>
                       <span className="text-[15px] font-black text-gray-950 block tracking-tight font-display">
                         {/* {formatMoney(project.amount, project.currency)} */}
-                        {formatNumberToCurrency(project.amount, {
-                          currency: project.currency ?? "NGN",
-                          style: "currency",
-                        })}
+                        {formatNumberToCurrency(
+                          project.amount,
+                          project.currency ?? "NGN",
+                        )}
                       </span>
                       <span className="text-[9px] text-gray-450 block font-mono">
                         3% platform escrow protec.

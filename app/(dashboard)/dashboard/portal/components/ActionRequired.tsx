@@ -96,10 +96,10 @@ export default function ActionRequired({
                       <p className="text-body-sm text-gray-400 mt-1">
                         Contract value:{" "}
                         <span className="font-extrabold text-amount text-gray-700">
-                          {formatNumberToCurrency(p.amount, {
-                            style: "currency",
-                            currency: p.currency,
-                          })}
+                          {formatNumberToCurrency(
+                            p.amount,
+                            p.currency as "USD" | "NGN",
+                          )}
                         </span>
                       </p>
                     </div>
