@@ -38,6 +38,9 @@ import AgreementAcceptanceBlock from "./AgreementAcceptanceBlock";
 import ClientActionSection from "./ClientActionSection";
 import FreelancerActionSection from "./FreelancerActionSection";
 import MilestoneSection from "./MilestoneSection";
+import Loading from "./loading";
+import Error from "./ErrorState";
+import ErrorState from "./ErrorState";
 // import { toast } from "@/components/ui/toast";
 
 const AutoReleaseTimer: React.FC<{ deliveredAt?: string }> = ({
@@ -261,40 +264,43 @@ export default function ProjectWorkspaceView() {
   const [showFlutterwavePay, setShowFlutterwavePay] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
+  // Loading state
+  if (getProject.isLoading) {
+    return <Loading />;
+  }
+
+  if (getProject.isError) {
+    return <ErrorState data={getProject} />;
+  }
+
+  // No project returned
   if (!project) {
     return (
-      <div className="py-12 text-center text-xs text-gray-500 animate-fade-in font-sans">
-        No active project selected. Return to{" "}
-        <button
-          onClick={() => navigate.push("./dashboard/projects")}
-          className="text-brand-primary font-bold hover:underline"
-        >
-          Projects
-        </button>
-        .
+      <div className="min-h-[60vh] flex items-center justify-center font-sans">
+        <div className="max-w-md w-full text-center">
+          <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center">
+            <FileText className="w-6 h-6 text-gray-400" />
+          </div>
+
+          <h2 className="text-sm font-bold text-gray-900">Project not found</h2>
+
+          <p className="text-xs text-gray-500 mt-2">
+            This project may have been removed or you may not have access to it.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => navigate.push("./dashboard/projects")}
+            className="mt-5 px-4 py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/90 transition"
+          >
+            Back to Projects
+          </button>
+        </div>
       </div>
     );
   }
 
   // Derive active steps for the Status Header Stepper
-  // const getStepperIndex = () => {
-  //   if (project.status !== "APPROVED") return 0; // Pending invite
-  //   // if (project.escrowStatus === "unfunded") return 1; // Unfunded
-  //   if (project.payment?.status === "PENDING" || project.payment?.status === "FAILED") return 1; // Unfunded
-  //   // if (project.escrowStatus === "funded" && !project.isDelivered) return 2; // Funded / In Progress
-  //    if (project.payment?.status === "COMPLETED") return 2; // Funded / In Progress
-  //   // if (
-  //   //   project.isDelivered &&
-  //   //   !project.isReleased &&
-  //   //   project.escrowStatus !== "dispute"
-  //   // )
-  //   //   return 3; // Delivered
-  //     if (project.status !== "DISPUTE") return 3; // Delivered
-  //   // if (project.isReleased || project.escrowStatus === "completed") return 4; // Released
-  //     if ( project.status === "COMPLETED") return 4; // Released
-  //   return 2; // Disputed falls into workspace progress
-  // };
-
   const getStepperIndex = () => {
     // Waiting for the other party to accept
     if (project.status === "CREATED") return 0;

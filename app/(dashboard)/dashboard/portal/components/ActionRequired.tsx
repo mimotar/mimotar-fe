@@ -34,7 +34,7 @@ export default function ActionRequired({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {actionRequiredProjects.items.map((p, idx) => {
               const isClient = p.roleStatus === "CLIENT";
-              const isFreelancer = p.roleStatus === "FREELANCER";
+              // const isFreelancer = p.roleStatus === "FREELANCER";
               // Determine prompt copy dynamically based on status & current view
               let actionTitle = "";
               let actionBtnText = "";
