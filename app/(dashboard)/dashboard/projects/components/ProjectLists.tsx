@@ -143,7 +143,7 @@ export default function ProjectLists({
                           className={`text-[9px] px-1.5 py-0.5 font-bold uppercase rounded-md tracking-wider ${project.creator_role === "CLIENT" ? "bg-indigo-50 text-indigo-700 border border-indigo-100/50" : "bg-magenta-55/15 text-[#c026d3] border border-magenta-200/20"}`}
                         >
                           You:{" "}
-                          {project.creator_role === "CLIENT"
+                          {project.myRole === "CLIENT"
                             ? "Client"
                             : "Freelancer"}
                         </span>

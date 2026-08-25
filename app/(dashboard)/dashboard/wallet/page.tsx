@@ -1,3 +1,5 @@
+import { WalletView } from "./components/WalletView";
+
 export default function page() {
-  return <div>page</div>;
+  return <WalletView />;
 }
