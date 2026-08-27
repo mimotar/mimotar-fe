@@ -44,7 +44,7 @@ const attachmentSchema = z.union([
 
 // flow one
 export const stepOneSchema = z.object({
-  currency: z.string().trim().min(1, "Currency is required"),
+  currency: z.enum(["NGN", "USD"]),
 
   title: z
     .string()

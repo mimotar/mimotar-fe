@@ -57,7 +57,7 @@ export default function ProjectStepFour() {
       creator_role: ticket.reciever_role === "CLIENT" ? "FREELANCER" : "CLIENT",
 
       expiresAt: Number(ticket.expiresAt),
-      transactionType: (ticket.milestones.length > 0
+      transactionType: (hasMilestones
         ? "MILESTONE_BASED_PROJECT"
         : ticket.transactionType) as
         | "PHYSICAL_PRODUCT"
@@ -85,6 +85,7 @@ export default function ProjectStepFour() {
     };
 
     const result = createTransactionSchema.safeParse(formValidationSchema);
+    console.log("type", formValidationSchema);
     const errors = result.error?.flatten().fieldErrors ?? {};
     console.log("Validation errors:", errors);
 

@@ -16,7 +16,7 @@ export type IMilestone = {
 };
 
 export type IStepOne = {
-  currency: string;
+  currency: "NGN" | "USD";
   title: string;
   files: IPersistedAttachment[];
   pay_escrow_fee: "CLIENT" | "FREELANCER" | "BOTH" | null;
@@ -37,7 +37,7 @@ export type IStepOne = {
 
 export interface ITicket {
   //step one
-  currency: string;
+  currency: "NGN" | "USD";
   title: string;
   files: IPersistedAttachment[];
   pay_escrow_fee: "CLIENT" | "FREELANCER" | "BOTH" | null;

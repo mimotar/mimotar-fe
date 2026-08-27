@@ -341,6 +341,9 @@ export default function ProjectWorkspaceView() {
     project.creator_email === session.session?.email
       ? project.reciever_email
       : "";
+  const isCreator =
+    project.creator_email?.toLowerCase() ===
+    session.session?.email?.toLowerCase();
 
   const formatMoney = (amount: number, currency: "NGN" | "USD") => {
     return currency === "NGN"
@@ -540,7 +543,11 @@ export default function ProjectWorkspaceView() {
             </div>
 
             {/* AGREEMENT ACCEPTANCE BLOCK */}
-            <AgreementAcceptanceBlock project={project} />
+            <AgreementAcceptanceBlock
+              isCreator={isCreator}
+              project={project}
+              session={session.session}
+            />
 
             {/* CLIENT ACTION PATH */}
             <ClientActionSection project={project} role={role} />
