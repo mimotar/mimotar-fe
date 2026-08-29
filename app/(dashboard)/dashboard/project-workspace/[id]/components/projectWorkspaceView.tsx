@@ -41,6 +41,9 @@ import MilestoneSection from "./MilestoneSection";
 import Loading from "./loading";
 import Error from "./ErrorState";
 import ErrorState from "./ErrorState";
+import { useQueryClient } from "@tanstack/react-query";
+import { useMutationAction } from "../hooks/useMutationActions";
+import { AxiosError } from "axios";
 // import { toast } from "@/components/ui/toast";
 
 const AutoReleaseTimer: React.FC<{ deliveredAt?: string }> = ({
@@ -136,6 +139,7 @@ const MilestoneCountdown: React.FC<{ submittedAt?: string }> = ({
 export default function ProjectWorkspaceView() {
   const params = useParams();
   const navigate = useRouter();
+  const queryClient = useQueryClient();
 
   const id = params.id as string;
   const { getProject } = useProjectApp(id);
@@ -144,6 +148,14 @@ export default function ProjectWorkspaceView() {
 
   // const project = projects.find((p) => p.id === selectedProjectId);
   const project = getProject.data;
+  const projectId = project?.id ?? "";
+
+  const {
+    approvalMutation,
+    rejectMutation,
+    requestTokenMutation,
+    fundingMutation,
+  } = useMutationAction(projectId);
 
   // Modal / form states
   const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -174,6 +186,11 @@ export default function ProjectWorkspaceView() {
   const [extendedMilestoneDeadlines, setExtendedMilestoneDeadlines] = useState<
     { id: string; deadline: string }[]
   >([]);
+
+  const [agreementDecision, setAgreementDecision] = useState<
+    "accept" | "reject" | null
+  >(null);
+  const [agreementOtp, setAgreementOtp] = useState("");
 
   useEffect(() => {
     if (project) {
@@ -260,6 +277,117 @@ export default function ProjectWorkspaceView() {
     setShowExtendModal(false);
   };
 
+  const openAgreementDecision = (nextDecision: "accept" | "reject") => {
+    setAgreementDecision(nextDecision);
+  };
+
+  const closeAgreementDecision = () => {
+    setAgreementDecision(null);
+    setAgreementOtp("");
+  };
+
+  const handleRequestAgreementOtp = () => {
+    requestTokenMutation.mutate(undefined, {
+      onSuccess: async (data) => {
+        const requestedOtp = data?.data?.otp;
+
+        if (requestedOtp) {
+          setAgreementOtp(requestedOtp);
+        }
+
+        toast.success(data?.message || "OTP sent to your email.");
+      },
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(
+            error?.response?.data?.message || "Unable to request OTP.",
+          );
+          return;
+        }
+        if (error instanceof Error) {
+          toast.error(error?.message || "Unable to request OTP.");
+          return;
+        }
+
+        toast.error("Unable to request OTP.");
+      },
+    });
+  };
+
+  const handleAgreementConfirm = ({
+    otp,
+    rejectionReason,
+  }: {
+    otp: string;
+    rejectionReason?: string;
+  }) => {
+    if (!otp.trim()) {
+      toast.error("Please request and enter the OTP before continuing.");
+      return;
+    }
+
+    if (agreementDecision === "accept") {
+      approvalMutation.mutate(otp.trim(), {
+        onSuccess: async (data) => {
+          toast.success(data?.message || "Agreement accepted successfully.");
+          await queryClient.invalidateQueries({
+            queryKey: ["project", projectId],
+          });
+          closeAgreementDecision();
+        },
+        onError: (error) => {
+          if (error instanceof AxiosError) {
+            toast.error(error?.response?.data?.message);
+            return;
+          }
+          if (error instanceof Error) {
+            toast.error(
+              error?.message || "Unable to accept the agreement right now.",
+            );
+            return;
+          }
+
+          toast.error("Unable to accept the agreement right now.");
+        },
+      });
+      return;
+    }
+
+    const reason = rejectionReason?.trim();
+
+    if (!reason) {
+      toast.error("Please provide a reason for rejection.");
+      return;
+    }
+
+    rejectMutation.mutate(
+      { otp: otp.trim(), rejectionReason: reason },
+      {
+        onSuccess: async (data) => {
+          toast.success(data?.message || "Agreement rejected successfully.");
+          await queryClient.invalidateQueries({
+            queryKey: ["project", projectId],
+          });
+          closeAgreementDecision();
+        },
+        onError: (error) => {
+          if (error instanceof AxiosError) {
+            toast.error(error?.response?.data?.message);
+            return;
+          }
+          if (error instanceof Error) {
+            toast.error(
+              error?.message || "Unable to reject the agreement right now.",
+            );
+            return;
+          }
+
+          toast.error("Unable to reject the agreement right now.");
+        },
+      },
+    );
+  };
+
   // Flutterwave simulated overlay
   const [showFlutterwavePay, setShowFlutterwavePay] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
@@ -299,17 +427,13 @@ export default function ProjectWorkspaceView() {
       </div>
     );
   }
-
   // Derive active steps for the Status Header Stepper
   const getStepperIndex = () => {
     // Waiting for the other party to accept
     if (project.status === "CREATED") return 0;
 
     // Agreement accepted but escrow not funded
-    if (
-      project.payment?.status === "PENDING" ||
-      project.payment?.status === "FAILED"
-    ) {
+    if (project.status === "APPROVED") {
       return 1;
     }
 
@@ -430,6 +554,48 @@ export default function ProjectWorkspaceView() {
     setShowResolveConfirm(false);
   };
 
+  const handlePayment = (id: string | number) => {
+    if (!id) {
+      toast.error("Invalid payment process");
+      return;
+    }
+    fundingMutation.mutate(undefined, {
+      onSuccess: (data) => {
+        const FlutterwaveData = data;
+        console.log(data);
+        if (FlutterwaveData.status === "success") {
+          if (FlutterwaveData.data && FlutterwaveData.data.link) {
+            toast.success(
+              "Processing payment... After payment refresh this page",
+            );
+            window.open(FlutterwaveData.data.link, "_blank");
+          } else {
+            toast.error("Payment link is missing.");
+            return;
+          }
+        } else {
+          toast.error(
+            FlutterwaveData.message || "Payment initialization failed",
+          );
+          return;
+        }
+      },
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(
+            error.response?.data?.message || "An error occurred during payment",
+          );
+          return;
+        }
+        if (error instanceof Error) {
+          toast.error(error.message || "An error occurred during payment");
+          return;
+        }
+        toast.error("An error occurred during payment");
+      },
+    });
+  };
+
   return (
     <div className="space-y-6 animate-fade-in font-sans pb-10">
       {/* Back to Dashboard bar and Role helpful hints selector */}
@@ -544,13 +710,30 @@ export default function ProjectWorkspaceView() {
 
             {/* AGREEMENT ACCEPTANCE BLOCK */}
             <AgreementAcceptanceBlock
+              decision={agreementDecision}
+              agreementOtp={agreementOtp}
+              isRequestingOtp={requestTokenMutation.isPending}
+              isDecisionPending={
+                (approvalMutation.isPending &&
+                  agreementDecision === "accept") ||
+                (rejectMutation.isPending && agreementDecision === "reject")
+              }
               isCreator={isCreator}
               project={project}
-              session={session.session}
+              onAgreementOtpChange={setAgreementOtp}
+              onCloseDecision={closeAgreementDecision}
+              onConfirmDecision={handleAgreementConfirm}
+              onOpenDecision={openAgreementDecision}
+              onRequestOtp={handleRequestAgreementOtp}
             />
 
             {/* CLIENT ACTION PATH */}
-            <ClientActionSection project={project} role={role} />
+            <ClientActionSection
+              project={project}
+              role={role}
+              handlePayment={handlePayment}
+              isLoadingPayment={fundingMutation.isPending}
+            />
 
             {/* FREELANCER ACTION PATH */}
             <FreelancerActionSection

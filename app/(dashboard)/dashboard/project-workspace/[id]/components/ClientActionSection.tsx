@@ -1,41 +1,57 @@
 import toast from "react-hot-toast";
 import { ITransaction } from "../../../projects/types/ITransaction";
 import { useState } from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { MdOutlineRefresh } from "react-icons/md";
 
 interface IClientActionSectionProps {
   project: ITransaction;
   role: "CLIENT" | "FREELANCER";
+  handlePayment: (id: string | number) => void;
+  isLoadingPayment: boolean;
 }
 
 export default function ClientActionSection({
   project,
   role,
+  handlePayment,
+  isLoadingPayment,
 }: IClientActionSectionProps) {
   const [showReleaseConfirm, setShowReleaseConfirm] = useState(false);
+
   return (
     <>
       {role === "CLIENT" && project.status === "APPROVED" && (
         <div className="space-y-4">
-          {/* {project.escrowStatus === "unfunded" && ( */}
-          project.payment?.status === "PENDING" ||
-          {project.payment?.status === "FAILED" && (
-            <div className="p-5 bg-purple-100/[0.02] border border-purple-100 rounded-2xl space-y-4">
-              <span className="text-xs font-bold text-brand-primary block">
-                Client Funding Required
-              </span>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                Securing funds locked inside Mimotar provides the milestone
-                guarantee. Once funded, the freelancer holds a legal claim and
-                can safely implement code deliverables.
-              </p>
-              <button
-                // onClick={() => setShowFlutterwavePay(true)}
-                className="w-full py-3 bg-brand-primary text-white text-xs font-bold rounded-xl shadow-xs hover:bg-brand-primary/95 transition cursor-pointer text-center"
-              >
-                Fund Escrow (₦{project.amount.toLocaleString()})
-              </button>
-            </div>
-          )}
+          {/* {project.payment?.status === "PENDING" ||
+            (project.payment?.status === "FAILED" && ( */}
+          <div className="p-5 relative bg-purple-100/[0.02] border border-purple-100 rounded-2xl space-y-4">
+            <MdOutlineRefresh className="absolute top-2 right-2 text-xl cursor-pointer" />
+            <span className="text-xs font-bold text-brand-primary block">
+              Client Funding Required
+            </span>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Securing funds locked inside Mimotar provides the milestone
+              guarantee. Once funded, the freelancer holds a legal claim and can
+              safely implement code deliverables.
+            </p>
+            <span className="text-xs text-brand-secondary ">
+              Note: refresh or wait for a few second for the ticket to update
+            </span>
+            <button
+              disabled={isLoadingPayment}
+              // onClick={() => setShowFlutterwavePay(true)}
+              onClick={() => handlePayment(project.id)}
+              className="w-full py-3 bg-brand-primary inline-flex gap-2 mt-2 items-center justify-center text-white text-xs font-bold rounded-xl shadow-xs hover:bg-brand-primary/95 transition cursor-pointer text-center"
+            >
+              Fund Escrow (₦{project.amount.toLocaleString()}){" "}
+              {isLoadingPayment && (
+                <AiOutlineLoading3Quarters className="animate-spin" />
+              )}
+            </button>
+          </div>
+          {/* // ))} */}
+
           {project.payment?.status === "COMPLETED" &&
             // !project.isDelivered &&
             project.milestones &&

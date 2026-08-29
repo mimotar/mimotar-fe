@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 
 type AgreementDecision = "accept" | "reject";
 
@@ -19,9 +19,14 @@ interface AgreementDecisionModalProps {
   open: boolean;
   decision: AgreementDecision | null;
   projectTitle?: string;
+  otp: string;
   isLoading?: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: (rejectionReason?: string) => void;
+  onOtpChange: (otp: string) => void;
+  onConfirm: (payload: {
+    otp: string;
+    rejectionReason?: string;
+  }) => void;
 }
 
 const decisionConfig: Record<
@@ -64,19 +69,15 @@ export default function AgreementDecisionModal({
   open,
   decision,
   projectTitle,
+  otp,
   isLoading = false,
   onOpenChange,
+  onOtpChange,
   onConfirm,
 }: AgreementDecisionModalProps) {
   const config = decision ? decisionConfig[decision] : decisionConfig.accept;
   const Icon = config.icon;
   const [rejectionReason, setRejectionReason] = useState("");
-
-  useEffect(() => {
-    if (decision !== "reject" || !open) {
-      setRejectionReason("");
-    }
-  }, [decision, open]);
 
   return (
     <Dialog
@@ -117,6 +118,27 @@ export default function AgreementDecisionModal({
           </p>
         </div>
 
+        <div className="space-y-2 rounded-2xl border border-amber-100 bg-amber-50/50 p-4 sm:p-5">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-amber-700" />
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-700">
+              OTP verification
+            </p>
+          </div>
+          <p className="text-xs leading-5 text-amber-800/80">
+            Request an OTP from the agreement block. It will be sent to your
+            mail and also filled here if the response returns the code.
+          </p>
+          <input
+            id="agreement-otp"
+            type="text"
+            value={otp}
+            onChange={(e) => onOtpChange(e.target.value)}
+            placeholder="Enter or paste OTP"
+            className="w-full rounded-xl border border-amber-200 bg-white px-3.5 py-3 text-sm tracking-[0.35em] text-center font-mono text-slate-900 outline-none transition focus:border-amber-400 focus:ring-2 focus:ring-amber-200"
+          />
+        </div>
+
         {decision === "reject" && (
           <div className="space-y-2 rounded-2xl border border-rose-100 bg-rose-50/40 p-4 sm:p-5">
             <label
@@ -153,8 +175,17 @@ export default function AgreementDecisionModal({
 
           <Button
             type="button"
-            onClick={() => onConfirm(rejectionReason.trim())}
-            disabled={isLoading || (decision === "reject" && !rejectionReason.trim())}
+            onClick={() =>
+              onConfirm({
+                otp: otp.trim(),
+                rejectionReason: rejectionReason.trim(),
+              })
+            }
+            disabled={
+              isLoading ||
+              !otp.trim() ||
+              (decision === "reject" && !rejectionReason.trim())
+            }
             className={`w-full sm:w-auto cursor-pointer inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium ${config.buttonClassName}`}
           >
             {isLoading ? (

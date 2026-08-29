@@ -17,19 +17,19 @@ export default function FreelancerActionSection({
       {" "}
       {role === "FREELANCER" && project.status === "APPROVED" && (
         <div className="space-y-4">
-          {project.payment?.status === "PENDING" ||
-            (project.payment?.status === "FAILED" && (
-              <div className="p-5.5 bg-gray-50 rounded-2xl">
-                <span className="text-xs font-semibold text-gray-500 block">
-                  Status: Waiting for Client to Fund Escrow
-                </span>
-                <p className="text-xs text-gray-400 leading-relaxed mt-2 text-left">
-                  DO NOT start working yet. We will notify you via in-app alerts
-                  and email once the client authorizes Flutterwave funding
-                  security layers.
-                </p>
-              </div>
-            ))}
+          {/* {project.payment?.status === "PENDING" ||
+            (project.payment?.status === "FAILED" && ( */}
+          <div className="p-5.5 bg-gray-50 rounded-2xl">
+            <span className="text-xs font-semibold text-gray-500 block">
+              Status: Waiting for Client to Fund Escrow
+            </span>
+            <p className="text-xs text-gray-400 leading-relaxed mt-2 text-left">
+              DO NOT start working yet. We will notify you via in-app alerts and
+              email once the client authorizes Flutterwave funding security
+              layers.
+            </p>
+          </div>
+          {/* // ))} */}
 
           {project.payment?.status === "COMPLETED" && (
             <div className="p-5 bg-brand-primary/[0.01] border border-brand-primary/10 rounded-2xl space-y-4">
