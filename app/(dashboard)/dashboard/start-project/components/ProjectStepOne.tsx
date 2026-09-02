@@ -420,7 +420,7 @@ export default function ProjectStepOne() {
             )}
           </div>
 
-          <div>
+          {/* <div>
             <label className="text-label text-gray-400 mb-1 block">
               Transaction Type
             </label>
@@ -444,7 +444,7 @@ export default function ProjectStepOne() {
                 <span>{errors.transactionType?.message}</span>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
       </form>
 
