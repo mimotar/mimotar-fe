@@ -174,10 +174,24 @@ export interface ITransaction {
   expiresAt: string;
   link_expires: boolean;
   deadline: string;
+  change_request_comment: string | null;
+  change_requested_at: string | null;
+  change_requested_by_email: string | null;
+  revision_count: number;
 
   deadlineExtensions: DeadlineExtension[];
 
   milestones: Milestone[];
+  myRole: UserRole;
+
+  counterparty: {
+    name: string;
+    email: string;
+    role: UserRole;
+  };
+
+  dueAt: string;
+  milestoneSummary: string | null;
 
   history: TransactionHistory;
 }
@@ -185,5 +199,13 @@ export interface ITransaction {
 export type ITransactionsResponseData = ITransaction[];
 export type ITransactionsResponse = {
   message: string;
-  data: ITransactionsResponseData;
+  data: {
+    items: ITransactionsResponseData;
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  };
 };

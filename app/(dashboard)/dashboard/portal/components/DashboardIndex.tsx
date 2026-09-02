@@ -1,7 +1,13 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Plus, ShieldCheck, HelpCircle as QuestionIcon } from "lucide-react";
+import {
+  Plus,
+  ShieldCheck,
+  HelpCircle as QuestionIcon,
+  RefreshCw,
+  AlertCircle,
+} from "lucide-react";
 import { useAuth } from "@/app/(client)/(page)/hooks/useAuth";
 import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 import Link from "next/link";
@@ -9,51 +15,104 @@ import WalletCard from "./WalletCard";
 import ActionRequired from "./ActionRequired";
 import ActiveContract_RecentLog from "./ActiveContract_RecentLog";
 import { useDashboardQuery } from "../hooks/useDashboardQuery";
+import { DashboardHeader } from "./DashboardHeader";
+import { ActionRequiredItem, IWallet } from "../types/IGetDashboard";
 
 export default function DashboardIndex() {
   const { session } = useAuth();
-  // const dashboardData = useDashboardQuery();
+  const {
+    data: dashboardData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useDashboardQuery();
+
+  /*
+   * Loading state
+   */
+  if (isLoading) {
+    return (
+      <main className="space-y-8 animate-fade-in font-sans">
+        <DashboardHeader firstName={session?.firstName} />
+
+        {/* Skeleton */}
+        <div className="space-y-6">
+          <div className="h-40 rounded-2xl bg-gray-100 animate-pulse" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="h-52 rounded-2xl bg-gray-100 animate-pulse" />
+            <div className="h-52 rounded-2xl bg-gray-100 animate-pulse" />
+          </div>
+
+          <div className="h-64 rounded-2xl bg-gray-100 animate-pulse" />
+        </div>
+      </main>
+    );
+  }
+
+  /*
+   * Error state
+   */
+  if (isError) {
+    return (
+      <main className="min-h-[500px] flex items-center justify-center font-sans">
+        <div className="max-w-md w-full text-center px-6">
+          <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+            <AlertCircle className="w-6 h-6 text-red-500" />
+          </div>
+
+          <h2 className="text-lg font-bold text-gray-900">
+            Unable to load dashboard
+          </h2>
+
+          <p className="text-sm text-gray-500 mt-2">
+            We couldn't retrieve your dashboard information. Please try again.
+          </p>
+
+          {error instanceof Error && (
+            <p className="text-xs text-red-500 mt-2">{error.message}</p>
+          )}
+
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="mt-5 inline-flex items-center gap-2 bg-brand-primary text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Try again
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+  /*
+   * No data state
+   */
+  if (!dashboardData) {
+    return (
+      <main className="min-h-[500px] flex items-center justify-center font-sans">
+        <div className="text-center">
+          <p className="text-gray-500 text-sm">No dashboard data available.</p>
+
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="mt-4 text-sm font-semibold text-brand-primary hover:underline"
+          >
+            Refresh
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="space-y-8 animate-fade-in font-sans">
       {/* Top Welcome Title Grid */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-h2 font-display text-gray-900 flex items-center gap-1.5 leading-tight">
-            Welcome back, {session?.firstName}
-            <motion.span
-              style={{
-                display: "inline-block",
-                transformOrigin: "bottom right",
-              }}
-              animate={{ rotate: [0, 15, -10, 15, -10, 15, -10, 10, 0] }}
-              transition={{
-                duration: 3,
-                ease: "easeInOut",
-                repeat: Infinity,
-                repeatDelay: 5,
-              }}
-            >
-              👋
-            </motion.span>
-          </h1>
-          {/* <p className="text-body-sm text-gray-500 mt-1 font-medium">
-            Perspective:{" "}
-            <span className="font-bold text-brand-primary capitalize">
-              {currentUser.role} Control Panel
-            </span>
-            .
-          </p> */}
-        </div>
 
-        <Link
-          href="/dashboard/start-project"
-          //   onClick={() => setActivePage("start-project")}
-          className="bg-brand-primary hover:bg-brand-primary/95 text-white rounded-2xl px-6 py-3.5 text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-magenta-200/50 text-center shrink-0 font-sans"
-        >
-          <Plus className="w-4 h-4" /> Start Project
-        </Link>
-      </div>
+      <DashboardHeader firstName={session?.firstName} />
 
       {/* Nudge Banner */}
       {!session?.phone_no ? (
@@ -82,13 +141,19 @@ export default function DashboardIndex() {
       ) : null}
 
       {/* Wallet Card Section (Important but not Dominant) */}
-      <WalletCard />
+      <WalletCard wallet={dashboardData.balance} />
 
       {/* Action Required Priority Bar */}
-      <ActionRequired />
+      <ActionRequired
+        actionRequiredProjects={dashboardData.actionsRequired}
+        session={session}
+      />
 
       {/* Main Active Escrow Board vs Empty State */}
-      <ActiveContract_RecentLog />
+      <ActiveContract_RecentLog
+        activeContracts={dashboardData.activeContracts ?? []}
+        recentLogs={dashboardData?.recentActivity ?? []}
+      />
     </main>
   );
 }

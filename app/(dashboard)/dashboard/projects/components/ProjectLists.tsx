@@ -15,6 +15,7 @@ import {
 } from "../types/ITransaction";
 import { useAuth } from "@/app/(client)/(page)/hooks/useAuth";
 import { format, isValid } from "date-fns";
+import { useRouter } from "next/navigation";
 
 interface IProjectLists {
   filteredProjects: ITransactionsResponseData;
@@ -37,7 +38,12 @@ export default function ProjectLists({
   setStatusFilter,
 }: IProjectLists) {
   const session = useAuth();
+  const navigate = useRouter();
   const getStatusBadge = (project: ITransaction) => {
+    const approvalLabel =
+      session.session?.email === project.creator_email
+        ? "Pending others Approval"
+        : "waiting for my Approval";
     // project.isReleased
     if (project.status === "COMPLETED") {
       return (
@@ -73,7 +79,7 @@ export default function ProjectLists({
     ) {
       return (
         <span className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-bold rounded-full border border-gray-150 uppercase tracking-wider flex items-center gap-1">
-          <Clock className="w-3 h-3" /> Pending others Approval
+          <Clock className="w-3 h-3" /> {approvalLabel}
         </span>
       );
     }
@@ -122,11 +128,16 @@ export default function ProjectLists({
             return (
               <div
                 key={project.id}
-                // onClick={() => handleOpenProject(project.id)}
+                onClick={() => navigate.push(`project-workspace/${project.id}`)}
                 className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col h-full justify-between transition-all hover:shadow-md hover:border-gray-150 group cursor-pointer text-left"
               >
                 <div>
                   {/* Card Header Top Row */}
+                  {project.status === "EXPIRED" && (
+                    <span className="text-red-500 text-xs animate-pulse font-semibold">
+                      Ticket Expired
+                    </span>
+                  )}
                   <div className="flex justify-between items-start gap-4 mb-4">
                     <div className="space-y-0.5 text-left">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -137,7 +148,7 @@ export default function ProjectLists({
                           className={`text-[9px] px-1.5 py-0.5 font-bold uppercase rounded-md tracking-wider ${project.creator_role === "CLIENT" ? "bg-indigo-50 text-indigo-700 border border-indigo-100/50" : "bg-magenta-55/15 text-[#c026d3] border border-magenta-200/20"}`}
                         >
                           You:{" "}
-                          {project.creator_role === "CLIENT"
+                          {project.myRole === "CLIENT"
                             ? "Client"
                             : "Freelancer"}
                         </span>
@@ -174,10 +185,10 @@ export default function ProjectLists({
                       </span>
                       <span className="text-[15px] font-black text-gray-950 block tracking-tight font-display">
                         {/* {formatMoney(project.amount, project.currency)} */}
-                        {formatNumberToCurrency(project.amount, {
-                          currency: project.currency ?? "NGN",
-                          style: "currency",
-                        })}
+                        {formatNumberToCurrency(
+                          project.amount,
+                          project.currency ?? "NGN",
+                        )}
                       </span>
                       <span className="text-[9px] text-gray-450 block font-mono">
                         3% platform escrow protec.
