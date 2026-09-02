@@ -133,6 +133,11 @@ export default function ProjectLists({
               >
                 <div>
                   {/* Card Header Top Row */}
+                  {project.status === "EXPIRED" && (
+                    <span className="text-red-500 text-xs animate-pulse font-semibold">
+                      Ticket Expired
+                    </span>
+                  )}
                   <div className="flex justify-between items-start gap-4 mb-4">
                     <div className="space-y-0.5 text-left">
                       <div className="flex items-center gap-2 flex-wrap mb-1">

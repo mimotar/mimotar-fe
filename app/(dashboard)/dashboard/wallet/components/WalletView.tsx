@@ -20,6 +20,7 @@ import { useAuth } from "@/app/(client)/(page)/hooks/useAuth";
 import { useWallet } from "../hooks/useWallet";
 import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 import { useDebounce } from "../hooks/useDebounce";
+import toast from "react-hot-toast";
 
 const USD_PAYOUT_NETWORKS = [
   "Virtual Dollar Card Account",
@@ -72,6 +73,7 @@ export const WalletView: React.FC = () => {
 
   const { wallet, banks } = useWallet();
   console.log(banks.data);
+  console.log(wallet.data);
 
   const formatMoney = (val: number) => {
     return `₦${val.toLocaleString()}`;
@@ -87,9 +89,9 @@ export const WalletView: React.FC = () => {
         return;
       }
 
-      if (amountInput > wallet.availableNgn) {
+      if (amountInput > (wallet?.data?.available?.NGN ?? 0)) {
         setWithdrawError(
-          `Payout bounds exceeded: Available balance is ₦${wallet.availableNgn.toLocaleString()}. Move locked funds by completing workspace deliverables.`,
+          `Payout bounds exceeded: Available balance is ₦${wallet?.data?.available.NGN.toLocaleString()}. Move locked funds by completing workspace deliverables.`,
         );
         return;
       }
@@ -99,9 +101,9 @@ export const WalletView: React.FC = () => {
         return;
       }
 
-      if (amountInput > wallet.availableUsd) {
+      if (amountInput > (wallet?.data?.available?.USD ?? 0)) {
         setWithdrawError(
-          `Payout bounds exceeded: Available balance is $${wallet.availableUsd.toLocaleString()}. Move locked funds by completing workspace deliverables.`,
+          `Payout bounds exceeded: Available balance is $${wallet?.data?.available.USD.toLocaleString()}. Move locked funds by completing workspace deliverables.`,
         );
         return;
       }
@@ -136,11 +138,11 @@ export const WalletView: React.FC = () => {
     setAccountName("Oluwaseun Adebayo (Verified)");
 
     // Check if phone number is verified; if not, route to security linkage step 5
-    if (!currentUser.phoneVerified) {
-      setWithdrawStep(5);
-    } else {
-      setWithdrawStep(2);
-    }
+    // if (!currentUser.phoneVerified) {
+    //   setWithdrawStep(5);
+    // } else {
+    //   setWithdrawStep(2);
+    // }
   };
 
   const handle2FASubmit = async (e: React.FormEvent) => {
@@ -157,23 +159,23 @@ export const WalletView: React.FC = () => {
     setIsProcessing(true);
     setWithdrawStep(4); // Processing spinner page
 
-    const success = await withdrawFunds(
-      amountInput,
-      bankSelected,
-      accountNumber,
-      otpCode,
-      selectedCurrency,
-    );
+    // const success = await withdrawFunds(
+    //   amountInput,
+    //   bankSelected,
+    //   accountNumber,
+    //   otpCode,
+    //   selectedCurrency,
+    // );
 
     setIsProcessing(false);
-    if (success) {
-      setWithdrawStep(3);
-    } else {
-      setWithdrawStep(1);
-      setWithdrawError(
-        "Integrated bank transaction cleared in failure. Try lesser amount.",
-      );
-    }
+    // if (success) {
+    //   setWithdrawStep(3);
+    // } else {
+    //   setWithdrawStep(1);
+    //   setWithdrawError(
+    //     "Integrated bank transaction cleared in failure. Try lesser amount.",
+    //   );
+    // }
   };
 
   const filteredBanks = useMemo(() => {
@@ -710,13 +712,12 @@ export const WalletView: React.FC = () => {
                         }
                         setPayoutOtpSubmitting(true);
                         setTimeout(() => {
-                          updatePhoneNumber(withdrawalPhone, false); // Store on user
+                          // updatePhoneNumber(withdrawalPhone, false); // Store on user
                           setPayoutOtpSent(true);
                           setPayoutOtpSubmitting(false);
                           setPayoutOtpError(null);
-                          showAlert(
+                          toast.success(
                             "Payout security OTP code dispatched successfully!",
-                            "success",
                           );
                         }, 1000);
                       }}
@@ -752,25 +753,25 @@ export const WalletView: React.FC = () => {
                         setWithdrawStep(4); // Show processing screen
 
                         // Mark Phone verified
-                        updatePhoneNumber(withdrawalPhone, true);
+                        // updatePhoneNumber(withdrawalPhone, true);
 
                         // Process actual withdrawal
-                        const success = await withdrawFunds(
-                          amountInput,
-                          bankSelected,
-                          accountNumber,
-                          payoutOtpCode,
-                          selectedCurrency,
-                        );
+                        // const success = await withdrawFunds(
+                        //   amountInput,
+                        //   bankSelected,
+                        //   accountNumber,
+                        //   payoutOtpCode,
+                        //   selectedCurrency,
+                        // );
                         setIsProcessing(false);
-                        if (success) {
-                          setWithdrawStep(3); // Success Screen
-                        } else {
-                          setWithdrawStep(1);
-                          setPayoutOtpError(
-                            "Integrated bank transaction cleared in failure. Try lesser amount.",
-                          );
-                        }
+                        // if (success) {
+                        //   setWithdrawStep(3); // Success Screen
+                        // } else {
+                        //   setWithdrawStep(1);
+                        //   setPayoutOtpError(
+                        //     "Integrated bank transaction cleared in failure. Try lesser amount.",
+                        //   );
+                        // }
                       } else {
                         setPayoutOtpError(
                           "Incorrect security OTP pin. Please try again! (Tip: Use 1234 or 9999 inside sandbox parameters!)",

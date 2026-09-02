@@ -155,7 +155,7 @@ export default function ProjectWorkspaceView() {
     rejectMutation,
     requestTokenMutation,
     fundingMutation,
-  } = useMutationAction(projectId);
+  } = useMutationAction(Number(projectId));
 
   // Modal / form states
   const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -489,10 +489,10 @@ export default function ProjectWorkspaceView() {
             : 0;
       const feeAmt = project.amount * (feePercent / 100);
       const totalAmt = project.amount + feeAmt;
-      toast.add({
-        description: `Flutterwave Secure Lock Approved: ${formatMoney(totalAmt, project.currency)} deposited and locked successfully!`,
-        type: "success",
-      });
+      // toast.add({
+      //   description: `Flutterwave Secure Lock Approved: ${formatMoney(totalAmt, project.currency)} deposited and locked successfully!`,
+      //   type: "success",
+      // });
     }, 2000);
   };
 
@@ -693,7 +693,12 @@ export default function ProjectWorkspaceView() {
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-base font-bold text-[#111827]">
-                  Secure Workspace Panel
+                  Secure Workspace Panel{" "}
+                  {project.status === "EXPIRED" && (
+                    <span className="text-red-500 text-sm">
+                      (Ticket Expired)
+                    </span>
+                  )}
                 </h3>
                 <p className="text-xs text-brand-neutral mt-1">
                   Interventions allowed dynamically based on the active role
@@ -1648,8 +1653,10 @@ export default function ProjectWorkspaceView() {
 
             <InteractiveMultiUploader
               id="submit-archive-path-uploader"
-              files={submissionFiles}
-              onChange={setSubmissionFiles}
+              // files={submissionFiles}
+              files={[]}
+              // onChange={setSubmissionFiles}
+              onChange={() => {}}
               label="Attach Final Archive ZIP File & Deliverables"
               placeholder="Drag & drop final files, source code archive, or images here"
             />
@@ -1727,8 +1734,10 @@ export default function ProjectWorkspaceView() {
 
             <InteractiveMultiUploader
               id="dispute-evidence-uploader"
-              files={disputeEvidenceFiles}
-              onChange={setDisputeEvidenceFiles}
+              // files={disputeEvidenceFiles}
+              files={[]}
+              // onChange={setDisputeEvidenceFiles}
+              onChange={() => {}}
               label="Upload Issue Evidence Assets"
               placeholder="Drag & drop screenshots, logs, or chat proofs here"
               theme="danger"
@@ -1797,7 +1806,7 @@ export default function ProjectWorkspaceView() {
                 <div className="space-y-3.5 max-h-52 overflow-y-auto pr-1">
                   {project.milestones.map((m, i) => {
                     const msState = extendedMilestoneDeadlines.find(
-                      (u) => u.id === m.id,
+                      (u) => Number(u.id) === m.id,
                     );
                     const currentDeadlineVal = msState
                       ? msState.deadline
@@ -1808,7 +1817,7 @@ export default function ProjectWorkspaceView() {
                         className="bg-gray-50/70 p-3 rounded-xl border border-gray-100 flex flex-col gap-1 text-left"
                       >
                         <span className="text-[10px] font-bold text-gray-600 block">
-                          Milestone {i + 1}: {m.title}
+                          Milestone {i + 1}: {m.name}
                         </span>
                         <input
                           type="date"
@@ -1818,7 +1827,9 @@ export default function ProjectWorkspaceView() {
                             const newVal = e.target.value;
                             setExtendedMilestoneDeadlines((prev) =>
                               prev.map((x) =>
-                                x.id === m.id ? { ...x, deadline: newVal } : x,
+                                Number(x.id) === m.id
+                                  ? { ...x, deadline: newVal }
+                                  : x,
                               ),
                             );
                           }}
@@ -1899,20 +1910,17 @@ export default function ProjectWorkspaceView() {
                     type="button"
                     onClick={() => {
                       if (!disputeOtpPhone) {
-                        showAlert(
-                          "Please enter your WhatsApp phone number.",
-                          "error",
-                        );
+                        toast.error("Please enter your WhatsApp phone number.");
+
                         return;
                       }
                       setDisputeVerificationSubmitting(true);
                       setTimeout(() => {
-                        updatePhoneNumber(disputeOtpPhone, false); // Store on user
+                        // updatePhoneNumber(disputeOtpPhone, false); // Store on user
                         setDisputeOtpSent(true);
                         setDisputeVerificationSubmitting(false);
-                        showAlert(
+                        toast.success(
                           "Security verification code sent to WhatsApp!",
-                          "success",
                         );
                       }, 1000);
                     }}

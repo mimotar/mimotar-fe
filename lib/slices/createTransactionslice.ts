@@ -5,7 +5,7 @@ import { ITicket } from "@/app/(dashboard)/dashboard/start-project/types/ITicket
 
 const initialState: ITicket = {
   //step 1
-  currency: "",
+  currency: "NGN",
   title: "",
   amount: 0,
   transaction_description: "",

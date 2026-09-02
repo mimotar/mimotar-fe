@@ -52,7 +52,7 @@ export default function ActiveContract_RecentLog({
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {activeContracts.map((p) => {
+            {/* {activeContracts.map((p) => {
               const isClient = p.role === "CLIENT";
               const isFreelancer = p.role === "FREELANCER";
 
@@ -101,7 +101,6 @@ export default function ActiveContract_RecentLog({
                     <p className="text-body-sm text-gray-400">
                       Total Escrow Value:{" "}
                       <span className="font-extrabold text-amount text-gray-700">
-                        {/* {formatMoney(p.amount, p.currency)} */}
                         {formatNumberToCurrency(
                           p.amount,
                           p.currency as "USD" | "NGN",
@@ -125,7 +124,8 @@ export default function ActiveContract_RecentLog({
                   </div>
                 </div>
               );
-            })}
+            })} */}
+            Coming ...
           </div>
         )}
       </div>
