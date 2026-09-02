@@ -9,7 +9,7 @@ interface IType {
 }
 export async function getProjectsApi({ search }: IType) {
   const response = await axiosService<ITransactionsResponse>(
-    `ticket/transactions?search=${search}`,
+    `ticket/projects?search=${search}`,
   );
 
   return response.data.data;

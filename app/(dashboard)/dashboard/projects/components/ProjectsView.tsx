@@ -7,6 +7,8 @@ import BottomInfoCard from "./BottomInfoCard";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useProjects } from "../hooks/useProjects";
+import ErrorState from "./ErrorState";
+import { ProjectsLoadingState } from "./ProjectsLoadingState";
 
 export function ProjectsView() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,6 +25,22 @@ export function ProjectsView() {
 
   const projects = useProjects();
   console.log(projects.data);
+
+  // Loading state
+  if (projects.isPending) {
+    return <ProjectsLoadingState />;
+  }
+
+  // Error state
+  if (projects.isError) {
+    return (
+      <ErrorState
+        query={projects}
+        title="Unable to load projects"
+        description="We couldn't load your escrow projects right now. Please try again."
+      />
+    );
+  }
 
   // Filter projects by search and status tab
   //   const filteredProjects = projects.filter((project: any) => {
@@ -89,10 +107,13 @@ export function ProjectsView() {
 
       {/* Grid listing */}
       <ProjectLists
-        filteredProjects={projects.data ?? []}
+        filteredProjects={projects.data?.items ?? []}
         setSearchTerm={setSearchTerm}
         setStatusFilter={setStatusFilter}
       />
+
+      {/* pagination */}
+      <p>Coming ..</p>
 
       {/* Bottom informational card */}
       <BottomInfoCard />

@@ -47,7 +47,7 @@ export const Sidebar = () => {
 
       <div className="mt-auto space-y-4">
         {/* Sleek Design Wallet Balance Footer */}
-        <div className="p-4 bg-gray-50/80 rounded-2xl border border-gray-100">
+        <div className="p-4 bg-gray-50/80 rounded-2xl space-y-2 border border-gray-100">
           <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">
             Wallet Balances
           </div>
@@ -55,29 +55,22 @@ export const Sidebar = () => {
             <div className="flex justify-between items-center text-xs">
               <span className="text-gray-500 font-medium">Naira (NGN):</span>
               <span className="font-bold text-gray-900 font-display">
-                {formatNumberToCurrency(450000, {
-                  style: "currency",
-                  currency: "NGN",
-                })}
+                {formatNumberToCurrency(450000, "NGN")}
               </span>
             </div>
             <div className="flex justify-between items-center text-xs border-t border-gray-200/40 pt-1.5">
               <span className="text-gray-500 font-medium">Dollars (USD):</span>
               <span className="font-bold text-brand-primary font-mono">
-                {formatNumberToCurrency(350, {
-                  style: "currency",
-                  currency: "USD",
-                })}
+                {formatNumberToCurrency(350, "USD")}
               </span>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => navigate.push("/wallet")}
-            className="mt-3.5 w-full py-2 bg-white border border-[#c026d3]/30 text-brand-primary hover:bg-brand-primary hover:text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
+          <Link
+            href={"/dashboard/wallet"}
+            className="mt-3.5 w-full py-2 px-2 bg-white border border-[#c026d3]/30 text-brand-primary hover:bg-brand-primary hover:text-white rounded-lg text-xs font-bold transition-all"
           >
             Withdraw Funds
-          </button>
+          </Link>
         </div>
 
         <div className="border-t border-gray-100 pt-4 px-1.5">

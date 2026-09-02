@@ -1,9 +1,14 @@
 import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 import { Wallet } from "lucide-react";
+import { IWallet } from "../types/IGetDashboard";
 
-export default function WalletCard() {
+interface IWalletCardProps {
+  wallet: IWallet;
+}
+
+export default function WalletCard({ wallet }: IWalletCardProps) {
   return (
-    <div className="bg-white rounded-3xl p-6.5 shadow-sm border border-gray-100 text-left">
+    <div className="bg-white rounded-3xl p-6.5 shadow-sm border   border-gray-100 text-left">
       <div className="flex items-center gap-2 mb-4">
         <Wallet className="w-5 h-5 text-brand-primary" />
         <h2 className="text-label text-gray-500 font-bold tracking-wider">
@@ -19,10 +24,7 @@ export default function WalletCard() {
               Available Naira (NGN)
             </span>
             <span className="text-h2 text-amount text-gray-900 mt-1.5 block">
-              {formatNumberToCurrency(450000, {
-                style: "currency",
-                currency: "NGN",
-              })}
+              {formatNumberToCurrency(wallet.availableWithdrawable.NGN, "NGN")}
             </span>
           </div>
           <button
@@ -43,10 +45,7 @@ export default function WalletCard() {
               Available Dollars (USD)
             </span>
             <span className="text-h2 text-amount text-gray-900 mt-1.5 block">
-              {formatNumberToCurrency(350, {
-                style: "currency",
-                currency: "USD",
-              })}
+              {formatNumberToCurrency(wallet.availableWithdrawable.USD, "USD")}
             </span>
           </div>
           <button
@@ -67,10 +66,7 @@ export default function WalletCard() {
               Locked Escrow (NGN)
             </span>
             <span className="text-h2 text-amount text-amber-600 mt-1.5 block">
-              {formatNumberToCurrency(1200000, {
-                style: "currency",
-                currency: "NGN",
-              })}
+              {formatNumberToCurrency(wallet.lockedEscrow.NGN, "NGN")}
             </span>
           </div>
           <span className="mt-2.5 text-caption text-amber-700/60 font-medium flex items-center gap-1 font-sans">
@@ -87,10 +83,7 @@ export default function WalletCard() {
             </span>
             <span className="text-h2 text-amount text-amber-600 mt-1.5 block">
               {/* ${wallet.pendingUsd.toLocaleString()} */}
-              {formatNumberToCurrency(1500, {
-                style: "currency",
-                currency: "NGN",
-              })}
+              {formatNumberToCurrency(wallet.lockedEscrow.USD, "USD")}
             </span>
           </div>
           <span className="mt-2.5 text-caption text-amber-700/60 font-medium flex items-center gap-1 font-sans">

@@ -1,23 +1,3 @@
-// import React, { useState } from "react";
-// import { useAppState } from "../useAppState";
-// import {
-//   FolderKanban,
-//   Search,
-//   Plus,
-//   Filter,
-//   Clock,
-//   Coins,
-//   ShieldCheck,
-//   FileText,
-//   CheckCircle,
-//   AlertCircle,
-//   Calendar,
-//   ChevronRight,
-//   ArrowUpRight,
-//   ShieldAlert,
-//   SlidersHorizontal,
-//   FolderOpen,
-// } from "lucide-react";
 import { ProjectsView } from "./components/ProjectsView";
 
 export default async function ProjectsPage() {
