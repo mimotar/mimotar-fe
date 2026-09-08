@@ -35,9 +35,23 @@ export default function AgreementAcceptanceBlock({
   onAgreementOtpChange,
   onConfirmDecision,
 }: AgreementAcceptanceBlockProps) {
+  const isExpired = project.status === "EXPIRED";
+  console.log("isCreator:", isCreator);
   return (
     <>
-      {project.status !== "APPROVED" && !isCreator && (
+      {!isCreator && isExpired && (
+        <div className="p-5.5 bg-red-50 rounded-2xl border border-red-200/50 space-y-4">
+          <span className="text-xs font-bold text-red-800">
+            Agreement Expired
+          </span>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            This ticket has expired, so the acceptance flow is no longer
+            available. Create a new agreement to continue.
+          </p>
+        </div>
+      )}
+
+      {!isCreator && project.status == "CREATED" && (
         <div className="p-5.5 bg-yellow-50 rounded-2xl border border-yellow-200/50 space-y-4">
           <span className="text-xs font-bold text-yellow-800">
             Proposal Pending Verification
@@ -77,21 +91,23 @@ export default function AgreementAcceptanceBlock({
         </div>
       )}
 
-      <AgreementDecisionModal
-        key={`${decision ?? "none"}-${Boolean(decision)}`}
-        open={Boolean(decision)}
-        decision={decision}
-        projectTitle={project.title}
-        otp={agreementOtp}
-        isLoading={isDecisionPending}
-        onOpenChange={(open) => {
-          if (!open) {
-            onCloseDecision();
-          }
-        }}
-        onOtpChange={onAgreementOtpChange}
-        onConfirm={onConfirmDecision}
-      />
+      {!isExpired && (
+        <AgreementDecisionModal
+          key={`${decision ?? "none"}-${Boolean(decision)}`}
+          open={Boolean(decision)}
+          decision={decision}
+          projectTitle={project.title}
+          otp={agreementOtp}
+          isLoading={isDecisionPending}
+          onOpenChange={(open) => {
+            if (!open) {
+              onCloseDecision();
+            }
+          }}
+          onOtpChange={onAgreementOtpChange}
+          onConfirm={onConfirmDecision}
+        />
+      )}
     </>
   );
 }
