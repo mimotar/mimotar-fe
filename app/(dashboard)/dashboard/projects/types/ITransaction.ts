@@ -13,6 +13,11 @@ export type IMilestoneStatus =
   | "ONGOING"
   | "PENDING_CLOSURE"
   | "DISPUTE"
+  | "APPROVED"
+  | "REJECTED"
+  | "CANCELED"
+  | "EXPIRED"
+  | "CHANGES_REQUESTED"
   | "COMPLETED";
 
 export type DisputeStatus = "ongoing" | "cancel" | "closed";
