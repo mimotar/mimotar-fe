@@ -1,5 +1,6 @@
 import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 import { ITransaction } from "../../../projects/types/ITransaction";
+import { format } from "date-fns";
 
 interface IMilestoneSectionProps {
   project: ITransaction;
@@ -17,9 +18,7 @@ export default function MilestoneSection({
       </span>
       <div className="space-y-4">
         {project.milestones.map((m, i) => {
-          const isProjectFunded =
-            project.payment?.status == "PENDING" ||
-            project.payment?.status == "FAILED";
+          const isProjectFunded = m.status === "ONGOING";
 
           // Determine Milestone Status Layout
           let statusBadge = null;
@@ -42,7 +41,7 @@ export default function MilestoneSection({
             );
             cardBorderColor = "border-red-100/60";
             cardBgColor = "bg-red-50/[0.01]";
-          } else if (m.status === "ONGOING") {
+          } else if (m.completedAt) {
             statusBadge = (
               <span className="text-[10px] text-amber-600 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
                 Submitted - Pending Release
@@ -85,7 +84,10 @@ export default function MilestoneSection({
                   </h4>
                   <span className="text-[10.5px] text-gray-405 block font-semibold">
                     Deadline:{" "}
-                    <span className="text-gray-600">{m.deadline}</span>
+                    <span className="text-gray-600">
+                      {" "}
+                      {format(new Date(m.deadline), "d MMMM yyyy, h:mm a")}
+                    </span>
                   </span>
                 </div>
                 <div className="shrink-0 flex items-center gap-1.5 bg-white shadow-xs border border-gray-150 px-3.5 py-2 rounded-xl">
@@ -93,14 +95,13 @@ export default function MilestoneSection({
                     Value:
                   </span>
                   <span className="text-xs font-extrabold text-gray-900 font-mono">
-                    {/* {formatMoney(m.amount, project.currency)} */}
                     {formatNumberToCurrency(m.amount, project.currency)}
                   </span>
                 </div>
               </div>
 
               {/* Spec / Attachments row */}
-              {(m.files && m.files.length > 0) || m.files ? (
+              {m.files && m.files.length > 0 ? (
                 <div className="text-[10.5px] bg-gray-50/50 border border-gray-100 p-2.5 rounded-xl flex flex-wrap items-center gap-2 text-gray-600 font-medium">
                   <span className="text-gray-450 font-semibold">
                     📎 Technical Specifications:
@@ -148,7 +149,7 @@ export default function MilestoneSection({
                               </span>
                             </div>
                           </div>
-                        )} */}
+                        )}  */}
 
               {m.status === "DISPUTE" && "" && (
                 <div className="mt-1 p-3 bg-red-50/20 border border-red-100 rounded-xl space-y-1.5 text-left font-sans">
@@ -183,11 +184,6 @@ export default function MilestoneSection({
                           (project.pay_escrow_fee === "BOTH" ? 0.015 : 0.03),
                         project.currency,
                       )}
-                      {/* {formatMoney(
-                        project.amount *
-                          (project.pay_escrow_fee === "BOTH" ? 0.015 : 0.03),
-                        project.currency,
-                      )} */}
                       ) will be processed on release of this first phase.
                       Subsequent phases have zero deductions.
                     </p>

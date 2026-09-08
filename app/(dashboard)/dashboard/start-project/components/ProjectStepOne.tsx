@@ -349,7 +349,7 @@ export default function ProjectStepOne() {
               htmlFor="create-project-title"
               className="text-label text-gray-400 mb-1 block"
             >
-              Expires At
+              Expires in
             </label>
             <input
               id="create-project-title"

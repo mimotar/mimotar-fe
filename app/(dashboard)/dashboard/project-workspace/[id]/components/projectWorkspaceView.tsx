@@ -748,28 +748,24 @@ export default function ProjectWorkspaceView() {
             />
 
             {/* AUTO-RELEASE TIMER COUNTDOWN (VERY IMPORTANT MOMENT) */}
-            {
-              // project.isDelivered &&
-              //   !project.isReleased &&
-              project.status !== "DISPUTE" &&
-                !(project.milestones && project.milestones.length > 0) && (
-                  <div className="p-5 bg-amber-50 rounded-2xl border border-amber-200/50 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in text-left">
-                    <div className="flex items-center gap-3">
-                      <Clock className="w-8 h-8 text-brand-secondary shrink-0 animate-pulse" />
-                      <div>
-                        <span className="text-xs font-bold text-amber-900 block">
-                          Auto-Release Countdown
-                        </span>
-                        <p className="text-[10px] text-amber-800/80 leading-relaxed mt-0.5">
-                          Funds will be released into freelancer's available
-                          balance in 48 hours if client takes no action.
-                        </p>
-                      </div>
+            {project.status !== "DISPUTE" &&
+              !(project.milestones && project.milestones.length > 0) && (
+                <div className="p-5 bg-amber-50 rounded-2xl border border-amber-200/50 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in text-left">
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-8 h-8 text-brand-secondary shrink-0 animate-pulse" />
+                    <div>
+                      <span className="text-xs font-bold text-amber-900 block">
+                        Auto-Release Countdown
+                      </span>
+                      <p className="text-[10px] text-amber-800/80 leading-relaxed mt-0.5">
+                        Funds will be released into freelancer's available
+                        balance in 48 hours if client takes no action.
+                      </p>
                     </div>
-                    <AutoReleaseTimer deliveredAt={project.expiresAt} />
                   </div>
-                )
-            }
+                  <AutoReleaseTimer deliveredAt={project.expiresAt} />
+                </div>
+              )}
 
             {/* COMPLETED SUCCESS STATE DETAILS */}
             {project.status === "COMPLETED" && (
