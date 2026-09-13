@@ -3,6 +3,11 @@ import { useMutation } from "@tanstack/react-query";
 import { rejectTicket } from "../api/rejectProject";
 import { requestProjectToken } from "../api/requestProjectToken";
 import { fundProject } from "../api/fundingAction";
+import {
+  freelancerWorkSubmission,
+  IFreelancerWorkSubmissionPayload,
+} from "../api/freelancerWorkSubmission";
+import { extendDeadline, IExtendDeadlinePayload } from "../api/extendDeadline";
 
 export interface ProjectAgreementOtpResponse {
   message?: string;
@@ -40,10 +45,24 @@ export function useMutationAction(id: number) {
     mutationFn: () => fundProject(id),
   });
 
+  const FreelancerWorkSubmissionMutation = useMutation({
+    mutationKey: ["freelancerWorkSubmission", id],
+    mutationFn: (payload: IFreelancerWorkSubmissionPayload) =>
+      freelancerWorkSubmission(id, payload),
+  });
+
+  const ClientDeadlineExtension = useMutation({
+    mutationKey: ["deadlineExtension", id],
+    mutationFn: (payload: IExtendDeadlinePayload) =>
+      extendDeadline(id, payload),
+  });
+
   return {
     approvalMutation,
     rejectMutation,
     requestTokenMutation,
     fundingMutation,
+    FreelancerWorkSubmissionMutation,
+    ClientDeadlineExtension,
   };
 }
