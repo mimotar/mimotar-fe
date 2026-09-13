@@ -170,7 +170,7 @@ export default function ExtendDeadline({
             disabled={isSubmitting}
             className="flex-1 inline-flex gap-2 items-center justify-center py-3 bg-brand-primary hover:bg-brand-primary/95 text-white text-xs font-bold rounded-xl transition shadow-xs cursor-pointer"
           >
-            Save{" "}
+            Save
             {isSubmitting && (
               <AiOutlineLoading3Quarters className=" animate-spin" />
             )}
