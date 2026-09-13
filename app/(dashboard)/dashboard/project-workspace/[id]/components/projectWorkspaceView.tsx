@@ -44,6 +44,9 @@ import ErrorState from "./ErrorState";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMutationAction } from "../hooks/useMutationActions";
 import { AxiosError } from "axios";
+import ExtendDeadline from "./ExtendDeadline";
+import { IExtendDeadlinePayload } from "../api/extendDeadline";
+import { format } from "date-fns";
 // import { toast } from "@/components/ui/toast";
 
 const AutoReleaseTimer: React.FC<{ deliveredAt?: string }> = ({
@@ -155,6 +158,8 @@ export default function ProjectWorkspaceView() {
     rejectMutation,
     requestTokenMutation,
     fundingMutation,
+    FreelancerWorkSubmissionMutation,
+    ClientDeadlineExtension,
   } = useMutationAction(Number(projectId));
 
   // Modal / form states
@@ -262,19 +267,39 @@ export default function ProjectWorkspaceView() {
     }
   };
 
-  const handleExtendDeadlineSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleExtendDeadlineSubmit = async (data: IExtendDeadlinePayload) => {
     if (!project) return;
-    if (!extendedDeadline) {
-      toast.error("Total project deadline cannot be empty");
-      return;
-    }
-    // extendProjectDeadline(
-    //   project.id,
-    //   extendedDeadline,
-    //   extendedMilestoneDeadlines,
-    // );
-    setShowExtendModal(false);
+
+    const payload: IExtendDeadlinePayload = {
+      deadline: `${data.deadline}T00:00:00.000Z`,
+      reason: data.reason,
+    };
+
+    ClientDeadlineExtension.mutate(payload, {
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(
+            error?.response?.data?.message || "Unable to request Extension.",
+          );
+          return;
+        }
+        if (error instanceof Error) {
+          toast.error(error?.message || "Unable to request Extension.");
+          return;
+        }
+
+        toast.error("Unable to request Extension.");
+      },
+      onSuccess: (data) => {
+        toast.success(
+          data?.message || "Agreement Deadline extended successfully.",
+        );
+        queryClient.invalidateQueries({
+          queryKey: ["project", projectId],
+        });
+        setShowExtendModal(false);
+      },
+    });
   };
 
   const openAgreementDecision = (nextDecision: "accept" | "reject") => {
@@ -749,6 +774,7 @@ export default function ProjectWorkspaceView() {
 
             {/* AUTO-RELEASE TIMER COUNTDOWN (VERY IMPORTANT MOMENT) */}
             {project.status !== "DISPUTE" &&
+              project.status === "PENDING_CLOSURE" &&
               !(project.milestones && project.milestones.length > 0) && (
                 <div className="p-5 bg-amber-50 rounded-2xl border border-amber-200/50 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in text-left">
                   <div className="flex items-center gap-3">
@@ -848,7 +874,7 @@ export default function ProjectWorkspaceView() {
                   Agreement Deadline
                 </span>
                 <span className="font-bold text-gray-800 block mt-1">
-                  {project.deadline}
+                  {format(new Date(project.deadline), "PPP p")}
                 </span>
               </div>
               <div>
@@ -1752,109 +1778,12 @@ export default function ProjectWorkspaceView() {
 
       {/* UPDATE DEADLINES MODAL SYSTEM */}
       {showExtendModal && (
-        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <form
-            onSubmit={handleExtendDeadlineSubmit}
-            className="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative animate-fade-in text-left space-y-4"
-          >
-            <button
-              type="button"
-              onClick={() => setShowExtendModal(false)}
-              className="absolute top-4 right-4 p-2.5 hover:bg-gray-100/85 rounded-xl transition cursor-pointer"
-              aria-label="Close font-sans"
-            >
-              <X className="w-5 h-5 text-gray-400" />
-            </button>
-
-            <div>
-              <h3 className="text-base font-bold text-[#111827] flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-brand-primary" /> Extend
-                Project Deadlines
-              </h3>
-              <p className="text-xs text-gray-400 mt-1 font-sans">
-                Clients can select a new date to extend deadlines. All milestone
-                phases and the total contract deadline can be adjusted here.
-              </p>
-            </div>
-
-            <div>
-              <label
-                htmlFor="extension-total-agreement-deadline"
-                className="block text-xs font-bold text-slate-500 mb-1"
-              >
-                Total Agreement Deadline
-              </label>
-              <input
-                id="extension-total-agreement-deadline"
-                type="date"
-                required
-                value={extendedDeadline}
-                onChange={(e) => setExtendedDeadline(e.target.value)}
-                className="w-full text-xs bg-gray-50 px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-primary font-medium"
-              />
-            </div>
-
-            {project.milestones && extendedMilestoneDeadlines.length > 0 && (
-              <div className="space-y-3 pt-1 border-t border-gray-100">
-                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
-                  Modify Milestone Phases Deadlines
-                </span>
-                <div className="space-y-3.5 max-h-52 overflow-y-auto pr-1">
-                  {project.milestones.map((m, i) => {
-                    const msState = extendedMilestoneDeadlines.find(
-                      (u) => Number(u.id) === m.id,
-                    );
-                    const currentDeadlineVal = msState
-                      ? msState.deadline
-                      : m.deadline;
-                    return (
-                      <div
-                        key={m.id}
-                        className="bg-gray-50/70 p-3 rounded-xl border border-gray-100 flex flex-col gap-1 text-left"
-                      >
-                        <span className="text-[10px] font-bold text-gray-600 block">
-                          Milestone {i + 1}: {m.name}
-                        </span>
-                        <input
-                          type="date"
-                          required
-                          value={currentDeadlineVal}
-                          onChange={(e) => {
-                            const newVal = e.target.value;
-                            setExtendedMilestoneDeadlines((prev) =>
-                              prev.map((x) =>
-                                Number(x.id) === m.id
-                                  ? { ...x, deadline: newVal }
-                                  : x,
-                              ),
-                            );
-                          }}
-                          className="w-full bg-white px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-brand-primary font-semibold"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            <div className="pt-2 flex gap-3">
-              <button
-                type="button"
-                onClick={() => setShowExtendModal(false)}
-                className="flex-1 py-3 border border-gray-200 hover:bg-gray-50 text-gray-605 text-xs font-bold rounded-xl transition"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 py-3 bg-brand-primary hover:bg-brand-primary/95 text-white text-xs font-bold rounded-xl transition shadow-xs cursor-pointer"
-              >
-                Save
-              </button>
-            </div>
-          </form>
-        </div>
+        <ExtendDeadline
+          deadline={project.deadline}
+          onExtensionSubmit={handleExtendDeadlineSubmit}
+          setShowExtendModal={setShowExtendModal}
+          isSubmitting={ClientDeadlineExtension.isPending}
+        />
       )}
 
       {/* ⚠️ DISPUTE VERIFICATION OTP FLOATING DIALOG */}
