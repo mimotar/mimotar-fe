@@ -68,20 +68,19 @@ export default function FreelancerActionSection({
       {/* ================================
           DELIVERABLE SUBMITTED
       ================================= */}
-      {["ONGOING", "PENDING_CLOSURE"].includes(project.status) &&
-        !hasMilestones && (
-          <div className="p-5.5 bg-emerald-50 text-emerald-950 rounded-2xl border border-emerald-100 space-y-3">
-            <span className="text-xs font-bold text-emerald-800">
-              Deliverables Submitted Awaiting Approval
-            </span>
+      {["PENDING_CLOSURE"].includes(project.status) && !hasMilestones && (
+        <div className="p-5.5 bg-emerald-50 text-emerald-950 rounded-2xl border border-emerald-100 space-y-3">
+          <span className="text-xs font-bold text-emerald-800">
+            Deliverables Submitted Awaiting Approval
+          </span>
 
-            <p className="text-xs text-emerald-950/70 leading-relaxed">
-              Your notes and assets were successfully dispatched. The client has
-              48 hours to review. If inaction happens, funds auto-release into
-              your available balance instantly.
-            </p>
-          </div>
-        )}
+          <p className="text-xs text-emerald-950/70 leading-relaxed">
+            Your notes and assets were successfully dispatched. The client has
+            48 hours to review. If inaction happens, funds auto-release into
+            your available balance instantly.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
