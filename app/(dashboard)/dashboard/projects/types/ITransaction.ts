@@ -198,6 +198,10 @@ export interface ITransaction {
   dueAt: string;
   milestoneSummary: string | null;
 
+  delivery_note: string | null;
+  delivery_file: TransactionFile | null;
+  delivery_submitted_at: string | null;
+
   history: TransactionHistory;
 }
 
