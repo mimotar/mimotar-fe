@@ -47,54 +47,11 @@ import { AxiosError } from "axios";
 import ExtendDeadline from "./ExtendDeadline";
 import { IExtendDeadlinePayload } from "../api/extendDeadline";
 import { format } from "date-fns";
+import FreelancerSubmitDeliverables from "./FreelancerSubmitDeliverables";
+import { IFreelancerWorkSubmissionPayload } from "../api/freelancerWorkSubmission";
+import { IDeliverySchema } from "../schema/freelancerSubmitDeliverableSchema";
+import { AutoReleaseTimer } from "./AutoReleaseTimer";
 // import { toast } from "@/components/ui/toast";
-
-const AutoReleaseTimer: React.FC<{ deliveredAt?: string }> = ({
-  deliveredAt,
-}) => {
-  const [timeLeft, setTimeLeft] = useState<string>("48:00:00");
-
-  useEffect(() => {
-    if (!deliveredAt) {
-      setTimeLeft("48:00:00");
-      return;
-    }
-
-    const calculateTimeLeft = () => {
-      const deliveryTime = new Date(deliveredAt).getTime();
-      const targetTime = deliveryTime + 48 * 60 * 60 * 1000; // 48 hours from delivery
-      const now = Date.now();
-      const difference = targetTime - now;
-
-      if (difference <= 0) {
-        return "00:00:00";
-      }
-
-      const hours = Math.floor(difference / (1000 * 60 * 60));
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-      const pad = (num: number) => String(num).padStart(2, "0");
-      return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-    };
-
-    // Calculate immediately
-    setTimeLeft(calculateTimeLeft());
-
-    // Tick every second
-    const interval = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [deliveredAt]);
-
-  return (
-    <div className="text-base font-black text-amber-950 bg-white px-4.5 py-1.5 rounded-xl border border-amber-200 shrink-0 font-mono animate-pulse">
-      {timeLeft}
-    </div>
-  );
-};
 
 const MilestoneCountdown: React.FC<{ submittedAt?: string }> = ({
   submittedAt,
@@ -521,22 +478,35 @@ export default function ProjectWorkspaceView() {
     }, 2000);
   };
 
-  const handleDeliverySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!submissionNotes) {
-      setUploadError("Please describe what deliverables you are attaching.");
-      return;
-    }
+  const handleDeliverySubmit = (data: IDeliverySchema) => {
+    console.log(data);
+    const payload: IFreelancerWorkSubmissionPayload = {
+      note: data.note,
+      file: data.file[0],
+    };
+    FreelancerWorkSubmissionMutation.mutate(payload, {
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(
+            error?.response?.data?.message || "Unable to submit deliverable.",
+          );
+          return;
+        }
+        if (error instanceof Error) {
+          toast.error(error?.message || "Unable to submit deliverable.");
+          return;
+        }
 
-    // submitProjectDelivery(
-    //   project.id,
-    //   submissionNotes,
-    //   submissionFiles.join(", ") || undefined,
-    // );
-    setShowSubmitModal(false);
-    setSubmissionNotes("");
-    setSubmissionFileName("");
-    setSubmissionFiles([]);
+        toast.error("Unable to submit deliverable.");
+      },
+      onSuccess: (data) => {
+        toast.success(data?.message || "Deliverables submitted successfully.");
+        queryClient.invalidateQueries({
+          queryKey: ["project", projectId],
+        });
+        setShowSubmitModal(false);
+      },
+    });
   };
 
   const handleDisputeSubmit = (e: React.FormEvent) => {
@@ -789,7 +759,9 @@ export default function ProjectWorkspaceView() {
                       </p>
                     </div>
                   </div>
-                  <AutoReleaseTimer deliveredAt={project.expiresAt} />
+                  <AutoReleaseTimer
+                    deliveredAt={project.delivery_submitted_at}
+                  />
                 </div>
               )}
 
@@ -889,7 +861,6 @@ export default function ProjectWorkspaceView() {
             </div>
 
             {role === "CLIENT" && project.status !== "COMPLETED" && (
-              // !project.isReleased &&
               <div className="pt-3 border-t border-gray-100 flex justify-end">
                 <button
                   type="button"
@@ -1635,76 +1606,11 @@ export default function ProjectWorkspaceView() {
 
       {/* FREELANCER DELIVERABLES SUBMISSION SYSTEM MODAL */}
       {showSubmitModal && (
-        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <form
-            onSubmit={handleDeliverySubmit}
-            className="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative animate-fade-in text-left space-y-4"
-          >
-            <button
-              type="button"
-              onClick={() => setShowSubmitModal(false)}
-              className="absolute top-4 right-4 p-2.5 hover:bg-gray-100/85 rounded-xl transition cursor-pointer"
-              aria-label="Close font-sans"
-            >
-              <X className="w-5 h-5 text-gray-400" />
-            </button>
-
-            <div>
-              <h3 className="text-base font-bold text-[#111827]">
-                Submit Project Deliverables
-              </h3>
-              <p className="text-xs text-gray-400 mt-1">
-                Briefly define your deliverables and include direct
-                file/documentation pointers.
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-500 mb-1">
-                Delivered proof notes
-              </label>
-              <textarea
-                rows={3}
-                required
-                value={submissionNotes}
-                onChange={(e) => setSubmissionNotes(e.target.value)}
-                placeholder="List Figma links, repository credentials, or ZIP folder details. Clear descriptions support faster release timers."
-                className="w-full text-xs bg-gray-50 px-3 py-2 border border-gray-100 rounded-xl focus:outline-none focus:border-brand-primary font-medium"
-              />
-            </div>
-
-            <InteractiveMultiUploader
-              id="submit-archive-path-uploader"
-              // files={submissionFiles}
-              files={[]}
-              // onChange={setSubmissionFiles}
-              onChange={() => {}}
-              label="Attach Final Archive ZIP File & Deliverables"
-              placeholder="Drag & drop final files, source code archive, or images here"
-            />
-
-            {uploadError && (
-              <p className="text-xs text-red-600 font-semibold">
-                {uploadError}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={isUploading}
-              className="w-full py-3.5 bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/95 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
-            >
-              {isUploading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" />{" "}
-                  Archiving assets...
-                </>
-              ) : (
-                "Submit"
-              )}
-            </button>
-          </form>
-        </div>
+        <FreelancerSubmitDeliverables
+          isUploading={FreelancerWorkSubmissionMutation.isPending}
+          onSubmit={handleDeliverySubmit}
+          setShowSubmitModal={setShowSubmitModal}
+        />
       )}
 
       {/* DISPUTE CREATION FLOATING DIALOG */}

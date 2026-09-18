@@ -2,17 +2,21 @@ import axiosService from "@/lib/services/axiosService";
 
 export type IFreelancerWorkSubmissionPayload = {
   note: string;
-  attachment: File[] | File;
+  file: File; //File[]
 };
 
 export async function freelancerWorkSubmission(
   id: number,
-  payload?: IFreelancerWorkSubmissionPayload,
+  payload: IFreelancerWorkSubmissionPayload,
 ) {
+  const formData = new FormData();
+  formData.append("note", payload.note);
+  formData.append("file", payload.file);
+
   const result = await axiosService({
-    method: "POST",
+    method: "PUT",
     url: `ticket/${id}/resolve`,
-    data: payload,
+    data: formData,
   });
   return result.data;
 }
