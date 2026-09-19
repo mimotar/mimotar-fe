@@ -51,6 +51,7 @@ import FreelancerSubmitDeliverables from "./FreelancerSubmitDeliverables";
 import { IFreelancerWorkSubmissionPayload } from "../api/freelancerWorkSubmission";
 import { IDeliverySchema } from "../schema/freelancerSubmitDeliverableSchema";
 import { AutoReleaseTimer } from "./AutoReleaseTimer";
+import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 // import { toast } from "@/components/ui/toast";
 
 const MilestoneCountdown: React.FC<{ submittedAt?: string }> = ({
@@ -117,6 +118,7 @@ export default function ProjectWorkspaceView() {
     fundingMutation,
     FreelancerWorkSubmissionMutation,
     ClientDeadlineExtension,
+    ApproveFreelancerWork,
   } = useMutationAction(Number(projectId));
 
   // Modal / form states
@@ -252,7 +254,7 @@ export default function ProjectWorkspaceView() {
           data?.message || "Agreement Deadline extended successfully.",
         );
         queryClient.invalidateQueries({
-          queryKey: ["project", projectId],
+          queryKey: ["project", id],
         });
         setShowExtendModal(false);
       },
@@ -313,7 +315,7 @@ export default function ProjectWorkspaceView() {
         onSuccess: async (data) => {
           toast.success(data?.message || "Agreement accepted successfully.");
           await queryClient.invalidateQueries({
-            queryKey: ["project", projectId],
+            queryKey: ["project", id],
           });
           closeAgreementDecision();
         },
@@ -348,7 +350,7 @@ export default function ProjectWorkspaceView() {
         onSuccess: async (data) => {
           toast.success(data?.message || "Agreement rejected successfully.");
           await queryClient.invalidateQueries({
-            queryKey: ["project", projectId],
+            queryKey: ["project", id],
           });
           closeAgreementDecision();
         },
@@ -478,7 +480,7 @@ export default function ProjectWorkspaceView() {
     }, 2000);
   };
 
-  const handleDeliverySubmit = (data: IDeliverySchema) => {
+  const handleFreelancerDeliverySubmit = (data: IDeliverySchema) => {
     console.log(data);
     const payload: IFreelancerWorkSubmissionPayload = {
       note: data.note,
@@ -502,9 +504,37 @@ export default function ProjectWorkspaceView() {
       onSuccess: (data) => {
         toast.success(data?.message || "Deliverables submitted successfully.");
         queryClient.invalidateQueries({
-          queryKey: ["project", projectId],
+          queryKey: ["project", id],
         });
         setShowSubmitModal(false);
+      },
+    });
+  };
+
+  const handleClientApproveFreelancerDeliverables = () => {
+    ApproveFreelancerWork.mutate(undefined, {
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(
+            error?.response?.data?.message || "Unable to Approve deliverable.",
+          );
+          return;
+        }
+        if (error instanceof Error) {
+          toast.error(error?.message || "Unable to Approve deliverable.");
+          return;
+        }
+
+        toast.error("Unable to Approve deliverable.");
+      },
+      onSuccess: (data) => {
+        // Escrow successfully released to your freelancer. Receipt logged!
+        toast.success(
+          data?.message || "Escrow successfully released to your freelancer.",
+        );
+        queryClient.invalidateQueries({
+          queryKey: ["project", id],
+        });
       },
     });
   };
@@ -733,6 +763,12 @@ export default function ProjectWorkspaceView() {
               role={role}
               handlePayment={handlePayment}
               isLoadingPayment={fundingMutation.isPending}
+              handleClientApproveFreelancerDeliverables={
+                handleClientApproveFreelancerDeliverables
+              }
+              isClientApprovingFreelancerDeliverables={
+                ApproveFreelancerWork.isPending
+              }
             />
 
             {/* FREELANCER ACTION PATH */}
@@ -838,7 +874,8 @@ export default function ProjectWorkspaceView() {
                   Total Escrow Value
                 </span>
                 <span className="font-bold text-gray-800 block mt-1 font-mono">
-                  {formatMoney(project.amount, project.currency)}
+                  {/* {formatMoney(project.amount, project.currency)} */}
+                  {formatNumberToCurrency(project.amount, project.currency)}
                 </span>
               </div>
               <div>
@@ -933,7 +970,11 @@ export default function ProjectWorkspaceView() {
                                       1.5%
                                     </strong>{" "}
                                     (
-                                    {formatMoney(
+                                    {/* {formatMoney(
+                                      project.amount * 0.015,
+                                      project.currency,
+                                    )} */}
+                                    {formatNumberToCurrency(
                                       project.amount * 0.015,
                                       project.currency,
                                     )}
@@ -948,7 +989,11 @@ export default function ProjectWorkspaceView() {
                                       1.5%
                                     </strong>{" "}
                                     (
-                                    {formatMoney(
+                                    {/* {formatMoney(
+                                      project.amount * 0.015,
+                                      project.currency,
+                                    )} */}
+                                    {formatNumberToCurrency(
                                       project.amount * 0.015,
                                       project.currency,
                                     )}
@@ -981,8 +1026,12 @@ export default function ProjectWorkspaceView() {
                                       3%
                                     </strong>{" "}
                                     (
-                                    {formatMoney(
+                                    {/* {formatMoney(
                                       project.amount * 0.03,
+                                      project.currency,
+                                    )} */}
+                                    {formatNumberToCurrency(
+                                      project.amount * 0.015,
                                       project.currency,
                                     )}
                                     ) which is automatically deducted from the{" "}
@@ -1486,7 +1535,7 @@ export default function ProjectWorkspaceView() {
       </div>
 
       {/* FLUTTERWAVE SIMULATED SECURE PAYMENT MODAL */}
-      {showFlutterwavePay && (
+      {/* {showFlutterwavePay && (
         <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
           <div className="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative animate-fade-in text-left">
             <button
@@ -1602,13 +1651,13 @@ export default function ProjectWorkspaceView() {
             </button>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* FREELANCER DELIVERABLES SUBMISSION SYSTEM MODAL */}
       {showSubmitModal && (
         <FreelancerSubmitDeliverables
           isUploading={FreelancerWorkSubmissionMutation.isPending}
-          onSubmit={handleDeliverySubmit}
+          onSubmit={handleFreelancerDeliverySubmit}
           setShowSubmitModal={setShowSubmitModal}
         />
       )}
