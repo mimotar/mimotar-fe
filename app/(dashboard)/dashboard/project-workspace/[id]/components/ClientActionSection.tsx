@@ -10,6 +10,8 @@ interface IClientActionSectionProps {
   role: "CLIENT" | "FREELANCER";
   handlePayment: (id: string | number) => void;
   isLoadingPayment: boolean;
+  isClientApprovingFreelancerDeliverables: boolean;
+  handleClientApproveFreelancerDeliverables: () => void;
 }
 
 export default function ClientActionSection({
@@ -17,6 +19,8 @@ export default function ClientActionSection({
   role,
   handlePayment,
   isLoadingPayment,
+  handleClientApproveFreelancerDeliverables,
+  isClientApprovingFreelancerDeliverables,
 }: IClientActionSectionProps) {
   const [showReleaseConfirm, setShowReleaseConfirm] = useState(false);
 
@@ -124,16 +128,13 @@ export default function ClientActionSection({
                   </p>
                   <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
                     <button
-                      onClick={() => {
-                        // releaseEscrowFunds(project.id);
-                        toast.success(
-                          `Escrow successfully released to your freelancer. Receipt logged!`,
-                        );
-                        setShowReleaseConfirm(false);
-                      }}
-                      className="flex-1 py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/95 transition cursor-pointer text-center"
+                      onClick={handleClientApproveFreelancerDeliverables}
+                      className="flex-1 inline-flex items-center justify-center py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/95 transition cursor-pointer text-center"
                     >
-                      Release Funds
+                      Release Funds{" "}
+                      {isClientApprovingFreelancerDeliverables && (
+                        <AiOutlineLoading3Quarters className="animate-spin" />
+                      )}
                     </button>
                     <button
                       onClick={() => setShowReleaseConfirm(false)}

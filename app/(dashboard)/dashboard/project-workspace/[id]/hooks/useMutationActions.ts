@@ -8,6 +8,7 @@ import {
   IFreelancerWorkSubmissionPayload,
 } from "../api/freelancerWorkSubmission";
 import { extendDeadline, IExtendDeadlinePayload } from "../api/extendDeadline";
+import { clientApproveFreelancerWork } from "../api/clientApproveFreelancerWork";
 
 export interface ProjectAgreementOtpResponse {
   message?: string;
@@ -57,6 +58,11 @@ export function useMutationAction(id: number) {
       extendDeadline(id, payload),
   });
 
+  const ApproveFreelancerWork = useMutation({
+    mutationKey: ["approve-freelancer-work", id],
+    mutationFn: () => clientApproveFreelancerWork(id),
+  });
+
   return {
     approvalMutation,
     rejectMutation,
@@ -64,5 +70,6 @@ export function useMutationAction(id: number) {
     fundingMutation,
     FreelancerWorkSubmissionMutation,
     ClientDeadlineExtension,
+    ApproveFreelancerWork,
   };
 }

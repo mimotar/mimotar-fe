@@ -12,7 +12,7 @@ export default function Header({ session, project }: HeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <button
-        onClick={() => navigate.push("./dashboard/portal")}
+        onClick={() => navigate.push("/dashboard/portal")}
         className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-brand-primary transition cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Interactive Dashboard
