@@ -218,3 +218,8 @@ export type ITransactionsResponse = {
     };
   };
 };
+
+export type ProjectStatus = Extract<
+  TransactionStatus,
+  "ONGOING" | "PENDING_CLOSURE" | "DISPUTE" | "EXPIRED" | "COMPLETED"
+>;
