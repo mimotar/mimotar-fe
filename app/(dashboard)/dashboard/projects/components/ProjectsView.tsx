@@ -4,27 +4,47 @@ import { Plus } from "lucide-react";
 import SearchInputAndTab from "./SearchInputAndTab";
 import ProjectLists from "./ProjectLists";
 import BottomInfoCard from "./BottomInfoCard";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useProjects } from "../hooks/useProjects";
 import ErrorState from "./ErrorState";
 import { ProjectsLoadingState } from "./ProjectsLoadingState";
+import ProjectsPagination from "./ProjectsPagination";
+import type { ProjectStatus } from "../types/ITransaction";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
 export function ProjectsView() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<
-    | "all"
-    | "unfunded"
-    | "funded"
-    | "disputed"
-    | "completed"
-    | "pending_agreement"
-  >("all");
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+  const page = Math.max(Number(params.get("page")) || 1, 1);
+  const limit = Math.max(Number(params.get("limit")) || 10, 1);
+  const searchParam = params.get("q") ?? "";
+  const statusParam = params.get("status") as ProjectStatus | null;
+  const [searchTerm, setSearchTerm] = useState(searchParam);
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
 
-  const navigate = useRouter();
+  useEffect(() => setSearchTerm(searchParam), [searchParam]);
 
-  const projects = useProjects();
-  console.log(projects.data);
+  useEffect(() => {
+    if (debouncedSearchTerm === searchParam) return;
+    updateParams({ q: debouncedSearchTerm || null, page: "1" });
+  }, [debouncedSearchTerm, searchParam]);
+
+  const updateParams = (updates: Record<string, string | null>) => {
+    const next = new URLSearchParams(params.toString());
+    Object.entries(updates).forEach(([key, value]) =>
+      value ? next.set(key, value) : next.delete(key),
+    );
+    router.replace(`${pathname}?${next.toString()}`);
+  };
+
+  const projects = useProjects({
+    page,
+    limit,
+    q: searchParam || undefined,
+    status: statusParam ?? undefined,
+  });
 
   // Loading state
   if (projects.isPending) {
@@ -42,39 +62,6 @@ export function ProjectsView() {
     );
   }
 
-  // Filter projects by search and status tab
-  //   const filteredProjects = projects.filter((project: any) => {
-  //     const matchesSearch =
-  //       project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //       project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //       project.otherPartyName.toLowerCase().includes(searchTerm.toLowerCase());
-
-  //     if (!matchesSearch) return false;
-
-  //     if (statusFilter === "all") return true;
-  //     if (statusFilter === "unfunded")
-  //       return (
-  //         project.escrowStatus === "unfunded" &&
-  //         project.agreementStatus === "accepted"
-  //       );
-  //     if (statusFilter === "funded")
-  //       return (
-  //         project.escrowStatus === "funded" ||
-  //         project.escrowStatus === "in_progress"
-  //       );
-  //     if (statusFilter === "disputed") return project.escrowStatus === "disputed";
-  //     if (statusFilter === "completed")
-  //       return project.escrowStatus === "completed" || project.isReleased;
-  //     if (statusFilter === "pending_agreement")
-  //       return (
-  //         project.agreementStatus === "pending_invite" ||
-  //         project.agreementStatus === "draft" ||
-  //         project.agreementStatus === "rejected"
-  //       );
-
-  //     return true;
-  //   });
-
   return (
     <div className="space-y-8 animate-fade-in font-sans pb-10">
       {/* Title block with CTA button aligned to design specifications */}
@@ -90,7 +77,7 @@ export function ProjectsView() {
         </div>
 
         <button
-          onClick={() => navigate.push("start-project")}
+          onClick={() => router.push("start-project")}
           className="bg-brand-primary hover:bg-brand-primary/95 text-white rounded-2xl px-6 py-3.5 text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-magenta-200/50 text-center shrink-0 w-full sm:w-auto"
         >
           <Plus className="w-4 h-4" /> Initialize Escrow Agreement
@@ -101,19 +88,41 @@ export function ProjectsView() {
       <SearchInputAndTab
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        setStatusFilter={setStatusFilter}
-        statusFilter={statusFilter}
+        setStatusFilter={(value) => {
+          const nextStatus =
+            typeof value === "function" ? value(statusParam ?? "all") : value;
+          updateParams({
+            status: nextStatus === "all" ? null : nextStatus,
+            page: "1",
+          });
+        }}
+        statusFilter={statusParam ?? "all"}
+        isFetching={projects.isFetching}
       />
 
       {/* Grid listing */}
       <ProjectLists
         filteredProjects={projects.data?.items ?? []}
+        isFetching={projects.isFetching}
         setSearchTerm={setSearchTerm}
-        setStatusFilter={setStatusFilter}
+        setStatusFilter={(value) => {
+          const nextStatus =
+            typeof value === "function" ? value(statusParam ?? "all") : value;
+          updateParams({
+            status: nextStatus === "all" ? null : nextStatus,
+            page: "1",
+          });
+        }}
       />
 
-      {/* pagination */}
-      <p>Coming ..</p>
+      <ProjectsPagination
+        page={projects.data?.pagination.page ?? page}
+        limit={projects.data?.pagination.limit ?? limit}
+        total={projects.data?.pagination.total ?? 0}
+        totalPages={projects.data?.pagination.totalPages ?? 0}
+        onPageChange={(nextPage) => updateParams({ page: String(nextPage) })}
+        disabled={projects.isFetching}
+      />
 
       {/* Bottom informational card */}
       <BottomInfoCard />

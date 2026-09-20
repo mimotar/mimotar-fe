@@ -11,6 +11,7 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import {
   ITransaction,
+  ProjectStatus,
   type ITransactionsResponseData,
 } from "../types/ITransaction";
 import { useAuth } from "@/app/(client)/(page)/hooks/useAuth";
@@ -19,21 +20,19 @@ import { useRouter } from "next/navigation";
 
 interface IProjectLists {
   filteredProjects: ITransactionsResponseData;
+  isFetching: boolean;
   setSearchTerm: Dispatch<SetStateAction<string>>;
   setStatusFilter: Dispatch<
     SetStateAction<
       | "all"
-      | "unfunded"
-      | "funded"
-      | "disputed"
-      | "completed"
-      | "pending_agreement"
+      | ProjectStatus
     >
   >;
 }
 
 export default function ProjectLists({
   filteredProjects,
+  isFetching,
   setSearchTerm,
   setStatusFilter,
 }: IProjectLists) {
@@ -117,7 +116,17 @@ export default function ProjectLists({
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div
+          className={`relative grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity ${isFetching ? "opacity-60" : "opacity-100"}`}
+          aria-busy={isFetching}
+        >
+          {isFetching && (
+            <div className="absolute inset-0 z-10 flex items-start justify-center pt-6 pointer-events-none">
+              <span className="rounded-full bg-white/95 px-4 py-2 text-xs font-semibold text-brand-primary shadow-sm border border-brand-primary/10">
+                Updating projects...
+              </span>
+            </div>
+          )}
           {filteredProjects.map((project) => {
             const hasMilestones = project.milestones.length > 0;
             const completedCount = project.milestones.filter(

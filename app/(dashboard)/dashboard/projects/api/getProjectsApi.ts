@@ -5,11 +5,22 @@ import {
 } from "../types/ITransaction";
 
 interface IType {
-  search?: string;
+  page: number;
+  limit: number;
+  q?: string;
+  status?: string;
 }
-export async function getProjectsApi({ search }: IType) {
+export async function getProjectsApi({ page, limit, q, status }: IType) {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+
+  if (q) params.set("q", q);
+  if (status) params.set("status", status);
+
   const response = await axiosService<ITransactionsResponse>(
-    `ticket/projects?search=${search}`,
+    `ticket/projects?${params.toString()}`,
   );
 
   return response.data.data;
