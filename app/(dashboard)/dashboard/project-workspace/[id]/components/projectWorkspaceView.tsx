@@ -414,7 +414,7 @@ export default function ProjectWorkspaceView() {
   // Derive active steps for the Status Header Stepper
   const getStepperIndex = () => {
     // Waiting for the other party to accept
-    if (project.status === "CREATED") return 0;
+    if (project.status === "CREATED" || project.status === "REJECTED") return 0;
 
     // Agreement accepted but escrow not funded
     if (project.status === "APPROVED") {
@@ -624,7 +624,6 @@ export default function ProjectWorkspaceView() {
   return (
     <div className="space-y-6 animate-fade-in font-sans pb-10">
       {/* Back to Dashboard bar and Role helpful hints selector */}
-
       <Header session={session.session} project={project} />
 
       {/* DISPUTE LOCK STATE BANNER */}
