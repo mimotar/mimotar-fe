@@ -11,7 +11,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Loader2,
+  ShieldCheck,
+} from "lucide-react";
 
 type AgreementDecision = "accept" | "reject";
 
@@ -23,10 +28,7 @@ interface AgreementDecisionModalProps {
   isLoading?: boolean;
   onOpenChange: (open: boolean) => void;
   onOtpChange: (otp: string) => void;
-  onConfirm: (payload: {
-    otp: string;
-    rejectionReason?: string;
-  }) => void;
+  onConfirm: (payload: { otp: string; rejectionReason?: string }) => void;
 }
 
 const decisionConfig: Record<
@@ -90,7 +92,9 @@ export default function AgreementDecisionModal({
     >
       <DialogContent className="w-[92vw] max-w-[460px] rounded-3xl border-0 bg-white p-5 sm:p-6 shadow-2xl max-h-[85vh] overflow-y-auto [&>button]:hidden">
         <DialogHeader className="text-left space-y-3">
-          <div className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider ${config.accent}`}>
+          <div
+            className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider ${config.accent}`}
+          >
             <Icon className="h-4 w-4 shrink-0" />
             <span>{config.eyebrow}</span>
           </div>
@@ -113,8 +117,8 @@ export default function AgreementDecisionModal({
             {projectTitle || "Selected agreement"}
           </p>
           <p className="mt-2 text-xs sm:text-sm leading-6 text-slate-500">
-            This confirmation is intentionally separate from the action buttons
-            so the modal can be reused for both accept and reject flows.
+            {/* This confirmation is intentionally separate from the action buttons
+            so the modal can be reused for both accept and reject flows. */}
           </p>
         </div>
 
@@ -188,9 +192,7 @@ export default function AgreementDecisionModal({
             }
             className={`w-full sm:w-auto cursor-pointer inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium ${config.buttonClassName}`}
           >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : null}
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             {isLoading ? "Processing..." : config.confirmLabel}
           </Button>
         </DialogFooter>
