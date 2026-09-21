@@ -836,9 +836,19 @@ export default function ProjectWorkspaceView() {
 
           {/* B. AGREEMENT DETAILS PANEL */}
           <div className="bg-white rounded-3xl p-6.5 shadow-xs border border-gray-100/50 text-left space-y-4">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-              Escrow Scope Agreement
-            </span>
+            <div className="flex justify-between items-center ">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                Escrow Scope Agreement
+              </span>
+              {project.status === "REJECTED" && isCreator && (
+                <button
+                  type="button"
+                  className="text-xs bg-brand-primary p-2 rounded-md text-white cursor-pointer"
+                >
+                  Edit Ticket
+                </button>
+              )}
+            </div>
 
             <div className="space-y-2">
               <h3 className="text-sm font-bold text-gray-900">
