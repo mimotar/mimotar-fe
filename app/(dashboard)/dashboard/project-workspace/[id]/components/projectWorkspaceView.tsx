@@ -414,7 +414,7 @@ export default function ProjectWorkspaceView() {
   // Derive active steps for the Status Header Stepper
   const getStepperIndex = () => {
     // Waiting for the other party to accept
-    if (project.status === "CREATED") return 0;
+    if (project.status === "CREATED" || project.status === "REJECTED") return 0;
 
     // Agreement accepted but escrow not funded
     if (project.status === "APPROVED") {
@@ -624,7 +624,6 @@ export default function ProjectWorkspaceView() {
   return (
     <div className="space-y-6 animate-fade-in font-sans pb-10">
       {/* Back to Dashboard bar and Role helpful hints selector */}
-
       <Header session={session.session} project={project} />
 
       {/* DISPUTE LOCK STATE BANNER */}
@@ -837,9 +836,19 @@ export default function ProjectWorkspaceView() {
 
           {/* B. AGREEMENT DETAILS PANEL */}
           <div className="bg-white rounded-3xl p-6.5 shadow-xs border border-gray-100/50 text-left space-y-4">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-              Escrow Scope Agreement
-            </span>
+            <div className="flex justify-between items-center ">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                Escrow Scope Agreement
+              </span>
+              {project.status === "REJECTED" && isCreator && (
+                <button
+                  type="button"
+                  className="text-xs bg-brand-primary p-2 rounded-md text-white cursor-pointer"
+                >
+                  Edit Ticket
+                </button>
+              )}
+            </div>
 
             <div className="space-y-2">
               <h3 className="text-sm font-bold text-gray-900">
