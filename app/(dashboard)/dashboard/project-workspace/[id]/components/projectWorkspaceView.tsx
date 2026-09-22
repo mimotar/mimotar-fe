@@ -768,6 +768,7 @@ export default function ProjectWorkspaceView() {
               isClientApprovingFreelancerDeliverables={
                 ApproveFreelancerWork.isPending
               }
+              isCreator={isCreator}
             />
 
             {/* FREELANCER ACTION PATH */}
@@ -836,19 +837,9 @@ export default function ProjectWorkspaceView() {
 
           {/* B. AGREEMENT DETAILS PANEL */}
           <div className="bg-white rounded-3xl p-6.5 shadow-xs border border-gray-100/50 text-left space-y-4">
-            <div className="flex justify-between items-center ">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                Escrow Scope Agreement
-              </span>
-              {project.status === "REJECTED" && isCreator && (
-                <button
-                  type="button"
-                  className="text-xs bg-brand-primary p-2 rounded-md text-white cursor-pointer"
-                >
-                  Edit Ticket
-                </button>
-              )}
-            </div>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+              Escrow Scope Agreement
+            </span>
 
             <div className="space-y-2">
               <h3 className="text-sm font-bold text-gray-900">
@@ -906,18 +897,20 @@ export default function ProjectWorkspaceView() {
               </div>
             </div>
 
-            {role === "CLIENT" && project.status !== "COMPLETED" && (
-              <div className="pt-3 border-t border-gray-100 flex justify-end">
-                <button
-                  type="button"
-                  id="btn_extend_deadlines_open"
-                  onClick={() => setShowExtendModal(true)}
-                  className="flex items-center gap-1.5 px-3.5 py-2 text-[11.5px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-xl hover:bg-indigo-100 transition duration-150 cursor-pointer text-right shrink-0"
-                >
-                  <Clock className="w-3.5 h-3.5" /> Extend Deadline
-                </button>
-              </div>
-            )}
+            {role === "CLIENT" &&
+              project.status !== "COMPLETED" &&
+              project.status !== "REJECTED" && (
+                <div className="pt-3 border-t border-gray-100 flex justify-end">
+                  <button
+                    type="button"
+                    id="btn_extend_deadlines_open"
+                    onClick={() => setShowExtendModal(true)}
+                    className="flex items-center gap-1.5 px-3.5 py-2 text-[11.5px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-xl hover:bg-indigo-100 transition duration-150 cursor-pointer text-right shrink-0"
+                  >
+                    <Clock className="w-3.5 h-3.5" /> Extend Deadline
+                  </button>
+                </div>
+              )}
 
             {/* FEE TRANSPARENCY EXPLANATORY PANEL (COLLAPSIBLE TO PREVENT COGNITIVE OVERLOAD) */}
             <div className="pt-2">
