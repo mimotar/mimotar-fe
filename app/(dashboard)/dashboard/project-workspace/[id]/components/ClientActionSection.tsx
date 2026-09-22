@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdOutlineRefresh } from "react-icons/md";
 import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
+import Link from "next/link";
 
 interface IClientActionSectionProps {
   project: ITransaction;
@@ -12,6 +13,7 @@ interface IClientActionSectionProps {
   isLoadingPayment: boolean;
   isClientApprovingFreelancerDeliverables: boolean;
   handleClientApproveFreelancerDeliverables: () => void;
+  isCreator: boolean;
 }
 
 export default function ClientActionSection({
@@ -21,6 +23,7 @@ export default function ClientActionSection({
   isLoadingPayment,
   handleClientApproveFreelancerDeliverables,
   isClientApprovingFreelancerDeliverables,
+  isCreator,
 }: IClientActionSectionProps) {
   const [showReleaseConfirm, setShowReleaseConfirm] = useState(false);
 
@@ -74,6 +77,77 @@ export default function ClientActionSection({
             </p>
           </div>
         )}
+
+        {project.status === "REJECTED" && isCreator && !hasMilestones && (
+          <div className="space-y-4">
+            <div className="bg-brand-primary/[0.02] border-2 border-dashed border-brand-primary/30 p-5 rounded-2xl">
+              <span className="text-xs font-bold text-brand-primary block">
+                Ticket Rejected
+              </span>
+              <p className="text-xs text-gray-400 mt-4 leading-normal">
+                This ticket was rejected by the other party and cannot be
+                continued. Review the reason below and create a new ticket if
+                you still want to proceed.
+              </p>
+              {/* Rejection Reason */}{" "}
+              <div className="mt-4 p-4 bg-white border border-red-100 rounded-xl space-y-2">
+                <span className="text-[10px] text-red-500 uppercase font-bold font-mono">
+                  Rejection Reason{" "}
+                </span>{" "}
+                <p className="text-xs text-gray-700 leading-relaxed">
+                  {false || "No rejection reason was provided."}{" "}
+                </p>{" "}
+              </div>
+              <div className="mt-4 p-4.5 bg-brand-primary/[0.03] rounded-2xl border border-brand-primary/20 space-y-3 animate-fade-in text-left">
+                <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
+                  <Link
+                    href="/dashboard/start-project"
+                    className="flex-1 inline-flex items-center justify-center py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/95 transition cursor-pointer text-center"
+                  >
+                    Create New Ticket
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {project.status === "CHANGES_REQUESTED" &&
+          isCreator &&
+          !hasMilestones && (
+            <div className="space-y-4">
+              <div className="bg-brand-primary/[0.02] border-2 border-dashed border-brand-primary/30 p-5 rounded-2xl">
+                <span className="text-xs font-bold text-brand-primary block">
+                  Changes Requested
+                </span>
+                <p className="text-xs text-gray-400 mt-4 leading-normal">
+                  The other party has requested changes to this ticket. Review
+                  the feedback below and update the ticket to address the
+                  requested changes.
+                </p>
+
+                <div className="mt-4 p-4 bg-white border border-red-100 rounded-xl space-y-2">
+                  <span className="text-[10px] text-red-500 uppercase font-bold font-mono">
+                    Requested Changes
+                  </span>{" "}
+                  <p className="text-xs text-gray-700 leading-relaxed">
+                    {project.change_request_comment ||
+                      "No rejection reason was provided."}{" "}
+                  </p>
+                </div>
+                <div className="mt-4 p-4.5 bg-brand-primary/[0.03] rounded-2xl border border-brand-primary/20 space-y-3 animate-fade-in text-left">
+                  <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
+                    <button
+                      onClick={() => ""}
+                      className="flex-1 inline-flex items-center justify-center py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/95 transition cursor-pointer text-center"
+                    >
+                      Make Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
         {project.status == "PENDING_CLOSURE" && !hasMilestones && (
           <div className="space-y-4">

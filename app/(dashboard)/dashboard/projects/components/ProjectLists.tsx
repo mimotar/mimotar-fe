@@ -17,17 +17,14 @@ import {
 import { useAuth } from "@/app/(client)/(page)/hooks/useAuth";
 import { format, isValid } from "date-fns";
 import { useRouter } from "next/navigation";
+import { FcExpired } from "react-icons/fc";
+import { MdCancel } from "react-icons/md";
 
 interface IProjectLists {
   filteredProjects: ITransactionsResponseData;
   isFetching: boolean;
   setSearchTerm: Dispatch<SetStateAction<string>>;
-  setStatusFilter: Dispatch<
-    SetStateAction<
-      | "all"
-      | ProjectStatus
-    >
-  >;
+  setStatusFilter: Dispatch<SetStateAction<"all" | ProjectStatus>>;
 }
 
 export default function ProjectLists({
@@ -38,6 +35,7 @@ export default function ProjectLists({
 }: IProjectLists) {
   const session = useAuth();
   const navigate = useRouter();
+
   const getStatusBadge = (project: ITransaction) => {
     const approvalLabel =
       session.session?.email === project.creator_email
@@ -58,11 +56,7 @@ export default function ProjectLists({
         </span>
       );
     }
-    if (
-      // project.status === "funded" ||
-      project.payment ||
-      project.status === "ONGOING"
-    ) {
+    if (project.status === "ONGOING") {
       return (
         <span className="px-3 py-1 bg-magenta-50 text-brand-primary text-[10px] font-bold rounded-full border border-brand-primary/20 uppercase tracking-wider flex items-center gap-1">
           <div className="w-1.5 h-1.5 bg-[#c026d3] rounded-full animate-ping"></div>{" "}
@@ -70,23 +64,45 @@ export default function ProjectLists({
         </span>
       );
     }
-    if (
-      // project.status === "pending_invite" ||
-      // project.agreementStatus === "draft"
 
-      project.status !== "APPROVED"
-    ) {
+    if (project.status == "APPROVED") {
+      return (
+        <span className="px-3 py-1 bg-amber-50/50 text-[#a16207] text-[10px] font-bold rounded-full border border-amber-150 uppercase tracking-wider flex items-center gap-1">
+          <AlertCircle className="w-3 h-3" /> Agreement Signed
+        </span>
+      );
+    }
+
+    if (project.status === "EXPIRED") {
+      return (
+        <span className="px-3 py-1 bg-orange-50 text-orange-700 text-[10px] font-bold rounded-full border border-orange-200 uppercase tracking-wider flex items-center gap-1">
+          <FcExpired className="w-3 h-3" />
+          Expired
+        </span>
+      );
+    }
+
+    if (project.status === "REJECTED") {
+      return (
+        <span className="px-3 py-1 bg-rose-50 text-rose-600 text-[10px] font-bold rounded-full border border-rose-200 uppercase tracking-wider flex items-center gap-1">
+          <MdCancel className="w-3 h-3" />
+          Rejected
+        </span>
+      );
+    }
+
+    if (project.status == "CREATED") {
       return (
         <span className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-bold rounded-full border border-gray-150 uppercase tracking-wider flex items-center gap-1">
           <Clock className="w-3 h-3" /> {approvalLabel}
         </span>
       );
     }
-    return (
-      <span className="px-3 py-1 bg-amber-50/50 text-[#a16207] text-[10px] font-bold rounded-full border border-amber-150 uppercase tracking-wider flex items-center gap-1">
-        <AlertCircle className="w-3 h-3" /> Agreement Signed
-      </span>
-    );
+    // return (
+    //   <span className="px-3 py-1 bg-amber-50/50 text-[#a16207] text-[10px] font-bold rounded-full border border-amber-150 uppercase tracking-wider flex items-center gap-1">
+    //     <AlertCircle className="w-3 h-3" /> Agreement Signed
+    //   </span>
+    // );
   };
 
   return (
@@ -142,12 +158,8 @@ export default function ProjectLists({
               >
                 <div>
                   {/* Card Header Top Row */}
-                  {project.status === "EXPIRED" && (
-                    <span className="text-red-500 text-xs animate-pulse font-semibold">
-                      Ticket Expired
-                    </span>
-                  )}
-                  <div className="flex justify-between items-start gap-4 mb-4">
+
+                  <div className="flex justify-between items-start gap-4 mb-4 ">
                     <div className="space-y-0.5 text-left">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <span className="text-[10px] text-gray-400 font-mono font-bold tracking-tight uppercase">
@@ -170,7 +182,7 @@ export default function ProjectLists({
                   </div>
 
                   {/* Card Description */}
-                  <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-6">
+                  <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-6 ">
                     {project.transaction_description}
                   </p>
 
