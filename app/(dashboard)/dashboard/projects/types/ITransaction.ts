@@ -6,6 +6,7 @@ export type TransactionStatus =
   | "COMPLETED"
   | "DISPUTE"
   | "EXPIRED"
+  | "CHANGES_REQUESTED"
   | "PENDING_CLOSURE";
 
 export type IMilestoneStatus =
