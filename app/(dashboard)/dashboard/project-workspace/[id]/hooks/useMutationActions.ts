@@ -9,6 +9,10 @@ import {
 } from "../api/freelancerWorkSubmission";
 import { extendDeadline, IExtendDeadlinePayload } from "../api/extendDeadline";
 import { clientApproveFreelancerWork } from "../api/clientApproveFreelancerWork";
+import { RequestChanges } from "../api/requestForChanges";
+import { editRequestedTicket } from "../api/editRequestTicket";
+import { MakeChangesPayload } from "../schema/makeChanges";
+import { sendEditedTicket } from "../api/sendEditedTicket";
 
 export interface ProjectAgreementOtpResponse {
   message?: string;
@@ -63,6 +67,21 @@ export function useMutationAction(id: number) {
     mutationFn: () => clientApproveFreelancerWork(id),
   });
 
+  const RequestChangesFromCreator = useMutation({
+    mutationKey: ["request-changes-from-freelancer", id],
+    mutationFn: (data: string) => RequestChanges(id, data),
+  });
+
+  const editRequestTicket = useMutation({
+    mutationKey: ["edit-requested-ticket", id],
+    mutationFn: (data: MakeChangesPayload) => editRequestedTicket(id, data),
+  });
+
+  const SendEditedTicket = useMutation({
+    mutationKey: ["send-edit-ticket", id],
+    mutationFn: () => sendEditedTicket(id),
+  });
+
   return {
     approvalMutation,
     rejectMutation,
@@ -71,5 +90,8 @@ export function useMutationAction(id: number) {
     FreelancerWorkSubmissionMutation,
     ClientDeadlineExtension,
     ApproveFreelancerWork,
+    RequestChangesFromCreator,
+    editRequestTicket,
+    SendEditedTicket,
   };
 }

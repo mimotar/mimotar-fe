@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { ITransaction } from "../../../projects/types/ITransaction";
 import AgreementDecisionModal from "./AgreementDecisionModal";
+import RequestChangesDialog from "./RequestChangesDialog";
 
 type AgreementDecision = "accept" | "reject";
 
@@ -20,6 +22,8 @@ interface AgreementAcceptanceBlockProps {
     otp: string;
     rejectionReason?: string;
   }) => void;
+  onRequestForChange: (comment: string) => Promise<void>;
+  isOnRequestChangePending: boolean;
 }
 
 export default function AgreementAcceptanceBlock({
@@ -34,9 +38,12 @@ export default function AgreementAcceptanceBlock({
   onCloseDecision,
   onAgreementOtpChange,
   onConfirmDecision,
+  onRequestForChange,
+  isOnRequestChangePending,
 }: AgreementAcceptanceBlockProps) {
   const isExpired = project.status === "EXPIRED";
-  console.log("isCreator:", isCreator);
+  const [requestChange, setRequestChange] = useState(false);
+
   return (
     <>
       {!isCreator && isExpired && (
@@ -58,7 +65,7 @@ export default function AgreementAcceptanceBlock({
           </span>
           <p className="text-xs text-slate-600 leading-relaxed">
             The counterparty must accept these terms before payments can be
-            funded. You can accept or decline instantly to bypass.
+            funded. You can accept, request for changes or decline instantly.
           </p>
 
           <div className="flex flex-col gap-3">
@@ -78,6 +85,13 @@ export default function AgreementAcceptanceBlock({
                 className="flex-1 py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl shadow-xs cursor-pointer hover:bg-brand-primary/95 transition text-center"
               >
                 Accept Terms
+              </button>
+              <button
+                type="button"
+                onClick={() => setRequestChange(true)}
+                className="px-4 py-2.5 bg-white border border-amber-200 hover:bg-amber-50 text-amber-600 text-xs font-semibold rounded-xl transition cursor-pointer"
+              >
+                Request for Change
               </button>
               <button
                 type="button"
@@ -106,6 +120,15 @@ export default function AgreementAcceptanceBlock({
           }}
           onOtpChange={onAgreementOtpChange}
           onConfirm={onConfirmDecision}
+        />
+      )}
+
+      {!isExpired && (
+        <RequestChangesDialog
+          open={requestChange}
+          onOpenChange={setRequestChange}
+          onSubmit={onRequestForChange}
+          isPending={isOnRequestChangePending}
         />
       )}
     </>
