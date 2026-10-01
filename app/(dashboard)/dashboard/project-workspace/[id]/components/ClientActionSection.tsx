@@ -5,8 +5,12 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdOutlineRefresh } from "react-icons/md";
 import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 import Link from "next/link";
+import { MakeChangesPayload } from "../schema/makeChanges";
+import EditRequestChangesTicketModal from "./EditRequestChangesTicketModal";
+import SendChangesDialog from "./SendChangesDialog";
 
 interface IClientActionSectionProps {
+  isFetching: boolean;
   project: ITransaction;
   role: "CLIENT" | "FREELANCER";
   handlePayment: (id: string | number) => void;
@@ -14,9 +18,16 @@ interface IClientActionSectionProps {
   isClientApprovingFreelancerDeliverables: boolean;
   handleClientApproveFreelancerDeliverables: () => void;
   isCreator: boolean;
+  onMakeChangesSubmit: (payload: MakeChangesPayload) => Promise<void>;
+  isEditingTicket: boolean;
+
+  onSendEditedTicket: () => Promise<void>;
+  isSendingEditedTicket: boolean;
+  refreshProject: () => void;
 }
 
 export default function ClientActionSection({
+  isFetching,
   project,
   role,
   handlePayment,
@@ -24,8 +35,15 @@ export default function ClientActionSection({
   handleClientApproveFreelancerDeliverables,
   isClientApprovingFreelancerDeliverables,
   isCreator,
+  onMakeChangesSubmit,
+  isEditingTicket,
+  onSendEditedTicket,
+  isSendingEditedTicket,
+  refreshProject,
 }: IClientActionSectionProps) {
   const [showReleaseConfirm, setShowReleaseConfirm] = useState(false);
+  const [showMakeChangesModal, setShowMakeChangesModal] = useState(false);
+  const [showSendChangesModal, setShowSendChangesModal] = useState(false);
 
   if (role !== "CLIENT") {
     return null;
@@ -39,7 +57,10 @@ export default function ClientActionSection({
       <div className="space-y-4">
         {project.status === "APPROVED" && (
           <div className="p-5 relative bg-purple-100/[0.02] border border-purple-100 rounded-2xl space-y-4">
-            <MdOutlineRefresh className="absolute top-2 right-2 text-xl cursor-pointer" />
+            <MdOutlineRefresh
+              className={`absolute top-2 right-2 text-xl cursor-pointer ${isFetching ? "animate-spin" : ""}`}
+              onClick={() => refreshProject()}
+            />
             <span className="text-xs font-bold text-brand-primary block">
               Client Funding Required
             </span>
@@ -53,7 +74,6 @@ export default function ClientActionSection({
             </span>
             <button
               disabled={isLoadingPayment}
-              // onClick={() => setShowFlutterwavePay(true)}
               onClick={() => handlePayment(project.id)}
               className="w-full py-3 bg-brand-primary inline-flex gap-2 mt-2 items-center justify-center text-white text-xs font-bold rounded-xl shadow-xs hover:bg-brand-primary/95 transition cursor-pointer text-center"
             >
@@ -117,7 +137,7 @@ export default function ClientActionSection({
           !hasMilestones && (
             <div className="space-y-4">
               <div className="bg-brand-primary/[0.02] border-2 border-dashed border-brand-primary/30 p-5 rounded-2xl">
-                <span className="text-xs font-bold text-brand-primary block">
+                <span className="text-sm font-bold text-brand-primary block">
                   Changes Requested
                 </span>
                 <p className="text-xs text-gray-400 mt-4 leading-normal">
@@ -128,7 +148,7 @@ export default function ClientActionSection({
 
                 <div className="mt-4 p-4 bg-white border border-red-100 rounded-xl space-y-2">
                   <span className="text-[10px] text-red-500 uppercase font-bold font-mono">
-                    Requested Changes
+                    Requested Changes reason:
                   </span>{" "}
                   <p className="text-xs text-gray-700 leading-relaxed">
                     {project.change_request_comment ||
@@ -138,10 +158,18 @@ export default function ClientActionSection({
                 <div className="mt-4 p-4.5 bg-brand-primary/[0.03] rounded-2xl border border-brand-primary/20 space-y-3 animate-fade-in text-left">
                   <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
                     <button
-                      onClick={() => ""}
+                      onClick={() => setShowMakeChangesModal(true)}
                       className="flex-1 inline-flex items-center justify-center py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/95 transition cursor-pointer text-center"
                     >
-                      Make Changes
+                      Edit Changes
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowSendChangesModal(true)}
+                      className="flex-1 inline-flex items-center justify-center py-2.5 border border-brand-primary text-black/70 text-xs font-bold rounded-xl hover:bg-brand-primary/15 transition cursor-pointer text-center"
+                    >
+                      Send Changes
                     </button>
                   </div>
                 </div>
@@ -240,6 +268,21 @@ export default function ClientActionSection({
           </div>
         )}
       </div>
+      {showMakeChangesModal && (
+        <EditRequestChangesTicketModal
+          setOpen={setShowMakeChangesModal}
+          onSubmit={onMakeChangesSubmit}
+          defaultValues={project}
+          isPending={isEditingTicket}
+        />
+      )}
+
+      <SendChangesDialog
+        onOpenChange={setShowSendChangesModal}
+        open={showSendChangesModal}
+        onSubmit={onSendEditedTicket}
+        isPending={isSendingEditedTicket}
+      />
       {/* )} */}
     </>
   );
