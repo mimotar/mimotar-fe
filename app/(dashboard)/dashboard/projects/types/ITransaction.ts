@@ -167,12 +167,15 @@ export interface ITransaction {
   reciever_role: UserRole;
   creator_role: UserRole;
 
-  terms: unknown | null;
+  additional_agreement: string | null;
+
+  terms: string | null;
 
   transactionType: TransactionType;
 
   pay_escrow_fee: EscrowFeePayer;
-  pay_shipping_cost: unknown | null;
+  // pay_shipping_cost: unknown | null;
+  pay_shipping_cost: EscrowFeePayer;
 
   receiver_address: string;
   receiver_no: string;

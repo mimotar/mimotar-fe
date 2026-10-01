@@ -1,32 +1,21 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-// import { useAppState } from "../useAppState";
-// import { Project } from "../types";
-// import { InteractiveMultiUploader } from "./InteractiveMultiUploader";
+
 import {
   ShieldCheck,
   Clock,
   FileText,
-  Send,
   AlertTriangle,
-  HelpCircle,
   Check,
-  ChevronRight,
-  ArrowLeft,
   X,
-  Loader2,
   Lock,
   MessageSquareCode,
   CheckCircle,
   FileCheck,
-  Calendar,
   Database,
-  Sparkles,
   ChevronDown,
   ChevronUp,
-  User,
-  Cpu,
 } from "lucide-react";
 import { useAuth } from "@/app/(client)/(page)/hooks/useAuth";
 import { useProjectApp } from "../hooks/useProjectApp";
@@ -52,50 +41,8 @@ import { IFreelancerWorkSubmissionPayload } from "../api/freelancerWorkSubmissio
 import { IDeliverySchema } from "../schema/freelancerSubmitDeliverableSchema";
 import { AutoReleaseTimer } from "./AutoReleaseTimer";
 import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
-// import { toast } from "@/components/ui/toast";
-
-const MilestoneCountdown: React.FC<{ submittedAt?: string }> = ({
-  submittedAt,
-}) => {
-  const [timeLeft, setTimeLeft] = useState<string>(
-    "48 Hours : 00 Minutes : 00 Seconds",
-  );
-
-  useEffect(() => {
-    if (!submittedAt) {
-      setTimeLeft("48 Hours : 00 Minutes : 00 Seconds");
-      return;
-    }
-
-    const calculateTimeLeft = () => {
-      const submissionTime = new Date(submittedAt).getTime();
-      const targetTime = submissionTime + 48 * 60 * 60 * 1000;
-      const now = Date.now();
-      const difference = targetTime - now;
-
-      if (difference <= 0) {
-        return "00 Hours : 00 Minutes : 00 Seconds";
-      }
-
-      const hours = Math.floor(difference / (1000 * 60 * 60));
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-      const pad = (num: number) => String(num).padStart(2, "0");
-      return `${hours} Hours : ${pad(minutes)} Minutes : ${pad(seconds)} Seconds`;
-    };
-
-    setTimeLeft(calculateTimeLeft());
-
-    const interval = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [submittedAt]);
-
-  return <>{timeLeft}</>;
-};
+import { MakeChangesPayload } from "../schema/makeChanges";
+import { MdOutlineRefresh } from "react-icons/md";
 
 export default function ProjectWorkspaceView() {
   const params = useParams();
@@ -103,7 +50,7 @@ export default function ProjectWorkspaceView() {
   const queryClient = useQueryClient();
 
   const id = params.id as string;
-  const { getProject } = useProjectApp(id);
+  const { getProject, refreshProject } = useProjectApp(id);
 
   const session = useAuth();
 
@@ -119,30 +66,13 @@ export default function ProjectWorkspaceView() {
     FreelancerWorkSubmissionMutation,
     ClientDeadlineExtension,
     ApproveFreelancerWork,
+    RequestChangesFromCreator,
+    editRequestTicket,
+    SendEditedTicket,
   } = useMutationAction(Number(projectId));
 
   // Modal / form states
   const [showSubmitModal, setShowSubmitModal] = useState(false);
-  const [submissionNotes, setSubmissionNotes] = useState("");
-  const [submissionFileName, setSubmissionFileName] = useState("");
-  const [submissionFiles, setSubmissionFiles] = useState<string[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-
-  // Milestone inline form states
-  const [submittingMilestoneId, setSubmittingMilestoneId] = useState<
-    string | null
-  >(null);
-  const [milestoneNotes, setMilestoneNotes] = useState("");
-  const [milestoneFile, setMilestoneFile] = useState("");
-  const [milestoneFilesList, setMilestoneFilesList] = useState<string[]>([]);
-  const [isDragOver, setIsDragOver] = useState(false);
-  const [disputingMilestoneId, setDisputingMilestoneId] = useState<
-    string | null
-  >(null);
-  const [milestoneDisputeReason, setMilestoneDisputeReason] = useState("");
-  const [milestoneDisputeEvidenceFiles, setMilestoneDisputeEvidenceFiles] =
-    useState<string[]>([]);
 
   // Extend deadline modal states
   const [showExtendModal, setShowExtendModal] = useState(false);
@@ -372,10 +302,6 @@ export default function ProjectWorkspaceView() {
     );
   };
 
-  // Flutterwave simulated overlay
-  const [showFlutterwavePay, setShowFlutterwavePay] = useState(false);
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-
   // Loading state
   if (getProject.isLoading) {
     return <Loading />;
@@ -414,7 +340,12 @@ export default function ProjectWorkspaceView() {
   // Derive active steps for the Status Header Stepper
   const getStepperIndex = () => {
     // Waiting for the other party to accept
-    if (project.status === "CREATED" || project.status === "REJECTED") return 0;
+    if (
+      project.status === "CREATED" ||
+      project.status === "REJECTED" ||
+      project.status === "CHANGES_REQUESTED"
+    )
+      return 0;
 
     // Agreement accepted but escrow not funded
     if (project.status === "APPROVED") {
@@ -452,33 +383,6 @@ export default function ProjectWorkspaceView() {
   const isCreator =
     project.creator_email?.toLowerCase() ===
     session.session?.email?.toLowerCase();
-
-  const formatMoney = (amount: number, currency: "NGN" | "USD") => {
-    return currency === "NGN"
-      ? `₦${amount.toLocaleString()}`
-      : `$${amount.toLocaleString()}`;
-  };
-
-  const handleFlutterwaveFund = () => {
-    setIsProcessingPayment(true);
-    setTimeout(() => {
-      // fundProjectEscrow(project.id);
-      setIsProcessingPayment(false);
-      setShowFlutterwavePay(false);
-      const feePercent =
-        project.pay_escrow_fee === "CLIENT"
-          ? 3
-          : project.pay_escrow_fee === "BOTH"
-            ? 1.5
-            : 0;
-      const feeAmt = project.amount * (feePercent / 100);
-      const totalAmt = project.amount + feeAmt;
-      // toast.add({
-      //   description: `Flutterwave Secure Lock Approved: ${formatMoney(totalAmt, project.currency)} deposited and locked successfully!`,
-      //   type: "success",
-      // });
-    }, 2000);
-  };
 
   const handleFreelancerDeliverySubmit = (data: IDeliverySchema) => {
     console.log(data);
@@ -621,6 +525,79 @@ export default function ProjectWorkspaceView() {
     });
   };
 
+  const handleOnRequestForChange = async (comment: string) => {
+    try {
+      const data = await RequestChangesFromCreator.mutateAsync(comment);
+
+      await queryClient.invalidateQueries({
+        queryKey: ["project", id],
+      });
+
+      toast.success(data?.message || "Changes request successfully.");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(
+          error?.response?.data?.message || "Unable to request Changes.",
+        );
+        return;
+      } else if (error instanceof globalThis.Error) {
+        toast.error(error.message || "Unable to request Changes.");
+        return;
+      } else {
+        toast.error("Unable to request Changes.");
+      }
+      throw error;
+    }
+  };
+
+  const handleEditTicketRequestSubmit = async (payload: MakeChangesPayload) => {
+    try {
+      const data = await editRequestTicket.mutateAsync(payload);
+
+      await queryClient.invalidateQueries({
+        queryKey: ["project", id],
+      });
+
+      toast.success(data?.message || "Ticket Edited  successfully.");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.message || "Unable to edit ticket.");
+      } else if (error instanceof globalThis.Error) {
+        toast.error(error.message || "Unable to edit ticket.");
+      } else {
+        toast.error("Unable to edit ticket.");
+      }
+
+      // 🔴 Important: tell the modal that submission failed
+      throw error;
+    }
+  };
+
+  const handleSendEditedTicket = async () => {
+    try {
+      const data = await SendEditedTicket.mutateAsync();
+
+      await queryClient.invalidateQueries({
+        queryKey: ["project", id],
+      });
+
+      toast.success(data?.message || "Edited Ticket Sent  successfully.");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(
+          error.response?.data?.message || "Unable to send edited ticket.",
+        );
+      } else if (error instanceof globalThis.Error) {
+        toast.error(error.message || "Unable to send edited ticket.");
+      } else {
+        toast.error("Unable to send edited ticket.");
+      }
+
+      // 🔴 Important: tell the modal that submission failed
+      throw error;
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fade-in font-sans pb-10">
       {/* Back to Dashboard bar and Role helpful hints selector */}
@@ -650,9 +627,16 @@ export default function ProjectWorkspaceView() {
 
       {/* A. STATUS HEADER (TOP PRIORITY STEPPER) */}
       <div className="bg-white rounded-2xl p-5.5 shadow-xs border border-gray-100/30">
-        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-5">
-          Contract Escrow Progress
-        </h2>
+        <div className="flex justify-between items-center gap-2">
+          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-5">
+            Contract Escrow Progress
+          </h2>
+
+          <MdOutlineRefresh
+            className={`text-xl cursor-pointer ${getProject.isFetching ? "animate-spin" : ""}`}
+            onClick={() => refreshProject()}
+          />
+        </div>
 
         <div className="relative flex items-center justify-between overflow-visible py-2">
           {[
@@ -754,10 +738,13 @@ export default function ProjectWorkspaceView() {
               onConfirmDecision={handleAgreementConfirm}
               onOpenDecision={openAgreementDecision}
               onRequestOtp={handleRequestAgreementOtp}
+              onRequestForChange={handleOnRequestForChange}
+              isOnRequestChangePending={RequestChangesFromCreator.isPending}
             />
 
             {/* CLIENT ACTION PATH */}
             <ClientActionSection
+              isFetching={getProject.isFetching}
               project={project}
               role={role}
               handlePayment={handlePayment}
@@ -769,6 +756,11 @@ export default function ProjectWorkspaceView() {
                 ApproveFreelancerWork.isPending
               }
               isCreator={isCreator}
+              onMakeChangesSubmit={handleEditTicketRequestSubmit}
+              isEditingTicket={editRequestTicket.isPending}
+              onSendEditedTicket={handleSendEditedTicket}
+              isSendingEditedTicket={SendEditedTicket.isPending}
+              refreshProject={refreshProject}
             />
 
             {/* FREELANCER ACTION PATH */}

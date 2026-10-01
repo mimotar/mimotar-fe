@@ -7,5 +7,6 @@ export function useProjectApp(id: string | number) {
     queryFn: () => GetProject(id),
   });
 
-  return { getProject };
+  const refreshProject = () => getProject.refetch();
+  return { getProject, refreshProject };
 }
