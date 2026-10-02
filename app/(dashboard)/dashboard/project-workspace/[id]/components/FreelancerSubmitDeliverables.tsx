@@ -73,6 +73,10 @@ export default function FreelancerSubmitDeliverables({
             placeholder="List Figma links, repository credentials, or ZIP folder details. Clear descriptions support faster release timers."
             className=" resize-none w-full text-xs bg-gray-50 px-3 py-2 border border-gray-400 rounded-xl focus:outline-none focus:border-brand-primary font-medium"
           />
+
+          {errors.note && (
+            <small className="text-red-600">{errors.note.message}</small>
+          )}
         </div>
 
         <Controller
