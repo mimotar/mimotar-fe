@@ -13,6 +13,7 @@ import { RequestChanges } from "../api/requestForChanges";
 import { editRequestedTicket } from "../api/editRequestTicket";
 import { MakeChangesPayload } from "../schema/makeChanges";
 import { sendEditedTicket } from "../api/sendEditedTicket";
+import { rejectDeliverable } from "../api/rejectDeliverable";
 
 export interface ProjectAgreementOtpResponse {
   message?: string;
@@ -82,6 +83,11 @@ export function useMutationAction(id: number) {
     mutationFn: () => sendEditedTicket(id),
   });
 
+  const RejectDeliverable = useMutation({
+    mutationKey: ["reject-deliverable", id],
+    mutationFn: (reason: string) => rejectDeliverable(id, reason),
+  });
+
   return {
     approvalMutation,
     rejectMutation,
@@ -93,5 +99,6 @@ export function useMutationAction(id: number) {
     RequestChangesFromCreator,
     editRequestTicket,
     SendEditedTicket,
+    RejectDeliverable,
   };
 }
