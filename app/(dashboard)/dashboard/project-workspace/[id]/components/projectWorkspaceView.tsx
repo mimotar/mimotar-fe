@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
-
+import React, { useState, useEffect } from "react";
 import {
   ShieldCheck,
   Clock,
@@ -43,6 +42,9 @@ import { AutoReleaseTimer } from "./AutoReleaseTimer";
 import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 import { MakeChangesPayload } from "../schema/makeChanges";
 import { MdOutlineRefresh } from "react-icons/md";
+import RejectResolutionDialog from "./RejectResolutionDialog";
+import EditRequestChangesTicketModal from "./EditRequestChangesTicketModal";
+import SendChangesDialog from "./SendChangesDialog";
 
 export default function ProjectWorkspaceView() {
   const params = useParams();
@@ -69,10 +71,15 @@ export default function ProjectWorkspaceView() {
     RequestChangesFromCreator,
     editRequestTicket,
     SendEditedTicket,
+    RejectDeliverable,
   } = useMutationAction(Number(projectId));
 
   // Modal / form states
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showRejectResolutionDialog, setShowRejectResolutionDialog] =
+    useState(false);
+  const [showMakeChangesModal, setShowMakeChangesModal] = useState(false);
+  const [showSendChangesModal, setShowSendChangesModal] = useState(false);
 
   // Extend deadline modal states
   const [showExtendModal, setShowExtendModal] = useState(false);
@@ -598,6 +605,31 @@ export default function ProjectWorkspaceView() {
     }
   };
 
+  const handleDeliverableRejection = (reason: string) => {
+    RejectDeliverable.mutate(reason, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["project", id],
+        });
+        toast.success("Deliverable rejected Successful");
+        setShowRejectResolutionDialog(false);
+      },
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(
+            error.response?.data?.message || "Deliverable rejection failed",
+          );
+          return;
+        }
+        if (error instanceof Error) {
+          toast.error(error.message || "Deliverable rejection failed");
+          return;
+        }
+        toast.error("Deliverable rejection failed");
+      },
+    });
+  };
+
   return (
     <div className="space-y-6 animate-fade-in font-sans pb-10">
       {/* Back to Dashboard bar and Role helpful hints selector */}
@@ -756,11 +788,10 @@ export default function ProjectWorkspaceView() {
                 ApproveFreelancerWork.isPending
               }
               isCreator={isCreator}
-              onMakeChangesSubmit={handleEditTicketRequestSubmit}
-              isEditingTicket={editRequestTicket.isPending}
-              onSendEditedTicket={handleSendEditedTicket}
-              isSendingEditedTicket={SendEditedTicket.isPending}
+              onOpenMakeChanges={() => setShowMakeChangesModal(true)}
+              onOpenSendChanges={() => setShowSendChangesModal(true)}
               refreshProject={refreshProject}
+              onRejectResolution={() => setShowRejectResolutionDialog(true)}
             />
 
             {/* FREELANCER ACTION PATH */}
@@ -1895,6 +1926,26 @@ export default function ProjectWorkspaceView() {
           </div>
         </div>
       )}
+      <RejectResolutionDialog
+        open={showRejectResolutionDialog}
+        onOpenChange={setShowRejectResolutionDialog}
+        onsubmit={handleDeliverableRejection}
+        isSubmitting={RejectDeliverable.isPending}
+      />
+      {showMakeChangesModal && (
+        <EditRequestChangesTicketModal
+          setOpen={setShowMakeChangesModal}
+          onSubmit={handleEditTicketRequestSubmit}
+          defaultValues={project}
+          isPending={editRequestTicket.isPending}
+        />
+      )}
+      <SendChangesDialog
+        open={showSendChangesModal}
+        onOpenChange={setShowSendChangesModal}
+        onSubmit={handleSendEditedTicket}
+        isPending={SendEditedTicket.isPending}
+      />
     </div>
   );
 }

@@ -5,9 +5,6 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdOutlineRefresh } from "react-icons/md";
 import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 import Link from "next/link";
-import { MakeChangesPayload } from "../schema/makeChanges";
-import EditRequestChangesTicketModal from "./EditRequestChangesTicketModal";
-import SendChangesDialog from "./SendChangesDialog";
 
 interface IClientActionSectionProps {
   isFetching: boolean;
@@ -18,12 +15,10 @@ interface IClientActionSectionProps {
   isClientApprovingFreelancerDeliverables: boolean;
   handleClientApproveFreelancerDeliverables: () => void;
   isCreator: boolean;
-  onMakeChangesSubmit: (payload: MakeChangesPayload) => Promise<void>;
-  isEditingTicket: boolean;
-
-  onSendEditedTicket: () => Promise<void>;
-  isSendingEditedTicket: boolean;
+  onOpenMakeChanges: () => void;
+  onOpenSendChanges: () => void;
   refreshProject: () => void;
+  onRejectResolution: () => void;
 }
 
 export default function ClientActionSection({
@@ -35,15 +30,12 @@ export default function ClientActionSection({
   handleClientApproveFreelancerDeliverables,
   isClientApprovingFreelancerDeliverables,
   isCreator,
-  onMakeChangesSubmit,
-  isEditingTicket,
-  onSendEditedTicket,
-  isSendingEditedTicket,
+  onOpenMakeChanges,
+  onOpenSendChanges,
   refreshProject,
+  onRejectResolution,
 }: IClientActionSectionProps) {
   const [showReleaseConfirm, setShowReleaseConfirm] = useState(false);
-  const [showMakeChangesModal, setShowMakeChangesModal] = useState(false);
-  const [showSendChangesModal, setShowSendChangesModal] = useState(false);
 
   if (role !== "CLIENT") {
     return null;
@@ -158,7 +150,7 @@ export default function ClientActionSection({
                 <div className="mt-4 p-4.5 bg-brand-primary/[0.03] rounded-2xl border border-brand-primary/20 space-y-3 animate-fade-in text-left">
                   <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
                     <button
-                      onClick={() => setShowMakeChangesModal(true)}
+                      onClick={onOpenMakeChanges}
                       className="flex-1 inline-flex items-center justify-center py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/95 transition cursor-pointer text-center"
                     >
                       Edit Changes
@@ -166,7 +158,7 @@ export default function ClientActionSection({
 
                     <button
                       type="button"
-                      onClick={() => setShowSendChangesModal(true)}
+                      onClick={onOpenSendChanges}
                       className="flex-1 inline-flex items-center justify-center py-2.5 border border-brand-primary text-black/70 text-xs font-bold rounded-xl hover:bg-brand-primary/15 transition cursor-pointer text-center"
                     >
                       Send Changes
@@ -231,7 +223,7 @@ export default function ClientActionSection({
                   <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
                     <button
                       onClick={handleClientApproveFreelancerDeliverables}
-                      className="flex-1 inline-flex items-center justify-center py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/95 transition cursor-pointer text-center"
+                      className="flex-1 inline-flex gap-2 items-center justify-center py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/95 transition cursor-pointer text-center"
                     >
                       Release Funds{" "}
                       {isClientApprovingFreelancerDeliverables && (
@@ -256,6 +248,13 @@ export default function ClientActionSection({
                   >
                     Approve & Release
                   </button>
+
+                  <button
+                    onClick={onRejectResolution}
+                    className="flex-1 py-3 bg-brand-secondary text-gray-800 text-xs font-bold rounded-xl shadow-xs hover:bg-brand-secondary/95 transition cursor-pointer text-center"
+                  >
+                    Reject Resolution/Deliverables
+                  </button>
                   <button
                     //   onClick={() => setShowDisputeModal(true)}
                     className="px-4 py-3 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-xl transition cursor-pointer"
@@ -268,21 +267,6 @@ export default function ClientActionSection({
           </div>
         )}
       </div>
-      {showMakeChangesModal && (
-        <EditRequestChangesTicketModal
-          setOpen={setShowMakeChangesModal}
-          onSubmit={onMakeChangesSubmit}
-          defaultValues={project}
-          isPending={isEditingTicket}
-        />
-      )}
-
-      <SendChangesDialog
-        onOpenChange={setShowSendChangesModal}
-        open={showSendChangesModal}
-        onSubmit={onSendEditedTicket}
-        isPending={isSendingEditedTicket}
-      />
       {/* )} */}
     </>
   );
