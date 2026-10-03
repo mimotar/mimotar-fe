@@ -14,6 +14,8 @@ import { editRequestedTicket } from "../api/editRequestTicket";
 import { MakeChangesPayload } from "../schema/makeChanges";
 import { sendEditedTicket } from "../api/sendEditedTicket";
 import { rejectDeliverable } from "../api/rejectDeliverable";
+import { RaiseDisputeApi } from "../api/raiseDispute";
+import { DisputeFormData } from "../components/CreateDisputeDialog";
 
 export interface ProjectAgreementOtpResponse {
   message?: string;
@@ -88,6 +90,11 @@ export function useMutationAction(id: number) {
     mutationFn: (reason: string) => rejectDeliverable(id, reason),
   });
 
+  const raiseDispute = useMutation({
+    mutationKey: ["raise-dispute", id],
+    mutationFn: (payload: DisputeFormData) => RaiseDisputeApi(id, payload),
+  });
+
   return {
     approvalMutation,
     rejectMutation,
@@ -100,5 +107,6 @@ export function useMutationAction(id: number) {
     editRequestTicket,
     SendEditedTicket,
     RejectDeliverable,
+    raiseDispute,
   };
 }
