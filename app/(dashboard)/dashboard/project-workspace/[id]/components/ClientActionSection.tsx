@@ -19,6 +19,7 @@ interface IClientActionSectionProps {
   onOpenSendChanges: () => void;
   refreshProject: () => void;
   onRejectResolution: () => void;
+  onOpenDispute: () => void;
 }
 
 export default function ClientActionSection({
@@ -34,6 +35,7 @@ export default function ClientActionSection({
   onOpenSendChanges,
   refreshProject,
   onRejectResolution,
+  onOpenDispute,
 }: IClientActionSectionProps) {
   const [showReleaseConfirm, setShowReleaseConfirm] = useState(false);
 
@@ -256,7 +258,7 @@ export default function ClientActionSection({
                     Reject Resolution/Deliverables
                   </button>
                   <button
-                    //   onClick={() => setShowDisputeModal(true)}
+                    onClick={onOpenDispute}
                     className="px-4 py-3 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-xl transition cursor-pointer"
                   >
                     Raise Dispute
