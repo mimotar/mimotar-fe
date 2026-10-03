@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction } from "react";
-import { IFreelancerWorkSubmissionPayload } from "../api/freelancerWorkSubmission";
 import { Loader2, X } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import {

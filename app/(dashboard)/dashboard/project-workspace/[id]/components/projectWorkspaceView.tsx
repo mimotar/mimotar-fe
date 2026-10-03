@@ -45,6 +45,8 @@ import { MdOutlineRefresh } from "react-icons/md";
 import RejectResolutionDialog from "./RejectResolutionDialog";
 import EditRequestChangesTicketModal from "./EditRequestChangesTicketModal";
 import SendChangesDialog from "./SendChangesDialog";
+import { FileUploader } from "@/app/(dashboard)/utils/FileUploader";
+import CreateDisputeDialog, { DisputeFormData } from "./CreateDisputeDialog";
 
 export default function ProjectWorkspaceView() {
   const params = useParams();
@@ -72,6 +74,7 @@ export default function ProjectWorkspaceView() {
     editRequestTicket,
     SendEditedTicket,
     RejectDeliverable,
+    raiseDispute,
   } = useMutationAction(Number(projectId));
 
   // Modal / form states
@@ -630,6 +633,31 @@ export default function ProjectWorkspaceView() {
     });
   };
 
+  const handleRaiseDispute = (payload: DisputeFormData) => {
+    raiseDispute.mutate(payload, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["project", id],
+        });
+        toast.success("Dispute raised successfully.");
+        setShowDisputeModal(false);
+      },
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(
+            error.response?.data?.message || "Dispute raising failed",
+          );
+          return;
+        }
+        if (error instanceof Error) {
+          toast.error(error.message || "Dispute raising failed");
+          return;
+        }
+        toast.error("Dispute raising failed");
+      },
+    });
+  };
+
   return (
     <div className="space-y-6 animate-fade-in font-sans pb-10">
       {/* Back to Dashboard bar and Role helpful hints selector */}
@@ -792,6 +820,7 @@ export default function ProjectWorkspaceView() {
               onOpenSendChanges={() => setShowSendChangesModal(true)}
               refreshProject={refreshProject}
               onRejectResolution={() => setShowRejectResolutionDialog(true)}
+              onOpenDispute={() => setShowDisputeModal(true)}
             />
 
             {/* FREELANCER ACTION PATH */}
@@ -1153,9 +1182,6 @@ export default function ProjectWorkspaceView() {
                     Partner ({role === "CLIENT" ? "freelancer" : "client"})
                   </span>
                   <span className="block text-[9.5px] text-gray-400 truncate max-w-[130px]">
-                    {/* {project.creatorRole === "CLIENT"
-                      ? "amara@freelancer.io"
-                      : "chidi@client.co"} */}
                     {countyPartyMail}
                   </span>
                 </div>
@@ -1230,7 +1256,7 @@ export default function ProjectWorkspaceView() {
           {/* D. DISPUTE ACTION BUTTONS WHEN APPLICABLE */}
           {project.status !== "DISPUTE" &&
             project.status !== "COMPLETED" &&
-            project.payment?.status == "COMPLETED" &&
+            project.status == "ONGOING" &&
             (role === "CLIENT" &&
             !project.milestones &&
             // project.isDelivered ||
@@ -1559,125 +1585,6 @@ export default function ProjectWorkspaceView() {
         </div>
       </div>
 
-      {/* FLUTTERWAVE SIMULATED SECURE PAYMENT MODAL */}
-      {/* {showFlutterwavePay && (
-        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative animate-fade-in text-left">
-            <button
-              onClick={() => setShowFlutterwavePay(false)}
-              className="absolute top-4 right-4 p-2.5 hover:bg-gray-100/85 rounded-xl transition cursor-pointer"
-              aria-label="Close"
-            >
-              <X className="w-5 h-5 text-gray-400" />
-            </button>
-
-            <span className="text-[10px] bg-amber-50 text-[#854d0e] font-bold px-3 py-1 rounded-full uppercase">
-              Secure Flutterwave Checkout Gateway
-            </span>
-            <h3 className="text-base font-bold text-[#111827] mt-3">
-              Lock Funds securely in Mimotar Escrow
-            </h3>
-
-            {(() => {
-              const feePercent =
-                project.pay_escrow_fee === "CLIENT"
-                  ? 3
-                  : project.pay_escrow_fee === "BOTH"
-                    ? 1.5
-                    : 0;
-              const feeAmt = project.amount * (feePercent / 100);
-              const totalAmt = project.amount + feeAmt;
-              return (
-                <>
-                  <div className="my-5 p-4.5 bg-gray-50 rounded-2xl border border-gray-100/20 space-y-2.5 font-mono">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">Escrow Value:</span>
-                      <span className="font-bold text-gray-700">
-                        {formatMoney(project.amount, project.currency)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">Fee Mode:</span>
-                      <span className="font-bold text-brand-primary capitalize">
-                        {project.pay_escrow_fee === "BOTH"
-                          ? "Split 50/50"
-                          : project.pay_escrow_fee === "FREELANCER"
-                            ? "Freelancer Pays All"
-                            : "Client Pays All"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">
-                        Your Share ({feePercent}%):
-                      </span>
-                      <span className="font-bold text-gray-700">
-                        {formatMoney(feeAmt, project.currency)}
-                      </span>
-                    </div>
-                    <div className="border-t border-gray-200/50 pt-2 flex justify-between text-sm font-bold">
-                      <span className="text-slate-800">
-                        Grand Total to Pay:
-                      </span>
-                      <span className="text-brand-primary">
-                        {formatMoney(totalAmt, project.currency)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {project.pay_escrow_fee === "BOTH" && (
-                    <div className="space-y-2 mb-6">
-                      <div className="p-3 bg-indigo-50/50 text-brand-primary text-[10.5px] leading-relaxed rounded-xl font-semibold border border-indigo-100/50">
-                        🤝 <strong>Split Fee Selected (1.5% each):</strong> You
-                        are paying an additional 1.5% fee now. The freelancer is
-                        also charged 1.5% which is automatically deducted from
-                        their first milestone payout when withdrawn.
-                      </div>
-                    </div>
-                  )}
-
-                  {project.pay_escrow_fee === "FREELANCER" && (
-                    <div className="space-y-2 mb-6">
-                      <div className="p-3 bg-emerald-50/50 text-emerald-800 text-[10.5px] leading-relaxed rounded-xl font-semibold border border-emerald-100/50">
-                        🛡️ <strong>Freelancer Handled Fee:</strong> You pay 0%
-                        fees during checkout. Standard flat 3% platform fee is
-                        deducted directly from your freelancer's milestone
-                        payout withdrawal.
-                      </div>
-                    </div>
-                  )}
-
-                  {project.pay_escrow_fee === "CLIENT" && (
-                    <div className="space-y-2 mb-6">
-                      <div className="p-3 bg-purple-50/50 text-purple-900 text-[10.5px] leading-relaxed rounded-xl font-semibold border border-purple-100/50">
-                        💎 <strong>Client Coivered Fee:</strong> You are
-                        covering the complete 3% escrow fee. Your freelancer
-                        receives 100% of the milestone funds with zero
-                        deductions.
-                      </div>
-                    </div>
-                  )}
-                </>
-              );
-            })()}
-
-            <button
-              disabled={isProcessingPayment}
-              onClick={handleFlutterwaveFund}
-              className="w-full py-3.5 bg-brand-primary text-white text-xs font-bold rounded-xl transition hover:bg-brand-primary/95 flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active:scale-95"
-            >
-              {isProcessingPayment ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Verifying Bank
-                  OTP...
-                </>
-              ) : (
-                "Confirm Payment"
-              )}
-            </button>
-          </div>
-        </div>
-      )} */}
-
       {/* FREELANCER DELIVERABLES SUBMISSION SYSTEM MODAL */}
       {showSubmitModal && (
         <FreelancerSubmitDeliverables
@@ -1687,74 +1594,12 @@ export default function ProjectWorkspaceView() {
         />
       )}
 
-      {/* DISPUTE CREATION FLOATING DIALOG */}
-      {showDisputeModal && (
-        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <form
-            onSubmit={handleDisputeSubmit}
-            className="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative animate-fade-in text-left space-y-4"
-          >
-            <button
-              type="button"
-              onClick={() => setShowDisputeModal(false)}
-              className="absolute top-4 right-4 p-2.5 hover:bg-gray-100/85 rounded-xl transition cursor-pointer"
-              aria-label="Close font-sans"
-            >
-              <X className="w-5 h-5 text-gray-400" />
-            </button>
-
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-6 h-6 text-red-500 shrink-0" />
-              <h3 className="text-base font-bold text-[#111827]">
-                Initiate Escrow Dispute
-              </h3>
-            </div>
-
-            <p className="text-xs text-slate-500 leading-normal">
-              Filing a dispute instantly locks funds and freezes the client's
-              automated withdrawal access. An independent arbitrator will
-              evaluate requirements based on the scope details agreements.
-            </p>
-
-            <div>
-              <label
-                htmlFor="dispute-issue-description"
-                className="block text-xs font-bold text-gray-500 mb-1"
-              >
-                Core issue description
-              </label>
-              <textarea
-                id="dispute-issue-description"
-                rows={3}
-                required
-                value={disputeReason}
-                onChange={(e) => setDisputeReason(e.target.value)}
-                placeholder="List contract sections that were violated, elements that are missing, or deadline problems."
-                className="w-full text-xs bg-gray-50 px-3 py-2 rounded-xl border border-red-100 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 leading-relaxed"
-              />
-            </div>
-
-            <InteractiveMultiUploader
-              id="dispute-evidence-uploader"
-              // files={disputeEvidenceFiles}
-              files={[]}
-              // onChange={setDisputeEvidenceFiles}
-              onChange={() => {}}
-              label="Upload Issue Evidence Assets"
-              placeholder="Drag & drop screenshots, logs, or chat proofs here"
-              theme="danger"
-            />
-
-            <button
-              id="btn_report_incident"
-              type="submit"
-              className="w-full py-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition shadow-xs cursor-pointer block"
-            >
-              File Dispute
-            </button>
-          </form>
-        </div>
-      )}
+      <CreateDisputeDialog
+        onOpenChange={setShowDisputeModal}
+        open={showDisputeModal}
+        onSubmit={handleRaiseDispute}
+        isSubmitting={raiseDispute.isPending}
+      />
 
       {/* UPDATE DEADLINES MODAL SYSTEM */}
       {showExtendModal && (
@@ -1926,12 +1771,14 @@ export default function ProjectWorkspaceView() {
           </div>
         </div>
       )}
+
       <RejectResolutionDialog
         open={showRejectResolutionDialog}
         onOpenChange={setShowRejectResolutionDialog}
         onsubmit={handleDeliverableRejection}
         isSubmitting={RejectDeliverable.isPending}
       />
+
       {showMakeChangesModal && (
         <EditRequestChangesTicketModal
           setOpen={setShowMakeChangesModal}
@@ -1940,6 +1787,7 @@ export default function ProjectWorkspaceView() {
           isPending={editRequestTicket.isPending}
         />
       )}
+
       <SendChangesDialog
         open={showSendChangesModal}
         onOpenChange={setShowSendChangesModal}
