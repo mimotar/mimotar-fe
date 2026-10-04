@@ -1,5 +1,5 @@
 import { unTokenAxiosInstance } from "@/lib/services/axiosService";
-import { AxiosError, isAxiosError } from "axios";
+import { AxiosError } from "axios";
 import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
