@@ -150,7 +150,7 @@ export const SettingContainer = () => {
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fade-in font-sans text-left">
       {/* General Settings Card */}
-      <div className="bg-white rounded-3xl p-6.5 md:p-8 shadow-xs border border-gray-100 space-y-6">
+      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-xs border border-gray-100 space-y-6">
         <div className="flex items-center gap-2.5">
           <div className="w-10 h-10 bg-brand-primary/10 rounded-xl flex items-center justify-center text-brand-primary">
             <Settings className="w-5 h-5" />
@@ -203,7 +203,7 @@ export const SettingContainer = () => {
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center flex-wrap justify-between mb-1">
               <label
                 htmlFor="settings-whatsapp-phone"
                 className="block text-xs font-bold text-slate-500"
@@ -229,14 +229,14 @@ export const SettingContainer = () => {
                 </span>
               )}
             </div>
-            <div className="flex gap-2 items-center w-full">
+            <div className="flex gap-2 flex-wrap items-center w-full">
               <input
                 id="settings-whatsapp-phone"
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="e.g. +234 803 123 4567"
-                className="px-4 py-2.5 flex-1 min-w-0 text-xs bg-gray-50 border border-gray-100 rounded-xl font-medium focus:outline-none focus:border-brand-primary"
+                className="px-4 py-2.5 sm:flex-1 min-w-0 w-full text-xs bg-gray-50 border border-gray-100 rounded-xl font-medium focus:outline-none focus:border-brand-primary"
               />
 
               {!phoneVerified && (
@@ -363,7 +363,7 @@ export const SettingContainer = () => {
       </div>
 
       {/* ID & KYC Verification Status */}
-      <div className="bg-white rounded-3xl p-6.5 md:p-8 shadow-xs border border-gray-100 space-y-6">
+      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-xs border border-gray-100 space-y-6">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-sm font-bold text-slate-500">
             ID &amp; KYC Verification Status
@@ -466,7 +466,7 @@ export const SettingContainer = () => {
         </div>
       </div>
       {/* Change Password Card */}
-      <div className="bg-white rounded-3xl p-6.5 md:p-8 shadow-xs border border-gray-100 space-y-6">
+      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-xs border border-gray-100 space-y-6">
         <div className="flex items-center gap-2.5">
           <div className="w-10 h-10 bg-brand-primary/10 rounded-xl flex items-center justify-center text-brand-primary">
             <Shield className="w-5 h-5 text-brand-primary" />
