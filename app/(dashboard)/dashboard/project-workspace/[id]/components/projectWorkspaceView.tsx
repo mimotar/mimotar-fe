@@ -1256,7 +1256,7 @@ export default function ProjectWorkspaceView() {
           {/* D. DISPUTE ACTION BUTTONS WHEN APPLICABLE */}
           {project.status !== "DISPUTE" &&
             project.status !== "COMPLETED" &&
-            project.status == "ONGOING" &&
+            project.status == "PENDING_CLOSURE" &&
             (role === "CLIENT" &&
             !project.milestones &&
             // project.isDelivered ||
