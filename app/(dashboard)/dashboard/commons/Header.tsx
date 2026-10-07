@@ -27,7 +27,7 @@ export const Header = () => {
   //     setSelectedProjectId,
   //   } = useAppState();
 
-  const { session, IsAuthenticated, userVerified, SignOut } = useAuth();
+  const { session, SignOut } = useAuth();
   const navigate = useRouter();
 
   const userInitials =
@@ -345,7 +345,7 @@ export const Header = () => {
                   <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100/50 px-1.5 py-0.5 rounded">
                     ✓ Email Verified
                   </span>
-                  {/* {currentUser.phoneVerified ? (
+                  {session?.phoneVerified ? (
                     <span className="inline-flex items-center gap-1 text-[9px] font-bold text-[#c026d3] bg-[#c026d3]/5 border border-[#c026d3]/15 px-1.5 py-0.5 rounded">
                       ✓ Phone Verified
                     </span>
@@ -353,26 +353,18 @@ export const Header = () => {
                     <span className="inline-flex items-center gap-1 text-[9px] font-medium text-gray-400 bg-gray-55/35 border border-gray-200/40 px-1.5 py-0.5 rounded">
                       Phone Unverified
                     </span>
-                  )} */}
+                  )}
                 </div>
               </div>
 
               <Link
-                href={""}
-                // onClick={() => {
-                //   setProfileDropdownOpen(false);
-                //   setActivePage("wallet");
-                // }}
+                href={"/dashboard/wallet"}
                 className="w-full text-left px-4 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-50 hover:text-brand-primary transition flex items-center gap-2"
               >
                 My Secure Wallet
               </Link>
               <Link
-                href={""}
-                // onClick={() => {
-                //   setProfileDropdownOpen(false);
-                //   setActivePage("settings");
-                // }}
+                href={"/dashboard/settings"}
                 className="w-full text-left px-4 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-50 hover:text-brand-primary transition flex items-center gap-2"
               >
                 Portal Settings

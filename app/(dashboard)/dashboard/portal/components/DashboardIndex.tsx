@@ -115,7 +115,7 @@ export default function DashboardIndex() {
       <DashboardHeader firstName={session?.firstName} />
 
       {/* Nudge Banner */}
-      {!session?.phone_no ? (
+      {!session?.phoneVerified ? (
         <div className="bg-gradient-to-r from-indigo-50/70 to-purple-50/70 border border-indigo-100 p-4.5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left animate-fade-in shadow-xs">
           <div className="flex items-start gap-3">
             <span className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-700 shrink-0 mt-0.5">
@@ -131,12 +131,13 @@ export default function DashboardIndex() {
               </p>
             </div>
           </div>
-          <button
+          <Link
+            href="/dashboard/settings"
             // onClick={() => setActivePage("settings")}
             className="text-[11.5px] font-bold text-indigo-700 hover:bg-indigo-100 px-3.5 py-2 rounded-xl border border-indigo-200/50 bg-white transition shrink-0 shadow-xs cursor-pointer"
           >
-            Verify WhatsApp
-          </button>
+            Verify WhatsApp Phone No
+          </Link>
         </div>
       ) : null}
 

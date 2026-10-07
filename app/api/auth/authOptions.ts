@@ -78,6 +78,7 @@ export const authOptions: AuthOptions = {
               email: data.data.user.email,
               verified: data.data.user.verified,
               phone_no: data.data.user.profile?.phone_no || "",
+              phoneVerified: data.data.user.profile?.phoneVerified || false,
               address: data.data.user.profile?.address || "",
               city: data.data.user.profile?.city || "",
               country: data.data.user.profile?.country || "",
@@ -139,6 +140,7 @@ export const authOptions: AuthOptions = {
         token.firstName = session.firstName ?? token.firstName;
         token.lastName = session.lastName ?? token.lastName;
         token.phone_no = session.phone_no ?? token.phone_no;
+        token.phoneVerified = session.phoneVerified ?? token.phoneVerified;
         token.address = session.address ?? token.address;
         token.city = session.city ?? token.city;
         token.country = session.country ?? token.country;
@@ -154,6 +156,7 @@ export const authOptions: AuthOptions = {
         token.userId = user.id;
         token.verified = user.verified;
         token.phone_no = user.phone_no;
+        token.phoneVerified = user.phoneVerified;
         token.address = user.address;
         token.city = user.city;
         token.country = user.country;
@@ -186,6 +189,7 @@ export const authOptions: AuthOptions = {
         session.user.userId = token.userId;
         session.user.verified = token.verified;
         session.user.phone_no = token.phone_no;
+        session.user.phoneVerified = token.phoneVerified;
         session.user.address = token.address;
         session.user.city = token.city;
         session.user.country = token.country;
