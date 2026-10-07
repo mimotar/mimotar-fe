@@ -145,7 +145,7 @@ export const SettingContainer = () => {
   };
 
   const fullname = `${session.session?.firstName ?? ""} ${session.session?.lastName ?? ""}`;
-  const phoneVerified: boolean = false;
+  const phoneVerified = session.session?.phoneVerified;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fade-in font-sans text-left">
