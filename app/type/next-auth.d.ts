@@ -9,6 +9,7 @@ declare module "next-auth" {
       lastName: string;
       verified: boolean;
       phone_no?: string;
+      phoneVerified: boolean;
       address?: string;
       city?: string;
       country?: string;
@@ -26,6 +27,7 @@ declare module "next-auth" {
     verified: boolean;
     accessToken: string;
     phone_no?: string;
+    phoneVerified: boolean;
     address?: string;
     city?: string;
     country?: string;

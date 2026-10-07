@@ -47,6 +47,7 @@ import EditRequestChangesTicketModal from "./EditRequestChangesTicketModal";
 import SendChangesDialog from "./SendChangesDialog";
 import { FileUploader } from "@/app/(dashboard)/utils/FileUploader";
 import CreateDisputeDialog, { DisputeFormData } from "./CreateDisputeDialog";
+import Link from "next/link";
 
 export default function ProjectWorkspaceView() {
   const params = useParams();
@@ -57,8 +58,8 @@ export default function ProjectWorkspaceView() {
   const { getProject, refreshProject } = useProjectApp(id);
 
   const session = useAuth();
+  console.log(session.session);
 
-  // const project = projects.find((p) => p.id === selectedProjectId);
   const project = getProject.data;
   const projectId = project?.id ?? "";
 
@@ -1163,7 +1164,7 @@ export default function ProjectWorkspaceView() {
                   <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100/50">
                     Email ✓
                   </span>
-                  {session.session?.phone_no ? (
+                  {session.session?.phoneVerified ? (
                     <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100/50">
                       WhatsApp Verified ✓
                     </span>
@@ -1189,9 +1190,16 @@ export default function ProjectWorkspaceView() {
                   <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100/40">
                     Email ✓
                   </span>
-                  <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100/40">
-                    WhatsApp Secured ✓
-                  </span>
+
+                  {session.session?.phoneVerified ? (
+                    <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100/50">
+                      WhatsApp Verified ✓
+                    </span>
+                  ) : (
+                    <span className="text-[9px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-100/50">
+                      Phone Unverified
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -1301,15 +1309,22 @@ export default function ProjectWorkspaceView() {
                   You will be contacted by a Mimotar representative on your
                   registered WhatsApp phone number:
                 </p>
-                {session.session?.phone_no ? (
+                {session.session?.phone_no?.trim() ? (
                   <div className="mt-2.5 flex items-center gap-1.5 bg-white p-2 rounded-xl border border-emerald-100">
                     <span className="inline-block w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                     <span className="font-mono font-bold text-emerald-800 text-xs">
                       {session.session?.phone_no}
                     </span>
-                    <span className="text-[9px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-bold ml-auto border border-emerald-100">
-                      Confirmed
-                    </span>
+
+                    {session.session?.phoneVerified ? (
+                      <span className="text-[9px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-bold ml-auto border border-emerald-100">
+                        Confirmed
+                      </span>
+                    ) : (
+                      <span className="text-[9px] text-amber-600 bg-amber-50  border-amber-100/50 px-1.5 py-0.5 rounded font-bold ml-auto border ">
+                        Confirmed
+                      </span>
+                    )}
                   </div>
                 ) : (
                   <div className="mt-2.5 space-y-2">
@@ -1318,18 +1333,12 @@ export default function ProjectWorkspaceView() {
                       profile yet. Please save and confirm your WhatsApp number
                       in profile settings.
                     </div>
-                    <button
-                      onClick={() => {
-                        // setActivePage("settings");
-
-                        toast.error(
-                          "Please configuration save your WhatsApp Phone Number.",
-                        );
-                      }}
-                      className="w-full text-center py-2 bg-brand-primary text-white text-[10px] font-bold rounded-lg hover:bg-brand-primary/95 transition cursor-pointer"
+                    <Link
+                      href="/dashboard/settings"
+                      className="w-full text-center py-2 px-2 bg-brand-primary text-white text-[10px] font-bold rounded-lg hover:bg-brand-primary/95 transition cursor-pointer"
                     >
-                      Setup WhatsApp
-                    </button>
+                      Setup WhatsApp Phone No
+                    </Link>
                   </div>
                 )}
               </div>
