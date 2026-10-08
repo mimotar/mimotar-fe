@@ -11,27 +11,38 @@ import {
   Settings,
   Shield,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSettingMutation } from "../hooks/useSettingMutation";
+import { useForm } from "react-hook-form";
+import {
+  ProfileDetailsFormValues,
+  ProfileDetailsSchema,
+} from "../schema/profileSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const countries = [
-  "Nigeria",
-  "Ghana",
-  "Kenya",
-  "South Africa",
-  "United States",
-  "United Kingdom",
-  "Canada",
-  "Australia",
-  "Germany",
-  "France",
-  "United Arab Emirates",
-  "India",
-  "Other",
+  { key: "NG", value: "Nigeria" },
+  { key: "GH", value: "Ghana" },
+  { key: "KE", value: "Kenya" },
+  { key: "ZA", value: "South Africa" },
+  { key: "US", value: "United States" },
+  { key: "GB", value: "United Kingdom" },
+  { key: "CA", value: "Canada" },
+  { key: "AU", value: "Australia" },
+  { key: "DE", value: "Germany" },
+  { key: "FR", value: "France" },
+  { key: "AE", value: "United Arab Emirates" },
+  { key: "IN", value: "India" },
+  // { key: "OTHER", value: "Other" },
 ];
 
 export const SettingContainer = () => {
-  //   const { currentUser, resetDemoData, showAlert, updatePhoneNumber } = useAppState();
+  const queryClient = useQueryClient();
   const session = useAuth();
+  const { UpdateProfileMutation, getProfile } = useSettingMutation();
   const [phone, setPhone] = useState(session.session?.phone_no || "");
   const [isResetting, setIsResetting] = useState(false);
 
@@ -147,6 +158,61 @@ export const SettingContainer = () => {
   const fullname = `${session.session?.firstName ?? ""} ${session.session?.lastName ?? ""}`;
   const phoneVerified = session.session?.phoneVerified;
 
+  const form = useForm<ProfileDetailsFormValues>({
+    resolver: zodResolver(ProfileDetailsSchema),
+    defaultValues: {
+      fullName: fullname,
+      phone_no: session.session?.phone_no ?? "",
+      address: session.session?.address ?? "",
+      city: session.session?.city ?? "",
+      country: session.session?.country ?? "",
+      postal_code: session.session?.postal_code ?? "",
+      id_number: "",
+    },
+  });
+
+  const onSubmitProfile = async (data: ProfileDetailsFormValues) => {
+    console.log(data);
+
+    UpdateProfileMutation.mutate(data, {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["profile"] });
+        toast.success(data.message || "Profile updated successfully");
+      },
+
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(
+            error?.response?.data?.message ||
+              "Unable to update your profile. Please try again",
+          );
+          return;
+        }
+        if (error instanceof Error) {
+          toast.error(
+            error?.message ||
+              "Unable to update your profile. Please try again.",
+          );
+          return;
+        }
+
+        toast.error("Unable to update your profile. Please try again.");
+      },
+    });
+  };
+
+  useEffect(() => {
+    form.reset({
+      fullName: getProfile.data?.data.fullName ?? "",
+      phone_no: getProfile.data?.data.phone_no ?? "",
+      address: getProfile.data?.data.address ?? "",
+      city: getProfile.data?.data.city ?? "",
+      country: getProfile.data?.data.country ?? "",
+      postal_code: getProfile.data?.data.postal_code ?? "",
+      id_number: getProfile.data?.data.id_number ?? "",
+    });
+  }, [getProfile.data?.data, form.reset]);
+
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fade-in font-sans text-left">
       {/* General Settings Card */}
@@ -165,7 +231,10 @@ export const SettingContainer = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSaveGeneral} className="space-y-4 pt-2">
+        <form
+          onSubmit={form.handleSubmit(onSubmitProfile)}
+          className="space-y-4 pt-2"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label
@@ -178,12 +247,17 @@ export const SettingContainer = () => {
                 id="settings-full-name"
                 type="text"
                 readOnly
-                value={fullname}
+                {...form.register("fullName")}
                 className="w-full px-4 py-2.5 text-xs bg-gray-50 border border-gray-100 rounded-xl font-medium text-gray-400 select-none cursor-not-allowed"
               />
               <span className="block text-[10px] text-gray-400 mt-1 leading-normal">
                 ✓ Full legal name is bound to escrow KYC verified registry.
               </span>
+              {form.formState.errors.fullName && (
+                <span className="block text-[10px] text-red-500 mt-1 leading-normal">
+                  {form.formState.errors.fullName.message}
+                </span>
+              )}
             </div>
             <div>
               <label
@@ -233,8 +307,7 @@ export const SettingContainer = () => {
               <input
                 id="settings-whatsapp-phone"
                 type="text"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                {...form.register("phone_no")}
                 placeholder="e.g. +234 803 123 4567"
                 className="px-4 py-2.5 sm:flex-1 min-w-0 w-full text-xs bg-gray-50 border border-gray-100 rounded-xl font-medium focus:outline-none focus:border-brand-primary"
               />
@@ -248,6 +321,11 @@ export const SettingContainer = () => {
                 </button>
               )}
             </div>
+            {form.formState.errors.phone_no && (
+              <span className="block text-[10px] text-red-500 mt-1 leading-normal">
+                {form.formState.errors.phone_no.message}
+              </span>
+            )}
           </div>
 
           <div className="grid md:grid-cols-2 gap-4 ">
@@ -265,10 +343,16 @@ export const SettingContainer = () => {
                 <input
                   id="settings-address"
                   type="text"
+                  {...form.register("address")}
                   placeholder="e.g. 123 Main Street, City"
                   className="px-4 py-2.5 flex-1 min-w-0 text-xs bg-gray-50 border border-gray-100 rounded-xl font-medium focus:outline-none focus:border-brand-primary"
                 />
               </div>
+              {form.formState.errors.address && (
+                <span className="block text-[10px] text-red-500 mt-1 leading-normal">
+                  {form.formState.errors.address.message}
+                </span>
+              )}
             </div>
 
             {/* city */}
@@ -285,10 +369,16 @@ export const SettingContainer = () => {
                 <input
                   id="settings-city"
                   type="text"
+                  {...form.register("city")}
                   placeholder="e.g.  City"
                   className="px-4 py-2.5 flex-1 min-w-0 text-xs bg-gray-50 border border-gray-100 rounded-xl font-medium focus:outline-none focus:border-brand-primary"
                 />
               </div>
+              {form.formState.errors.city && (
+                <span className="block text-[10px] text-red-500 mt-1 leading-normal">
+                  {form.formState.errors.city.message}
+                </span>
+              )}
             </div>
           </div>
 
@@ -307,10 +397,16 @@ export const SettingContainer = () => {
                 <input
                   id="settings-country"
                   type="text"
+                  {...form.register("country")}
                   placeholder="e.g.  Country"
                   className="px-4 py-2.5 flex-1 min-w-0 text-xs bg-gray-50 border border-gray-100 rounded-xl font-medium focus:outline-none focus:border-brand-primary"
                 />
               </div>
+              {form.formState.errors.country && (
+                <span className="block text-[10px] text-red-500 mt-1 leading-normal">
+                  {form.formState.errors.country.message}
+                </span>
+              )}
             </div>
 
             {/* postal code */}
@@ -327,10 +423,16 @@ export const SettingContainer = () => {
                 <input
                   id="settings-postal-code"
                   type="text"
+                  {...form.register("postal_code")}
                   placeholder="e.g.  Postal Code"
                   className="px-4 py-2.5 flex-1 min-w-0 text-xs bg-gray-50 border border-gray-100 rounded-xl font-medium focus:outline-none focus:border-brand-primary"
                 />
               </div>
+              {form.formState.errors.postal_code && (
+                <span className="block text-[10px] text-red-500 mt-1 leading-normal">
+                  {form.formState.errors.postal_code.message}
+                </span>
+              )}
             </div>
           </div>
 
@@ -347,17 +449,26 @@ export const SettingContainer = () => {
               <input
                 id="settings-id-number"
                 type="text"
+                {...form.register("id_number")}
                 placeholder="e.g. 123456789"
                 className="px-4 py-2.5 flex-1 min-w-0 text-xs bg-gray-50 border border-gray-100 rounded-xl font-medium focus:outline-none focus:border-brand-primary"
               />
             </div>
+            {form.formState.errors.id_number && (
+              <span className="block text-[10px] text-red-500 mt-1 leading-normal">
+                {form.formState.errors.id_number.message}
+              </span>
+            )}
           </div>
 
           <button
             type="submit"
-            className="px-5 py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/95 transition active:scale-95 shadow-xs"
+            className="px-5 py-2.5 inline-flex gap-2 cursor-pointer items-center justify-center bg-brand-primary text-white text-xs font-bold rounded-xl hover:bg-brand-primary/95 transition active:scale-95 shadow-xs"
           >
-            Save Profile Changes
+            Save Profile Changes{" "}
+            {UpdateProfileMutation.isPending && (
+              <AiOutlineLoading3Quarters className="animate-spin" />
+            )}
           </button>
         </form>
       </div>
@@ -407,8 +518,8 @@ export const SettingContainer = () => {
             >
               <option value="">Select country</option>
               {countries.map((country) => (
-                <option key={country} value={country}>
-                  {country}
+                <option key={country.key} value={country.key}>
+                  {country.value}
                 </option>
               ))}
             </select>
