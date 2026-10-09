@@ -1,0 +1,15 @@
+export const countries = [
+  { key: "NG", value: "Nigeria" },
+  { key: "GH", value: "Ghana" },
+  { key: "KE", value: "Kenya" },
+  { key: "ZA", value: "South Africa" },
+  { key: "US", value: "United States" },
+  { key: "UK", value: "United Kingdom" },
+  { key: "CA", value: "Canada" },
+  { key: "AU", value: "Australia" },
+  { key: "DE", value: "Germany" },
+  { key: "FR", value: "France" },
+  { key: "AE", value: "United Arab Emirates" },
+  { key: "IN", value: "India" },
+  // { key: "OTHER", value: "Other" },
+];

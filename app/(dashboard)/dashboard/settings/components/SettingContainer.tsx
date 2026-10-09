@@ -7,7 +7,6 @@ import {
   Check,
   Eye,
   EyeOff,
-  RefreshCw,
   Settings,
   Shield,
 } from "lucide-react";
@@ -22,27 +21,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
-const countries = [
-  { key: "NG", value: "Nigeria" },
-  { key: "GH", value: "Ghana" },
-  { key: "KE", value: "Kenya" },
-  { key: "ZA", value: "South Africa" },
-  { key: "US", value: "United States" },
-  { key: "GB", value: "United Kingdom" },
-  { key: "CA", value: "Canada" },
-  { key: "AU", value: "Australia" },
-  { key: "DE", value: "Germany" },
-  { key: "FR", value: "France" },
-  { key: "AE", value: "United Arab Emirates" },
-  { key: "IN", value: "India" },
-  // { key: "OTHER", value: "Other" },
-];
+import { countries } from "../data/countries";
+import {
+  KycVerificationFormValues,
+  KycVerificationSchema,
+} from "../schema/KycSchema";
 
 export const SettingContainer = () => {
   const queryClient = useQueryClient();
   const session = useAuth();
-  const { UpdateProfileMutation, getProfile } = useSettingMutation();
+  const {
+    UpdateProfileMutation,
+    getProfile,
+    postVerifyKYCMutation,
+    getKycStatus,
+  } = useSettingMutation();
   const [phone, setPhone] = useState(session.session?.phone_no || "");
   const [isResetting, setIsResetting] = useState(false);
 
@@ -59,9 +52,11 @@ export const SettingContainer = () => {
   const [showConfirm, setShowConfirm] = useState(false);
 
   // KYC States
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedDocument, setSelectedDocument] = useState("BVN");
-  const [kycReference, setKycReference] = useState("");
+  const kycForm = useForm<KycVerificationFormValues>({
+    resolver: zodResolver(KycVerificationSchema),
+    defaultValues: { country: "NG", document: "bvn", reference: "" },
+  });
+  const selectedDocument = kycForm.watch("document");
 
   const handleSaveGeneral = (e: React.FormEvent) => {
     e.preventDefault();
@@ -201,6 +196,41 @@ export const SettingContainer = () => {
     });
   };
 
+  const onSubmitKyc = (data: KycVerificationFormValues) => {
+    const kycPayload = {
+      country: data.country,
+      channel: data.document,
+      data: {
+        number: data.reference,
+      },
+    };
+
+    postVerifyKYCMutation.mutate(kycPayload, {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["kyc-status"] });
+        toast.success(data.message || "kyc Submitted successfully");
+      },
+
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(
+            error?.response?.data?.message ||
+              "Unable to Submit your KYC. Please try again",
+          );
+          return;
+        }
+        if (error instanceof Error) {
+          toast.error(
+            error?.message || "Unable to Submit your KYC. Please try again",
+          );
+          return;
+        }
+
+        toast.error("Unable to Submit your KYC. Please try again");
+      },
+    });
+  };
+
   useEffect(() => {
     form.reset({
       fullName: getProfile.data?.data.fullName ?? "",
@@ -212,6 +242,17 @@ export const SettingContainer = () => {
       id_number: getProfile.data?.data.id_number ?? "",
     });
   }, [getProfile.data?.data, form.reset]);
+
+  useEffect(() => {
+    kycForm.reset({
+      country: "" as unknown as "NG" | "GH" | "UK",
+      document: getKycStatus.data?.data?.kycDocumentType as
+        | "bvn"
+        | "nin"
+        | "passport",
+      reference: getKycStatus.data?.data?.kycDocumentNumber,
+    });
+  }, [getKycStatus.data, form.reset]);
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fade-in font-sans text-left">
@@ -484,7 +525,10 @@ export const SettingContainer = () => {
           </span>
         </div>
 
-        <div className="rounded-2xl border border-fuchsia-200 bg-fuchsia-50/70 p-4 md:p-5 space-y-4">
+        <form
+          onSubmit={kycForm.handleSubmit(onSubmitKyc)}
+          className="rounded-2xl border border-fuchsia-200 bg-fuchsia-50/70 p-4 md:p-5 space-y-4"
+        >
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-[10px] font-extrabold tracking-wide text-fuchsia-600 uppercase">
               🔒 Verify Account ID (KYC)
@@ -512,9 +556,8 @@ export const SettingContainer = () => {
             </label>
             <select
               id="settings-kyc-country"
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
-              className="w-full rounded-xl border border-slate-500 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-700 outline-none focus:border-brand-primary"
+              {...kycForm.register("country")}
+              className="h-9 w-full rounded-xl border border-slate-500 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 outline-none focus:border-brand-primary"
             >
               <option value="">Select country</option>
               {countries.map((country) => (
@@ -523,6 +566,11 @@ export const SettingContainer = () => {
                 </option>
               ))}
             </select>
+            {kycForm.formState.errors.country && (
+              <span className="block text-[10px] text-red-500 mt-1 leading-normal">
+                {kycForm.formState.errors.country.message}
+              </span>
+            )}
           </div>
 
           <div>
@@ -530,21 +578,32 @@ export const SettingContainer = () => {
               Document Selection
             </span>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-              {["BVN", "NIN", "Passport"].map((document) => (
+              {["bvn", "nin", "passport"].map((document) => (
                 <button
                   key={document}
                   type="button"
-                  onClick={() => setSelectedDocument(document)}
+                  onClick={() =>
+                    kycForm.setValue(
+                      "document",
+                      document as KycVerificationFormValues["document"],
+                      { shouldValidate: true },
+                    )
+                  }
                   className={`rounded-xl border px-3 py-2 text-[10px] font-bold transition ${
                     selectedDocument === document
                       ? "border-fuchsia-500 bg-fuchsia-50 text-fuchsia-600"
                       : "border-slate-500 bg-white text-slate-500 hover:border-fuchsia-400"
                   }`}
                 >
-                  {document}
+                  {document.toUpperCase()}
                 </button>
               ))}
             </div>
+            {kycForm.formState.errors.document && (
+              <span className="block text-[10px] text-red-500 mt-1 leading-normal">
+                {kycForm.formState.errors.document.message}
+              </span>
+            )}
           </div>
 
           <div>
@@ -552,29 +611,37 @@ export const SettingContainer = () => {
               htmlFor="settings-kyc-reference"
               className="mb-1 block text-[10px] font-bold uppercase text-slate-500"
             >
-              {selectedDocument} Reference Number
+              {selectedDocument?.toUpperCase()} Reference Number
             </label>
             <input
               id="settings-kyc-reference"
               type="text"
-              value={kycReference}
-              onChange={(e) => setKycReference(e.target.value)}
+              {...kycForm.register("reference")}
               placeholder={
-                selectedDocument === "BVN"
+                selectedDocument === "bvn"
                   ? "e.g. 22295671842"
-                  : `Enter ${selectedDocument} number`
+                  : `Enter ${selectedDocument?.toUpperCase()} number`
               }
               className="w-full rounded-xl border border-slate-500 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-700 outline-none placeholder:text-slate-400 focus:border-brand-primary"
             />
+            {kycForm.formState.errors.reference && (
+              <span className="block text-[10px] text-red-500 mt-1 leading-normal">
+                {kycForm.formState.errors.reference.message}
+              </span>
+            )}
           </div>
 
           <button
-            type="button"
-            className="w-full rounded-xl bg-fuchsia-600 px-5 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-fuchsia-700 active:scale-95 sm:w-auto"
+            type="submit"
+            disabled={postVerifyKYCMutation.isPending}
+            className="w-full rounded-xl inline-flex gap-2 cursor-pointer items-center justify-center bg-fuchsia-600 px-5 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-fuchsia-700 active:scale-95 sm:w-auto"
           >
-            Verify
+            Verify{" "}
+            {postVerifyKYCMutation.isPending && (
+              <AiOutlineLoading3Quarters className="animate-spin" />
+            )}
           </button>
-        </div>
+        </form>
       </div>
       {/* Change Password Card */}
       <div className="bg-white rounded-3xl p-4 md:p-8 shadow-xs border border-gray-100 space-y-6">

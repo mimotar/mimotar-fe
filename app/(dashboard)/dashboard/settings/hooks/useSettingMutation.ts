@@ -3,6 +3,8 @@ import { UpdateProfile } from "../api/putProfile";
 import { IProfilePayload } from "../types/ProfilePayload";
 import { getProfileApi } from "../api/getProfile";
 import { PostKycVerify } from "../api/PostKycVerify";
+import { getKycVerifyVerification } from "../api/getKycVerification";
+import { KycVerificationPayload } from "../types/kycVerifyPayload";
 
 export function useSettingMutation() {
   const UpdateProfileMutation = useMutation({
@@ -10,9 +12,9 @@ export function useSettingMutation() {
     mutationFn: (payload: IProfilePayload) => UpdateProfile(payload),
   });
 
-  const verifyKYCMutation = useMutation({
+  const postVerifyKYCMutation = useMutation({
     mutationKey: ["post-kyc-verification"],
-    mutationFn: (payload: any) => PostKycVerify(payload),
+    mutationFn: (payload: KycVerificationPayload) => PostKycVerify(payload),
   });
 
   const getProfile = useQuery({
@@ -20,9 +22,15 @@ export function useSettingMutation() {
     queryFn: getProfileApi,
   });
 
+  const getKycStatus = useQuery({
+    queryKey: ["kyc-status"],
+    queryFn: getKycVerifyVerification,
+  });
+
   return {
     UpdateProfileMutation,
     getProfile,
-    verifyKYCMutation,
+    postVerifyKYCMutation,
+    getKycStatus,
   };
 }
