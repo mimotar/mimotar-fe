@@ -32,16 +32,6 @@ const USD_PAYOUT_NETWORKS = [
 ];
 
 export const WalletView: React.FC = () => {
-  //   const {
-  //     // wallet,
-  //     withdrawFunds,
-  //     showAlert,
-  //     activePage,
-  //     withdrawCurrencyPreference,
-  //     currentUser,
-  //     updatePhoneNumber,
-  //   } = useAppState();
-
   const session = useAuth();
   const [selectedCurrency, setSelectedCurrency] = useState<"NGN" | "USD">(
     "NGN",
@@ -72,8 +62,8 @@ export const WalletView: React.FC = () => {
   const debouncedBankSearch = useDebounce(bankSearch, 300);
 
   const { wallet, banks } = useWallet();
-  console.log(banks.data);
-  console.log(wallet.data);
+  // console.log(banks.data);
+  // console.log(wallet.data);
 
   const formatMoney = (val: number) => {
     return `₦${val.toLocaleString()}`;
