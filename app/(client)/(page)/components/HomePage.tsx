@@ -31,10 +31,10 @@ export const Homepage: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-50/50 min-h-screen pt-16 font-sans text-gray-800">
+    <div className="bg-gray-50/50 min-h-screen pt-16 font-sans text-gray-800 ">
       {/* Hero Section */}
-      <section className="relative px-4 py-16 md:py-24 max-w-7xl mx-auto animate-fade-in">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section className="relative overflow-x-clip px-4 py-16 md:py-24 max-w-7xl mx-auto animate-fade-in">
+        <div className="grid min-w-0 grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column Text content */}
           <motion.div
             initial="hidden"
@@ -50,7 +50,7 @@ export const Homepage: React.FC = () => {
                 },
               },
             }}
-            className="lg:col-span-7 flex flex-col items-start text-left"
+            className="lg:col-span-7 min-w-0 flex flex-col items-start text-left"
           >
             <motion.h1
               variants={{
@@ -125,7 +125,7 @@ export const Homepage: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
-            className="lg:col-span-5 relative w-full flex justify-center"
+            className="lg:col-span-5 relative min-w-0 w-full flex justify-center"
           >
             {/* Background blob colors */}
             <div className="absolute -top-12 -right-12 w-72 h-72 bg-brand-primary/5 rounded-full blur-3xl" />
@@ -135,16 +135,16 @@ export const Homepage: React.FC = () => {
             <motion.div
               whileHover={{ scale: 1.02, rotate: 0.5 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              className="relative w-full max-w-md bg-white border border-gray-100/90 rounded-[2rem] p-4 bg-gray-50/20 shadow-2xl overflow-hidden cursor-pointer"
+              className="relative min-w-0 w-full max-w-md bg-white border border-gray-100/90 rounded-[2rem] p-4 bg-gray-50/20 shadow-2xl overflow-hidden cursor-pointer"
             >
               {/* Window decoration */}
-              <div className="flex items-center justify-between mb-4 border-b border-gray-50 pb-3">
+              <div className="flex min-w-0 items-center justify-between mb-4 border-b border-gray-50 pb-3">
                 <div className="flex gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
                   <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
                 </div>
-                <div className="text-[10px] text-gray-400 font-mono flex items-center gap-1 font-bold">
+                <div className="min-w-0 max-w-[75%] truncate text-[10px] text-gray-400 font-mono flex items-center gap-1 font-bold">
                   <span className="inline-block w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                   mimotar.com/workspace/MIM-102
                 </div>
@@ -153,8 +153,8 @@ export const Homepage: React.FC = () => {
               {/* Mock Workspace Content */}
               <div className="text-left space-y-4">
                 {/* Header info */}
-                <div className="flex justify-between items-start">
-                  <div>
+                <div className="flex min-w-0 justify-between items-start">
+                  <div className="min-w-0">
                     <span className="text-[9px] uppercase tracking-wider font-extrabold text-brand-primary">
                       Project Workspace
                     </span>
@@ -165,7 +165,7 @@ export const Homepage: React.FC = () => {
                       Contract: <span className="font-mono">MIM-784013-NG</span>
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className="shrink-0 text-right">
                     <span className="text-[9px] text-gray-400 block font-bold">
                       TOTAL CAPITAL
                     </span>
@@ -257,11 +257,11 @@ export const Homepage: React.FC = () => {
 
                   {/* Milestone 1 (Completed & Paid out) */}
                   <div className="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between opacity-75">
-                    <div className="flex items-center gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
                       <div className="w-6 h-6 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
                         <CheckCircle className="w-3.5 h-3.5" />
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <span className="text-[10px] font-bold text-gray-800 block line-through">
                           1. Figma Design & Prototypes
                         </span>
@@ -280,11 +280,11 @@ export const Homepage: React.FC = () => {
 
                   {/* Milestone 2 (Funded & WIP with Countdown) */}
                   <div className="p-3 bg-white border border-brand-primary/20 rounded-xl flex items-center justify-between shadow-xs">
-                    <div className="flex items-center gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
                       <div className="w-6 h-6 rounded-lg bg-brand-primary/15 flex items-center justify-center text-brand-primary animate-pulse">
                         <Clock className="w-3.5 h-3.5" />
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <span className="text-[10px] font-extrabold text-gray-900 block">
                           2. React Native Frontend Code
                         </span>
@@ -322,7 +322,7 @@ export const Homepage: React.FC = () => {
         </div>
 
         {/* Visual trust block with cards style without borders */}
-        <div className="mt-16 w-full max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
+        <div className="mt-16 mx-auto  w-full max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
