@@ -5,6 +5,7 @@ import { getProfileApi } from "../api/getProfile";
 import { PostKycVerify } from "../api/PostKycVerify";
 import { getKycVerifyVerification } from "../api/getKycVerification";
 import { KycVerificationPayload } from "../types/kycVerifyPayload";
+import { PostUploadAvatar } from "../api/uploadAvatar";
 
 export function useSettingMutation() {
   const UpdateProfileMutation = useMutation({
@@ -27,10 +28,16 @@ export function useSettingMutation() {
     queryFn: getKycVerifyVerification,
   });
 
+  const postUploadAvatarMutation = useMutation({
+    mutationKey: ["post-kyc-verification"],
+    mutationFn: (payload: File) => PostUploadAvatar(payload),
+  });
+
   return {
     UpdateProfileMutation,
     getProfile,
     postVerifyKYCMutation,
     getKycStatus,
+    postUploadAvatarMutation,
   };
 }
