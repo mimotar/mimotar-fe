@@ -26,18 +26,25 @@ import {
   KycVerificationFormValues,
   KycVerificationSchema,
 } from "../schema/KycSchema";
+import { useAppDispatch } from "@/lib/hooks";
+
+const MAX_AVATAR_FILE_SIZE = 5 * 1024 * 1024;
 
 export const SettingContainer = () => {
   const queryClient = useQueryClient();
-  const session = useAuth();
+  const { session, update } = useAuth();
   const {
     UpdateProfileMutation,
     getProfile,
     postVerifyKYCMutation,
     getKycStatus,
+    postUploadAvatarMutation,
   } = useSettingMutation();
-  const [phone, setPhone] = useState(session.session?.phone_no || "");
+
+  const [phone, setPhone] = useState(session?.phone_no || "");
   const [isResetting, setIsResetting] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
 
   // Password States
   const [currentPassword, setCurrentPassword] = useState("");
@@ -150,18 +157,18 @@ export const SettingContainer = () => {
     }, 1000);
   };
 
-  const fullname = `${session.session?.firstName ?? ""} ${session.session?.lastName ?? ""}`;
-  const phoneVerified = session.session?.phoneVerified;
+  const fullname = `${session?.firstName ?? ""} ${session?.lastName ?? ""}`;
+  const phoneVerified = session?.phoneVerified;
 
   const form = useForm<ProfileDetailsFormValues>({
     resolver: zodResolver(ProfileDetailsSchema),
     defaultValues: {
       fullName: fullname,
-      phone_no: session.session?.phone_no ?? "",
-      address: session.session?.address ?? "",
-      city: session.session?.city ?? "",
-      country: session.session?.country ?? "",
-      postal_code: session.session?.postal_code ?? "",
+      phone_no: session?.phone_no ?? "",
+      address: session?.address ?? "",
+      city: session?.city ?? "",
+      country: session?.country ?? "",
+      postal_code: session?.postal_code ?? "",
       id_number: "",
     },
   });
@@ -171,6 +178,7 @@ export const SettingContainer = () => {
 
     UpdateProfileMutation.mutate(data, {
       onSuccess: (data) => {
+        // update()
         queryClient.invalidateQueries({ queryKey: ["profile"] });
         toast.success(data.message || "Profile updated successfully");
       },
@@ -231,6 +239,56 @@ export const SettingContainer = () => {
     });
   };
 
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_AVATAR_FILE_SIZE) {
+      toast.error("Profile pictures must be 5 MB or smaller");
+      e.target.value = "";
+      return;
+    }
+
+    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
+
+  const handleAvatarUpload = () => {
+    if (!avatarFile) {
+      toast.error("Please select a profile picture first");
+      return;
+    }
+
+    postUploadAvatarMutation.mutate(avatarFile, {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["profile"] });
+        setAvatarFile(null);
+        if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+        setAvatarPreview("");
+        toast.success(data.message || "Profile picture updated successfully");
+      },
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          toast.error(
+            error?.response?.data?.message ||
+              "Unable to update your profile picture. Please try again",
+          );
+          return;
+        }
+
+        toast.error("Unable to update your profile picture. Please try again");
+      },
+    });
+  };
+
   useEffect(() => {
     form.reset({
       fullName: getProfile.data?.data.fullName ?? "",
@@ -269,6 +327,54 @@ export const SettingContainer = () => {
             <p className="text-xs text-brand-neutral mt-0.5">
               Customize verified credentials on your account.
             </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-gray-50/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-16 w-16 max-w-full shrink-0 overflow-hidden rounded-full border border-gray-200">
+              <img
+                src={avatarPreview || session?.avatar || "/womanAvatar.PNG"}
+                alt="Profile avatar"
+                className="h-full w-full max-w-full object-cover"
+              />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-gray-950">
+                Profile Picture
+              </h3>
+              <p className="mt-0.5 text-xs text-brand-neutral">
+                Upload a profile picture independently from your profile
+                details.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <label
+              htmlFor="settings-avatar"
+              className="cursor-pointer rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 transition hover:border-brand-primary hover:text-brand-primary"
+            >
+              Choose Image
+            </label>
+            <input
+              id="settings-avatar"
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={handleAvatarUpload}
+              disabled={postUploadAvatarMutation.isPending}
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-brand-primary/95 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Upload Avatar
+              {postUploadAvatarMutation.isPending && (
+                <AiOutlineLoading3Quarters className="animate-spin" />
+              )}
+            </button>
           </div>
         </div>
 
@@ -311,7 +417,7 @@ export const SettingContainer = () => {
                 id="settings-email-address"
                 type="text"
                 readOnly
-                value={session.session?.email ?? ""}
+                value={session?.email ?? ""}
                 className="w-full px-4 py-2.5 text-xs bg-gray-50 border border-gray-100 rounded-xl font-mono text-gray-400 select-none cursor-not-allowed"
               />
             </div>
