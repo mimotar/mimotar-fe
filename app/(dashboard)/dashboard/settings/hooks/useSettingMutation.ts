@@ -6,6 +6,10 @@ import { PostKycVerify } from "../api/PostKycVerify";
 import { getKycVerifyVerification } from "../api/getKycVerification";
 import { KycVerificationPayload } from "../types/kycVerifyPayload";
 import { PostUploadAvatar } from "../api/uploadAvatar";
+import {
+  IRequestOtpPhoneVerifyPayload,
+  RequestOtpForPhoneNoVerify,
+} from "../api/RequestOtpForPhoneNoVerify";
 
 export function useSettingMutation() {
   const UpdateProfileMutation = useMutation({
@@ -29,8 +33,14 @@ export function useSettingMutation() {
   });
 
   const postUploadAvatarMutation = useMutation({
-    mutationKey: ["post-kyc-verification"],
+    mutationKey: ["profile-pic-mutation"],
     mutationFn: (payload: File) => PostUploadAvatar(payload),
+  });
+
+  const RequestOtpForPhoneVerificationMutation = useMutation({
+    mutationKey: ["request-otp-phone-verification"],
+    mutationFn: (payload: IRequestOtpPhoneVerifyPayload) =>
+      RequestOtpForPhoneNoVerify(payload),
   });
 
   return {
@@ -39,5 +49,6 @@ export function useSettingMutation() {
     postVerifyKYCMutation,
     getKycStatus,
     postUploadAvatarMutation,
+    RequestOtpForPhoneVerificationMutation,
   };
 }

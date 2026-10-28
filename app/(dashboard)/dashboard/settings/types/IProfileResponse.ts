@@ -8,6 +8,9 @@ export interface ProfileDetail {
   country: string;
   postal_code: string;
   id_number: string;
+  avatar: string;
+  avatarUrl: string;
+  profilePicture: string;
 }
 
 export interface IProfileApiResponse {
