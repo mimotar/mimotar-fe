@@ -14,6 +14,9 @@ export const ProfileDetailsSchema = z.object({
   postal_code: z.string().min(2, "Postal code is required"),
 
   id_number: z.string().min(2, "ID number is required"),
+
+  // avatar: z.string().url().optional(),
+  // avatarUrl: z.string().url().optional(),
 });
 
 export type ProfileDetailsFormValues = z.infer<typeof ProfileDetailsSchema>;

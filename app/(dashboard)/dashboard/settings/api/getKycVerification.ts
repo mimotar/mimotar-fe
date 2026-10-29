@@ -1,8 +1,8 @@
-import axiosinstance from "@/lib/services/axiosService";
+import axiosService from "@/lib/services/axiosService";
 import { KycApiResponse } from "../types/KycApiResponse";
 
 export async function getKycVerifyVerification() {
-  const KycStatus = await axiosinstance<KycApiResponse>({
+  const KycStatus = await axiosService<KycApiResponse>({
     method: "GET",
     url: "kyc/status",
   });

@@ -64,7 +64,7 @@ export const authOptions: AuthOptions = {
             password: credentials?.password as string,
           })
           .then(({ data }) => {
-            console.log("server login data", data);
+            // console.log("server login data", data);
             if (!data) {
               return null;
             }
@@ -85,6 +85,8 @@ export const authOptions: AuthOptions = {
               postal_code: data.data.user.profile?.postal_code || "",
               id_number: data.data.user.profile?.id_number,
               avatar: data.data.user.profile?.avatar || "",
+              avatarUrl: data.data.user.profile?.avatarUrl || "",
+              profilePicture: data.data.user.profile?.profilePicture || "",
             };
           })
           .catch((error) => {
@@ -147,13 +149,15 @@ export const authOptions: AuthOptions = {
         token.postal_code = session.postal_code ?? token.postal_code;
         token.id_number = session.id_number ?? token.id_number;
         token.avatar = session.avatar ?? token.avatar;
+        token.avatarUrl = session.avatarUrl ?? token.avatarUrl;
+        token.profilePicture = session.profilePicture ?? token.profilePicture;
       }
 
-      if (account?.provider == "credentials") {
+      if (account?.provider == "credentials" && user) {
         token.accessToken = user.accessToken;
         token.firstName = user.firstName;
         token.lastName = user.lastName;
-        token.userId = user.id;
+        token.id = user.id;
         token.verified = user.verified;
         token.phone_no = user.phone_no;
         token.phoneVerified = user.phoneVerified;
@@ -163,6 +167,8 @@ export const authOptions: AuthOptions = {
         token.postal_code = user.postal_code;
         token.id_number = user.id_number;
         token.avatar = user.avatar;
+        token.avatarUrl = user.avatarUrl;
+        token.profilePicture = user.profilePicture;
       }
 
       if (account?.provider == "google") {
@@ -175,27 +181,27 @@ export const authOptions: AuthOptions = {
         token.accessToken = account?.access_token;
         token.firstName = googleProfile?.given_name;
         token.lastName = googleProfile?.family_name;
-        token.userId = googleProfile?.sub;
+        token.id = googleProfile?.sub;
         token.verified = googleProfile?.email_verified;
       }
 
       return token;
     },
-    session: async ({ session, token }: { session: any; token: any }) => {
+    session: async ({ session, token }) => {
       if (token) {
-        session.user.accessToken = token.accessToken;
-        session.user.firstName = token.firstName;
-        session.user.lastName = token.lastName;
-        session.user.userId = token.userId;
-        session.user.verified = token.verified;
-        session.user.phone_no = token.phone_no;
-        session.user.phoneVerified = token.phoneVerified;
-        session.user.address = token.address;
-        session.user.city = token.city;
-        session.user.country = token.country;
-        session.user.postal_code = token.postal_code;
-        session.user.id_number = token.id_number;
-        session.user.avatar = token.avatar;
+        session.user.accessToken = token.accessToken as string;
+        session.user.firstName = token.firstName as string;
+        session.user.lastName = token.lastName as string;
+        session.user.id = token.id as string;
+        session.user.verified = token.verified as boolean;
+        session.user.phone_no = token.phone_no as string | undefined;
+        session.user.phoneVerified = token.phoneVerified as boolean;
+        session.user.address = token.address as string | undefined;
+        session.user.city = token.city as string | undefined;
+        session.user.country = token.country as string | undefined;
+        session.user.postal_code = token.postal_code as string | undefined;
+        session.user.id_number = token.id_number as number | undefined;
+        session.user.avatar = token.avatar as string | undefined;
       }
       return session;
     },
