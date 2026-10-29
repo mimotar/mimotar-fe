@@ -33,6 +33,7 @@ const MAX_AVATAR_FILE_SIZE = 5 * 1024 * 1024;
 export const SettingContainer = () => {
   const queryClient = useQueryClient();
   const { session, update } = useAuth();
+
   const {
     UpdateProfileMutation,
     getProfile,
@@ -40,6 +41,7 @@ export const SettingContainer = () => {
     getKycStatus,
     postUploadAvatarMutation,
     RequestOtpForPhoneVerificationMutation,
+    SendOtpForPhoneVerificationMutation,
   } = useSettingMutation();
 
   const [phone, setPhone] = useState(session?.phone_no || "");
@@ -66,11 +68,6 @@ export const SettingContainer = () => {
     defaultValues: { country: "NG", document: "bvn", reference: "" },
   });
   const selectedDocument = kycForm.watch("document");
-
-  const handleSaveGeneral = (e: React.FormEvent) => {
-    e.preventDefault();
-    // updatePhoneNumber(phone);
-  };
 
   const handleCurrentPasswordBlur = () => {
     if (!currentPassword) {
@@ -151,14 +148,6 @@ export const SettingContainer = () => {
     toast.success("Password updated successfully!");
   };
 
-  const handleReset = () => {
-    setIsResetting(true);
-    setTimeout(() => {
-      //   resetDemoData();
-      setIsResetting(false);
-    }, 1000);
-  };
-
   const fullname = `${session?.firstName ?? ""} ${session?.lastName ?? ""}`;
   const phoneVerified = session?.phoneVerified;
 
@@ -182,7 +171,18 @@ export const SettingContainer = () => {
 
     UpdateProfileMutation.mutate(data, {
       onSuccess: (data) => {
-        // update()
+        update({
+          phone_no: data.data.phone_no,
+          phoneVerified: data.data.phoneVerified,
+          address: data.data.address,
+          city: data.data.city,
+          country: data.data.country,
+          postal_code: data.data.postal_code,
+          id_number: data.data.id_number,
+          // avatar: data.data.avatar,
+          // avatarUrl: data.data.avatarUrl,
+          // profilePicture: data.data.profilePicture,
+        });
         queryClient.invalidateQueries({ queryKey: ["profile"] });
         toast.success(data.message || "Profile updated successfully");
       },
@@ -277,6 +277,11 @@ export const SettingContainer = () => {
         setAvatarFile(null);
         if (avatarPreview) URL.revokeObjectURL(avatarPreview);
         setAvatarPreview(data.data.avatar ?? "");
+        update({
+          avatar: data.data.avatar,
+          // avatarUrl: data.data.avatarUrl,
+          // profilePicture: data.data.profilePicture,
+        });
         toast.success(data.message || "Profile picture updated successfully");
       },
       onError: (error) => {
@@ -328,9 +333,50 @@ export const SettingContainer = () => {
     );
   };
 
-  const handlePhoneVerificationSubmit = (otp: string) => {
-    void otp;
-    setOpenPhoneVerifyModal(false);
+  const handlePhoneVerificationSubmit = async (otp: string) => {
+    try {
+      const result = await SendOtpForPhoneVerificationMutation.mutateAsync({
+        otp,
+      });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      toast.success(result.message || "Phone number verified successfully");
+      setOpenPhoneVerifyModal(false);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(
+          error?.response?.data?.message ||
+            "Unable to verify OTP for Phone verification. Please try again",
+        );
+        return;
+      }
+
+      toast.error(
+        "Unable to verify OTP for Phone verification. Please try again",
+      );
+    }
+
+    // SendOtpForPhoneVerificationMutation.mutate(
+    //   { otp },
+    //   {
+    //     onSuccess: (data) => {
+    //       toast.success(data.message || "Phone number verified successfully");
+    //       setOpenPhoneVerifyModal(false);
+    //     },
+    //     onError: (error) => {
+    //       if (error instanceof AxiosError) {
+    //         toast.error(
+    //           error?.response?.data?.message ||
+    //             "Unable to verify OTP for Phone verification. Please try again",
+    //         );
+    //         return;
+    //       }
+
+    //       toast.error(
+    //         "Unable to verify OTP for Phone verification. Please try again",
+    //       );
+    //     },
+    //   },
+    // );
   };
 
   useEffect(() => {
@@ -1079,6 +1125,7 @@ export const SettingContainer = () => {
         open={openPhoneVerifyModal}
         close={() => setOpenPhoneVerifyModal(false)}
         onsubmit={handlePhoneVerificationSubmit}
+        submitting={SendOtpForPhoneVerificationMutation.isPending}
       />
     </>
   );

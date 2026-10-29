@@ -64,7 +64,7 @@ export const authOptions: AuthOptions = {
             password: credentials?.password as string,
           })
           .then(({ data }) => {
-            console.log("server login data", data);
+            // console.log("server login data", data);
             if (!data) {
               return null;
             }

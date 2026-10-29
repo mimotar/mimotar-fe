@@ -10,6 +10,10 @@ import {
   IRequestOtpPhoneVerifyPayload,
   RequestOtpForPhoneNoVerify,
 } from "../api/RequestOtpForPhoneNoVerify";
+import {
+  ISendOtpPhoneNoVerifyPayload,
+  sendOtpPhoneNoVerify,
+} from "../api/sendOtpPhoneNoVerify";
 
 export function useSettingMutation() {
   const UpdateProfileMutation = useMutation({
@@ -43,6 +47,12 @@ export function useSettingMutation() {
       RequestOtpForPhoneNoVerify(payload),
   });
 
+  const SendOtpForPhoneVerificationMutation = useMutation({
+    mutationKey: ["send-otp-phone-verification"],
+    mutationFn: (payload: ISendOtpPhoneNoVerifyPayload) =>
+      sendOtpPhoneNoVerify(payload),
+  });
+
   return {
     UpdateProfileMutation,
     getProfile,
@@ -50,5 +60,6 @@ export function useSettingMutation() {
     getKycStatus,
     postUploadAvatarMutation,
     RequestOtpForPhoneVerificationMutation,
+    SendOtpForPhoneVerificationMutation,
   };
 }

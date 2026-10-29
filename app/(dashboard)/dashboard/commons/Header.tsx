@@ -2,32 +2,14 @@
 
 import { useAuth } from "@/app/(client)/(page)/hooks/useAuth";
 import { MimotarLogo } from "@/app/(client)/commons/client/Navbar";
-import {
-  AlertTriangle,
-  Bell,
-  CheckCircle2,
-  ChevronDown,
-  Info,
-  LogOut,
-  Trash2,
-} from "lucide-react";
+import { Bell, ChevronDown, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export const Header = () => {
-  //   const {
-  //     currentUser,
-  //     notifications,
-  //     markNotificationAsRead,
-  //     markAllNotificationsAsRead,
-  //     clearAllNotifications,
-  //     logoutUser,
-  //     setActivePage,
-  //     setSelectedProjectId,
-  //   } = useAppState();
-
   const { session, SignOut } = useAuth();
+  console.log(session?.avatar);
   const navigate = useRouter();
 
   const userInitials =
@@ -41,12 +23,19 @@ export const Header = () => {
 
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [avatarLoading, setAvatarLoading] = useState(Boolean(session?.avatar));
+  const [avatarError, setAvatarError] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "all" | "action" | "update" | "informational"
   >("all");
 
   const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setAvatarLoading(Boolean(session?.avatar));
+    setAvatarError(false);
+  }, [session?.avatar]);
 
   //   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
@@ -317,8 +306,32 @@ export const Header = () => {
             }}
             className="flex items-center gap-2.5 hover:bg-gray-50 p-1.5 pr-2.5 rounded-xl transition cursor-pointer"
           >
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#c026d3] to-purple-400 text-white flex items-center justify-center font-bold text-sm border-2 border-white shadow-xs shrink-0 font-display">
-              {userInitials}
+            <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-[#c026d3] to-purple-400 text-white flex items-center justify-center font-bold text-sm border-2 border-white shadow-xs shrink-0 font-display overflow-hidden">
+              {session?.avatar && !avatarError ? (
+                <>
+                  {avatarLoading && (
+                    <span
+                      className="absolute z-10 h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin"
+                      aria-label="Loading avatar"
+                    />
+                  )}
+                  <img
+                    src={session.avatar}
+                    alt={`${fullname || "User"} avatar`}
+                    loading="lazy"
+                    className={`h-full w-full object-cover transition-opacity ${avatarLoading ? "opacity-0" : "opacity-100"}`}
+                    onLoad={() => {
+                      window.setTimeout(() => setAvatarLoading(false), 300);
+                    }}
+                    onError={(event) => {
+                      setAvatarLoading(false);
+                      setAvatarError(true);
+                    }}
+                  />
+                </>
+              ) : (
+                userInitials
+              )}
             </div>
             <div className="hidden sm:block text-left">
               <div className="text-xs font-bold text-gray-900 leading-tight truncate max-w-[120px]">

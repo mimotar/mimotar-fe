@@ -14,17 +14,21 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 type PhoneVerificationDialogProps = {
   open: boolean;
   close: () => void;
-  onsubmit: (otp: string) => void;
+  onsubmit: (otp: string) => Promise<void>;
+  submitting: boolean;
 };
 
 export function PhoneVerificationDialog({
   open,
   close,
   onsubmit,
+  submitting,
 }: PhoneVerificationDialogProps) {
   const [otp, setOtp] = useState("");
 
@@ -37,12 +41,17 @@ export function PhoneVerificationDialog({
 
   const handleClose = () => handleOpenChange(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (otp.length !== 6) return;
+    try {
+      if (otp.length !== 6) {
+        toast.error("Please add your Sent OTP to complete verification.");
+        return;
+      }
 
-    onsubmit(otp);
+      await onsubmit(otp);
+    } catch (error) {}
   };
 
   return (
@@ -85,10 +94,13 @@ export function PhoneVerificationDialog({
             </button>
             <button
               type="submit"
-              disabled={otp.length !== 6}
-              className="h-10 rounded-xl bg-brand-primary px-5 text-sm font-semibold text-white transition hover:bg-brand-primary/95 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={otp.length !== 6 || submitting}
+              className="h-10 inline-flex gap-2 items-center rounded-xl bg-brand-primary px-5 text-sm font-semibold text-white transition hover:bg-brand-primary/95 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Verify phone
+              Verify phone{" "}
+              {submitting && (
+                <AiOutlineLoading3Quarters className="animate-spin" />
+              )}
             </button>
           </DialogFooter>
         </form>
