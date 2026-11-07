@@ -1,5 +1,4 @@
 import axiosService from "@/lib/services/axiosService";
-import { WalletBalancesResponse } from "../types/IWallet";
 
 export async function getBanks() {
   const result = await axiosService<{
