@@ -872,7 +872,7 @@ export const WalletView: React.FC = () => {
                     type="button"
                     disabled={ConfirmPayout.isPending}
                     onClick={handleConfirmPayout}
-                    className="flex-1 inline-flex gap-2 items-center py-3 bg-emerald-600 text-white text-xs font-bold rounded-xl text-center hover:bg-emerald-700 transition shadow-md shadow-emerald-100 cursor-pointer"
+                    className="flex-1 inline-flex gap-2 items-center justify-center py-3 bg-emerald-600 text-white text-xs font-bold rounded-xl text-center hover:bg-emerald-700 transition shadow-md shadow-emerald-100 cursor-pointer"
                   >
                     Authorize & Process Withdrawal{" "}
                     {ConfirmPayout.isPending && (
