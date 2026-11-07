@@ -15,6 +15,7 @@ axiosService.interceptors.request.use(async (AxiosRequestConfig) => {
   // const session: any = await getServerSession(authOptions);
   const session = await getSession();
   const token = session?.user.accessToken;
+
   if (token) {
     AxiosRequestConfig.headers.Authorization = `Bearer ${token}`;
   }
@@ -44,7 +45,8 @@ axiosService.interceptors.response.use(
       // Redirect to login page if unauthorized
 
       toast.error("session expired", { position: "top-right" });
-      const data = await signOut({ redirect: false, callbackUrl: "/" });
+      // const data =
+      await signOut({ redirect: true, callbackUrl: "/" });
       // useRouter().push(data.url);
 
       return Promise.reject(error);
