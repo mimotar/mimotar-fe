@@ -5,7 +5,7 @@ import {
   IResolvePayoutAccountAction,
   resolvePayoutAccountAction,
 } from "../api/resolvePayoutAction";
-import { getPayoutAccountAction } from "../api/getPayoutAccountAction";
+import { getResolvedPayoutAccountAction } from "../api/getResolvedPayoutAccountAction";
 import { IPayoutRequestAction, PayoutRequestAction } from "../api/payoutAction";
 import {
   ConfirmPayoutAction,
@@ -29,9 +29,9 @@ export function useWallet() {
       await resolvePayoutAccountAction(data),
   });
 
-  const getPayoutAccount = useQuery({
-    queryKey: ["get-payout-account"],
-    queryFn: async () => await getPayoutAccountAction(),
+  const getResolvedPayoutAccount = useQuery({
+    queryKey: ["get-resolved-payout-account"],
+    queryFn: async () => await getResolvedPayoutAccountAction(),
   });
 
   const PayoutRequest = useMutation({
@@ -50,7 +50,7 @@ export function useWallet() {
     wallet,
     banks,
     resolvePayoutAccount,
-    getPayoutAccount,
+    getResolvedPayoutAccount,
     PayoutRequest,
     ConfirmPayout,
   };
