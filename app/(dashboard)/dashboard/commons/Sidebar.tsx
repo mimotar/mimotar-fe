@@ -4,6 +4,7 @@ import { formatNumberToCurrency } from "@/app/utils/formatNumberToCurrency";
 import {
   FolderKanban,
   LayoutDashboard,
+  ReceiptText,
   Settings,
   ShieldCheck,
 } from "lucide-react";
@@ -17,6 +18,11 @@ export const Sidebar = () => {
   const menuItems = [
     { page: "/dashboard/portal", name: "Dashboard", icon: LayoutDashboard },
     { page: "/dashboard/projects", name: "Projects", icon: FolderKanban },
+    {
+      page: "/dashboard/withdrawal-request",
+      name: "Payout requests",
+      icon: ReceiptText,
+    },
     { page: "/dashboard/settings", name: "Settings", icon: Settings },
   ];
 

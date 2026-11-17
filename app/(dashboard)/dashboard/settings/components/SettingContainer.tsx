@@ -49,6 +49,7 @@ export const SettingContainer = () => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState("");
   const [openPhoneVerifyModal, setOpenPhoneVerifyModal] = useState(false);
+  const [kycIsVerify, setKycIsVerify] = useState(false);
 
   // Password States
   const [currentPassword, setCurrentPassword] = useState("");
@@ -404,6 +405,8 @@ export const SettingContainer = () => {
         | "passport",
       reference: getKycStatus.data?.data?.kycDocumentNumber,
     });
+
+    setKycIsVerify(getKycStatus.data?.data.isVerified ?? false);
   }, [getKycStatus.data, form.reset]);
 
   return (
@@ -726,8 +729,10 @@ export const SettingContainer = () => {
             <h2 className="text-sm font-bold text-slate-500">
               ID &amp; KYC Verification Status
             </h2>
-            <span className="text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-md">
-              ⚠ Unverified
+            <span
+              className={`text-[10px] font-bold ${kycIsVerify ? "text-green-600 bg-green-50" : "text-amber-600 bg-amber-50"} border border-amber-100 px-2.5 py-1 rounded-md`}
+            >
+              {kycIsVerify ? "✅ Verified" : "⚠ Unverified"}
             </span>
           </div>
 
