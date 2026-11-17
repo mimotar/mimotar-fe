@@ -1,17 +1,10 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
-import { NIGERIAN_BANKS } from "../data/nigeriaBanks";
 import {
-  Wallet,
-  ArrowDownLeft,
   ChevronRight,
-  ArrowUpRight,
-  TrendingDown,
-  CheckCircle,
   Lock,
   AlertCircle,
   Loader2,
-  ShieldAlert,
   HelpCircle as QuestionIcon,
   Check,
   Search,
@@ -23,15 +16,6 @@ import { useDebounce } from "../hooks/useDebounce";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { useQueryClient } from "@tanstack/react-query";
-
-const USD_PAYOUT_NETWORKS = [
-  "Virtual Dollar Card Account",
-  "Payoneer USD Reception Node",
-  "Wise USD Account",
-  "Nigerian Dollar Bank Account (Domiciliary)",
-  "Standard Chartered (USD International Wire)",
-  "GTBank (USD Domiciliary)",
-];
 
 export const WalletView: React.FC = () => {
   const session = useAuth();
@@ -45,19 +29,8 @@ export const WalletView: React.FC = () => {
   const [bankSelected, setBankSelected] = useState<string>("");
   const [accountNumber, setAccountNumber] = useState<string>("");
   const [accountName, setAccountName] = useState<string>("");
-  const [otpCode, setOtpCode] = useState<string>("");
 
-  const [isProcessing, setIsProcessing] = useState(false);
   const [withdrawError, setWithdrawError] = useState<string | null>(null);
-
-  // withdrawal OTP protect states
-  const [withdrawalPhone, setWithdrawalPhone] = useState(
-    session.session?.phone_no || "",
-  );
-  const [payoutOtpSent, setPayoutOtpSent] = useState(false);
-  const [payoutOtpSubmitting, setPayoutOtpSubmitting] = useState(false);
-  const [payoutOtpCode, setPayoutOtpCode] = useState("");
-  const [payoutOtpError, setPayoutOtpError] = useState<string | null>(null);
 
   const [bankSearch, setBankSearch] = useState("");
   const [isBankDropdownOpen, setIsBankDropdownOpen] = useState(false);
@@ -68,110 +41,15 @@ export const WalletView: React.FC = () => {
     wallet,
     banks,
     resolvePayoutAccount,
-    getPayoutAccount,
+    getResolvedPayoutAccount,
     PayoutRequest,
-    ConfirmPayout,
   } = useWallet();
-  // console.log("saved account", getPayoutAccount.data);
 
-  const handleDetailsSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setWithdrawError(null);
-
-    if (selectedCurrency === "NGN") {
-      if (amountInput <= 1000) {
-        setWithdrawError("Payout limit: Minimum withdrawal amount is ₦1,000.");
-        return;
-      }
-
-      if (amountInput > (wallet?.data?.available?.NGN ?? 0)) {
-        setWithdrawError(
-          `Payout bounds exceeded: Available balance is ₦${wallet?.data?.available.NGN.toLocaleString()}. Move locked funds by completing workspace deliverables.`,
-        );
-        return;
-      }
-    } else {
-      if (amountInput <= 50) {
-        setWithdrawError("Payout limit: Minimum USD withdrawal amount is $50.");
-        return;
-      }
-
-      if (amountInput > (wallet?.data?.available?.USD ?? 0)) {
-        setWithdrawError(
-          `Payout bounds exceeded: Available balance is $${wallet?.data?.available.USD.toLocaleString()}. Move locked funds by completing workspace deliverables.`,
-        );
-        return;
-      }
-    }
-
-    if (!bankSelected) {
-      setWithdrawError(
-        selectedCurrency === "NGN"
-          ? "Please select a verified Nigerian payout receiving destination bank."
-          : "Please select a verified USD payout network or domiciliary node.",
-      );
-      return;
-    }
-
-    if (selectedCurrency === "NGN") {
-      if (accountNumber.length !== 10) {
-        setWithdrawError(
-          "Invalid NUBAN account code structure. Real Nigerian accounts possess exactly 10 digits.",
-        );
-        return;
-      }
-    } else {
-      if (accountNumber.length < 8 || accountNumber.length > 17) {
-        setWithdrawError(
-          "Invalid dollar account format. Receiving accounts must possess between 8 to 17 digits.",
-        );
-        return;
-      }
-    }
-
-    // Resolve fictitious elegant name for mockup realism
-    setAccountName("Oluwaseun Adebayo (Verified)");
-
-    // Check if phone number is verified; if not, route to security linkage step 5
-    // if (!currentUser.phoneVerified) {
-    //   setWithdrawStep(5);
-    // } else {
-    //   setWithdrawStep(2);
-    // }
-  };
-
-  const handle2FASubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setWithdrawError(null);
-
-    if (otpCode !== "9999" && otpCode !== "1234") {
-      setWithdrawError(
-        'Unauthorized 2FA Pin. Use "9999" or "1234" inside visual sandbox parameters!',
-      );
-      return;
-    }
-
-    setIsProcessing(true);
-    setWithdrawStep(4); // Processing spinner page
-
-    // const success = await withdrawFunds(
-    //   amountInput,
-    //   bankSelected,
-    //   accountNumber,
-    //   otpCode,
-    //   selectedCurrency,
-    // );
-
-    setIsProcessing(false);
-    // if (success) {
-    //   setWithdrawStep(3);
-    // } else {
-    //   setWithdrawStep(1);
-    //   setWithdrawError(
-    //     "Integrated bank transaction cleared in failure. Try lesser amount.",
-    //   );
-    // }
-  };
+  useEffect(() => {
+    setBankSelected(getResolvedPayoutAccount.data?.data?.bankCode || "");
+    setAccountNumber(getResolvedPayoutAccount.data?.data?.accountNumber || "");
+    setAccountName(getResolvedPayoutAccount.data?.data?.accountName || "");
+  }, [getResolvedPayoutAccount.data]);
 
   const filteredBanks = useMemo(() => {
     if (!banks.data) return [];
@@ -234,9 +112,9 @@ export const WalletView: React.FC = () => {
           toast.success(
             data?.message || "payout account resolve and saved successfully.",
           );
-          // queryClient.invalidateQueries({
-          //   queryKey: ["project"],
-          // });
+          queryClient.invalidateQueries({
+            queryKey: ["get-resolved-payout-account"],
+          });
         },
       },
     );
@@ -277,36 +155,6 @@ export const WalletView: React.FC = () => {
           toast.success(
             data?.message || "Payout request processed successfully.",
           );
-        },
-      },
-    );
-  };
-
-  const handleConfirmPayout = () => {
-    if (!otpCode) {
-      toast.error("Please enter the OTP code to confirm the payout.");
-      return;
-    }
-
-    ConfirmPayout.mutate(
-      { otp: otpCode },
-      {
-        onError: (error) => {
-          if (error instanceof AxiosError) {
-            toast.error(
-              error?.response?.data?.message || "Unable to confirm the payout.",
-            );
-            return;
-          }
-          if (error instanceof Error) {
-            toast.error(error?.message || "Unable to confirm the payout.");
-            return;
-          }
-
-          toast.error("Unable to confirm the payout.");
-        },
-        onSuccess: (data) => {
-          toast.success(data?.message || "Payout confirmed successfully.");
         },
       },
     );
@@ -576,6 +424,24 @@ export const WalletView: React.FC = () => {
                   </div>
                 </div>
 
+                <div>
+                  <label
+                    htmlFor="wallet-account-number"
+                    className="text-label text-gray-400 mb-1 block"
+                  >
+                    Account Name
+                  </label>
+                  <input
+                    id="wallet-account-name"
+                    type="text"
+                    readOnly
+                    value={accountName}
+                    onChange={(e) => setAccountName(e.target.value)}
+                    placeholder="e.g. John Doe"
+                    className="w-full px-4 cursor-not-allowed py-3 text-xs bg-gray-50 rounded-xl border border-brand-primary placeholder-gray-300 font-mono text-gray-800 font-bold focus:outline-none focus:border-brand-primary"
+                  />
+                </div>
+
                 {withdrawError && (
                   <div className="p-3 bg-red-50 text-red-700 text-xs rounded-xl flex items-start gap-2 border border-red-100 mt-1 animate-fade-in">
                     <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
@@ -668,285 +534,6 @@ export const WalletView: React.FC = () => {
                   )}
                 </button>
               </form>
-            </div>
-          )}
-
-          {/* 2FA Verification Steps */}
-          {withdrawStep === 2 && (
-            <div className="space-y-6 animate-fade-in">
-              <div className="text-center">
-                <span className="w-10 h-10 bg-brand-primary/10 text-brand-primary rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <Lock className="w-5 h-5" />
-                </span>
-                <h2 className="text-base font-extrabold text-[#111827]">
-                  Two-Factor Authorization (2FA)
-                </h2>
-                <p className="text-xs text-brand-neutral mt-1">
-                  Authorized security checks validate your payout locks.
-                </p>
-              </div>
-
-              <div className="p-4 bg-purple-50 rounded-2xl border border-purple-100 text-center space-y-1">
-                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
-                  Sandbox verification pin
-                </span>
-                <span className="text-lg font-black tracking-widest text-brand-primary font-mono block">
-                  9 9 9 9
-                </span>
-              </div>
-
-              <form
-                onSubmit={handle2FASubmit}
-                className="space-y-4 text-left max-w-sm mx-auto"
-              >
-                <div>
-                  <label
-                    htmlFor="wallet-2fa-code"
-                    className="block text-xs font-bold text-slate-500 mb-1.5 text-center"
-                  >
-                    Enter 4-Digit 2FA Code
-                  </label>
-                  <input
-                    id="wallet-2fa-code"
-                    type="text"
-                    required
-                    maxLength={4}
-                    value={otpCode}
-                    onChange={(e) => setOtpCode(e.target.value)}
-                    placeholder="0 0 0 0"
-                    className="w-full text-center px-4 py-3 tracking-widest text-[#111827] font-mono font-black text-lg bg-gray-50 border border-gray-150 rounded-xl focus:outline-none focus:border-brand-primary"
-                  />
-                </div>
-
-                {withdrawError && (
-                  <div className="p-3 bg-red-50 text-red-700 text-xs rounded-xl flex gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                    <span>{withdrawError}</span>
-                  </div>
-                )}
-
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setWithdrawStep(1)}
-                    className="flex-1 py-3 border border-gray-250 text-gray-600 text-xs font-semibold rounded-xl text-center hover:bg-gray-50 transition"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-3 bg-brand-primary text-white text-xs font-bold rounded-xl text-center hover:bg-brand-primary/95 transition shadow-xs cursor-pointer"
-                  >
-                    Withdraw
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {/* Step 5: Advanced Withdrawal protection system entry (phone number + OTP verification linking) */}
-          {/* {withdrawStep === 5 && ( */}
-          <div className="space-y-6 animate-fade-in text-left">
-            <div className="space-y-1">
-              <span className="text-[10px] bg-indigo-50 text-indigo-700 font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
-                🔒 Progressive Withdrawal Protection System
-              </span>
-              {/* <h2 className="text-h3 text-gray-900 mt-2">
-                Payout Security & Phone Setup
-              </h2>
-              <p className="text-body-sm text-brand-neutral">
-                To guarantee secure funds disbursement and guard against
-                unauthorized withdrawals, link your WhatsApp phone number as
-                secondary 2FA.
-              </p> */}
-            </div>
-
-            {/* <div className="p-3.5 bg-gray-50 rounded-2xl border border-gray-100/50 space-y-1.5 text-[11px] font-medium text-slate-650">
-              <div className="flex flex-wrap items-center gap-1.5 text-emerald-600 font-bold">
-                <span>✓ Email Verification Checked:</span>
-                <span className="bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded text-[9.5px]">
-                  Verified ✅
-                </span>
-              </div>
-              <p className="text-gray-450 leading-relaxed font-sans">
-                As part of our high-value trust protection, a 2FA OTP security
-                PIN is generated live and dispatched directly to your registered
-                phone number.
-              </p>
-            </div> */}
-
-            <div className="space-y-4">
-              {/* Phone Input Card */}
-              {/* <div className="space-y-1.5">
-                <label
-                  htmlFor="payout-phone-field"
-                  className="block text-xs font-bold text-slate-500 uppercase"
-                >
-                  WhatsApp Phone Number
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    id="payout-phone-field"
-                    type="text"
-                    disabled={payoutOtpSent}
-                    value={withdrawalPhone}
-                    onChange={(e) => setWithdrawalPhone(e.target.value)}
-                    placeholder="e.g. +234 803 123 4567"
-                    className="flex-1 px-4 py-3 text-xs bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-brand-primary disabled:opacity-75 font-medium"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!withdrawalPhone) {
-                        setPayoutOtpError(
-                          "Please enter your WhatsApp phone number.",
-                        );
-                        return;
-                      }
-                      setPayoutOtpSubmitting(true);
-                      setTimeout(() => {
-                        // updatePhoneNumber(withdrawalPhone, false); // Store on user
-                        setPayoutOtpSent(true);
-                        setPayoutOtpSubmitting(false);
-                        setPayoutOtpError(null);
-                        toast.success(
-                          "Payout security OTP code dispatched successfully!",
-                        );
-                      }, 1000);
-                    }}
-                    className="px-5 py-3 bg-brand-primary text-white font-bold rounded-xl text-xs hover:bg-brand-primary/95 transition cursor-pointer shrink-0 disabled:opacity-50"
-                    disabled={payoutOtpSubmitting}
-                  >
-                    {payoutOtpSubmitting
-                      ? "Sending..."
-                      : payoutOtpSent
-                        ? "Resend"
-                        : "Send OTP"}
-                  </button>
-                </div>
-                {payoutOtpSent && (
-                  <span className="block text-[10.5px] text-emerald-600 font-bold leading-normal mt-1">
-                    ✓ Security code simulated via WhatsApp Business! Standard
-                    demo codes: "1234" or "9999".
-                  </span>
-                )}
-              </div> */}
-
-              {/* OTP Verifier */}
-              {/* {payoutOtpSent && ( */}
-              <form className="space-y-4 pt-3 border-t border-gray-100 animate-fade-in">
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="payout-otp-field"
-                    className="block text-xs font-bold text-slate-500 uppercase"
-                  >
-                    Enter 4-Digit Payout Security Code
-                  </label>
-                  <input
-                    id="payout-otp-field"
-                    type="text"
-                    maxLength={4}
-                    value={payoutOtpCode}
-                    onChange={(e) => {
-                      setPayoutOtpCode(e.target.value);
-                      setPayoutOtpError(null);
-                    }}
-                    placeholder="e.g. 1234"
-                    className="w-full px-4 py-3 tracking-[1.5em] text-center text-sm font-mono font-extrabold bg-gray-55/30 border border-gray-150 rounded-xl focus:outline-none focus:border-brand-primary"
-                  />
-                </div>
-
-                <div className="flex gap-3">
-                  {/* <button
-                    type="button"
-                    onClick={() => {
-                      setWithdrawStep(1);
-                      setPayoutOtpSent(false);
-                      setPayoutOtpCode("");
-                    }}
-                    className="flex-1 py-3 bg-white border border-gray-200 text-gray-655 text-xs font-bold rounded-xl text-center hover:bg-gray-50 transition"
-                  >
-                    Cancel
-                  </button> */}
-                  <button
-                    type="button"
-                    disabled={ConfirmPayout.isPending}
-                    onClick={handleConfirmPayout}
-                    className="flex-1 inline-flex gap-2 items-center justify-center py-3 bg-emerald-600 text-white text-xs font-bold rounded-xl text-center hover:bg-emerald-700 transition shadow-md shadow-emerald-100 cursor-pointer"
-                  >
-                    Authorize & Process Withdrawal{" "}
-                    {ConfirmPayout.isPending && (
-                      <Loader2 className="animate-spin text-white" />
-                    )}
-                  </button>
-                </div>
-              </form>
-              {/* )} */}
-            </div>
-          </div>
-          {/* )} */}
-
-          {/* Processing View */}
-          {withdrawStep === 4 && (
-            <div className="py-12 flex flex-col items-center justify-center space-y-4 text-center animate-fade-in">
-              <Loader2 className="w-12 h-12 text-brand-primary animate-spin" />
-              <h3 className="text-sm font-bold text-gray-900">
-                Validating payout parameters with Banking Network...
-              </h3>
-              <p className="text-xs text-brand-neutral leading-relaxed max-w-xs font-sans">
-                {selectedCurrency === "NGN"
-                  ? "Please do not refresh as we verify NUBAN routes and dispatch Naira assets."
-                  : "Please do not refresh as we verify international routing notes and dispatch USD assets."}
-              </p>
-            </div>
-          )}
-
-          {/* Payout Success Screen */}
-          {withdrawStep === 3 && (
-            <div className="space-y-6 py-6 text-center animate-fade-in max-w-sm mx-auto">
-              <div className="w-14 h-14 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8" />
-              </div>
-
-              <div>
-                <h2 className="text-lg font-extrabold text-[#111827]">
-                  {selectedCurrency === "NGN"
-                    ? "Naira Transfer Dispatched!"
-                    : "Dollar Transfer Dispatched!"}
-                </h2>
-                <p className="text-xs text-slate-500 leading-relaxed mt-2">
-                  We successfully debited{" "}
-                  <span className="font-bold text-gray-800">
-                    {selectedCurrency === "NGN"
-                      ? `₦${amountInput.toLocaleString()}`
-                      : `$${amountInput.toLocaleString()}`}
-                  </span>{" "}
-                  and wired funds to your{" "}
-                  <span className="font-semibold text-gray-800">
-                    {bankSelected}
-                  </span>{" "}
-                  account{" "}
-                  <span className="font-mono text-gray-800">
-                    {accountNumber}
-                  </span>
-                  .
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setWithdrawStep(1);
-                  setAmountInput(0);
-                  setBankSelected("");
-                  setAccountNumber("");
-                  setAccountName("");
-                  setOtpCode("");
-                }}
-                className="w-full py-3 bg-brand-primary text-white text-xs font-bold rounded-xl transition hover:bg-brand-primary/95 shadow-xs cursor-pointer"
-              >
-                Done
-              </button>
             </div>
           )}
         </div>

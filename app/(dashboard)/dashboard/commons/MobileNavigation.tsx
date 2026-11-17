@@ -1,5 +1,10 @@
 "use client";
-import { FolderKanban, LayoutDashboard, UserIcon } from "lucide-react";
+import {
+  FolderKanban,
+  LayoutDashboard,
+  ReceiptText,
+  UserIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -10,6 +15,11 @@ export const MobileNavigation: React.FC = () => {
     { page: "/dashboard/portal", name: "Dashboard", icon: LayoutDashboard },
     { page: "projects", name: "Projects", icon: FolderKanban },
     { page: "wallet", name: "Wallet", icon: UserIcon },
+    {
+      page: "/dashboard/withdrawal-request",
+      name: "Payouts",
+      icon: ReceiptText,
+    },
   ];
 
   return (
